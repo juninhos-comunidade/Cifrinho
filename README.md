@@ -80,25 +80,38 @@ Antes de começar, você vai precisar ter instalado em sua máquina:
 
 Para manter o código limpo e organizado para todo o time, seguimos rigorosamente estas regras de contribuição:
 
-### 1. Nomenclatura de Branches
-Sempre crie uma ramificação específica para a sua tarefa a partir da branch principal:
+### 1. Estrutura de Branches
+
+| Branch        | Finalidade                                                        |
+|---------------|-------------------------------------------------------------------|
+| `main`        | Código em produção. Nunca recebe commits ou PRs diretos.          |
+| `development` | Branch de integração. **Todos os PRs devem ser abertos para cá.** |
+
+### 2. Nomenclatura de Branches
+Sempre crie sua branch a partir da `development`:
+
+```bash
+git checkout development
+git pull origin development
+git checkout -b feature/nome-da-funcionalidade
+```
+
+Prefixos obrigatórios:
 * `feature/nome-da-funcionalidade`
 * `fix/correcao-de-bug`
 * `docs/atualizacao-readme`
 
-```bash
-git checkout -b feature/minha-tarefa
-```
-
-### 2. Padrão de Commits
+### 3. Padrão de Commits
 Os commits devem ser claros, em português e indicar a intenção da alteração:
 * `feat: adiciona calculo de previsao de gastos`
 * `fix: corrige bug na filtragem por categoria empresarial`
 * `style: estiliza os inputs do formulario de imposto de renda`
 
-### 3. Revisão de Código (Pull Requests)
-* Nunca faça o merge direto na branch principal.
-* Abra um **Pull Request (PR)** e solicite a revisão de pelo menos um outro membro do squad antes de aplicar as alterações.
+### 4. Revisão de Código (Pull Requests)
+* Nunca faça commit ou PR diretamente na `main` ou `development`.
+* Sempre crie sua branch a partir da `development`.
+* Abra um **Pull Request (PR)** apontando para `development` e solicite a revisão de pelo menos um outro membro do squad antes de aplicar as alterações.
+* O merge de `development` para `main` é feito pelo responsável do projeto ao final de cada sprint.
 
 ---
 

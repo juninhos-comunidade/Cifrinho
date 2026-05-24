@@ -2,17 +2,20 @@
 
 ## Branches principais
 
-| Branch   | Finalidade                                               |
-|----------|----------------------------------------------------------|
-| `main`   | Código em produção. Nunca recebe commits diretos.        |
+| Branch        | Finalidade                                                        |
+|---------------|-------------------------------------------------------------------|
+| `main`        | Código em produção. Nunca recebe commits ou PRs diretos.          |
+| `development` | Branch de integração. **Todos os PRs devem ser abertos para cá.** |
+
+> O merge de `development` para `main` é feito pelo responsável do projeto ao final de cada sprint, após validação completa.
 
 ## Nomenclatura de branches
 
-Sempre crie sua branch a partir da `main`:
+Sempre crie sua branch a partir da `development`:
 
 ```bash
-git checkout main
-git pull origin main
+git checkout development
+git pull origin development
 git checkout -b feature/nome-da-funcionalidade
 ```
 
@@ -47,14 +50,15 @@ style: ajusta espaçamento no dashboard pessoal
 ## Pull Requests
 
 1. Faça push da sua branch: `git push origin feature/minha-tarefa`
-2. Abra um PR no GitHub apontando para `main`
+2. Abra um PR no GitHub apontando para **`development`** (nunca para `main`)
 3. Preencha o template do PR com o que foi feito e como testar
 4. Solicite revisão de **pelo menos um** outro membro do squad
 5. Aguarde aprovação antes de fazer o merge
 
 ## Regras de ouro
 
-- Nunca faça commit diretamente na `main`
+- Nunca faça commit diretamente na `main` ou `development`
+- Todo PR deve apontar para `development`
 - Nunca use `--force` sem avisar o squad
 - Mantenha as branches curtas (idealmente resolvidas em até 2 dias)
-- Sempre sincronize com a `main` antes de abrir o PR
+- Sempre sincronize com a `development` antes de abrir o PR
