@@ -21,10 +21,10 @@ Este projeto está sendo construído de forma 100% colaborativa dentro do ecossi
 
 O projeto foi estruturado seguindo os conceitos de **modularização**, alta coesão e baixo acoplamento:
 
-* **Frontend:** ...
-* **Backend:** ...
-* **Banco de Dados:** ...
-* **Infraestrutura:** ...
+* **Frontend:** Next.js
+* **Backend:** Node.js + Fastify
+* **Banco de Dados:** Prisma + NeonDB
+* **Infraestrutura:** Vercel + Railway
 
 ---
 
