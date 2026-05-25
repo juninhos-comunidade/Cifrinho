@@ -110,7 +110,9 @@ Motivos:
 32px
 48px
 
-# 🔲 Border Radius
+---
+
+## 🔲 Border Radius
 
 ```txt
 sm = 8px
@@ -118,3 +120,4 @@ md = 12px
 lg = 16px
 xl = 24px
 ```
+
