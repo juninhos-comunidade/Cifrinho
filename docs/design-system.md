@@ -122,3 +122,8 @@ lg = 16px
 xl = 24px
 ```
 
+---
+
+# 🎨 Preview Visual
+
+![Preview](./design-preview.png.png)
