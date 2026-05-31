@@ -21,8 +21,8 @@ export default function LoginPage() {
     setLoading(true)
     try {
       const { data } = await api.post('/auth/login', loginData)
-      localStorage.setItem('token', data.token)
-      router.push('/personal')
+      document.cookie = `token=${data.token}; path=/; max-age=${60 * 60 * 24 * 7}; SameSite=Lax`
+      router.push('/overview')
     } catch (err: any) {
       setError(err.response?.data?.message ?? 'Erro ao fazer login.')
     } finally {
@@ -36,8 +36,8 @@ export default function LoginPage() {
     setLoading(true)
     try {
       const { data } = await api.post('/auth/register', registerData)
-      localStorage.setItem('token', data.token)
-      router.push('/personal')
+      document.cookie = `token=${data.token}; path=/; max-age=${60 * 60 * 24 * 7}; SameSite=Lax`
+      router.push('/overview')
     } catch (err: any) {
       setError(err.response?.data?.message ?? 'Erro ao criar conta.')
     } finally {
