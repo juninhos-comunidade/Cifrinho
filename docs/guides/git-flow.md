@@ -76,7 +76,7 @@ git commit -m "style: ajusta cores dos botões conforme design system"
 ---
 
 ### 4. Envie sua branch para o GitHub
-
+    
 ```bash
 git push origin feature/tela-de-login
 ```

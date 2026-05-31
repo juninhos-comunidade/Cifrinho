@@ -75,7 +75,7 @@ Motivos:
 
 # 🧩 Componentes
 
-## Botões
+## Botões   
 
 - Border radius: `12px`
 - Transição suave: `0.2s`

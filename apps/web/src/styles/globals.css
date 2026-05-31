@@ -2,16 +2,149 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
 
-* {
-  box-sizing: border-box;
-  padding: 0;
-  margin: 0;
+:root,
+[data-theme="dark"] {
+  --c-bg:       15 23 42;
+  --c-bg-deep:  2 6 23;
+  --c-card:     17 24 39;
+  --c-elev:     30 41 59;
+  --c-line:     31 41 55;
+  --c-ink:      249 250 251;
+  --c-mute:     148 163 184;
+  --c-faint:    100 116 139;
+  --c-brand:    33 194 94;
+  --c-brand-dk: 22 163 74;
+  --c-blue:     59 130 246;
+  --c-purple:   139 92 246;
+  --c-amber:    245 158 11;
+  --c-rose:     244 63 94;
+  --shadow-sm:  0 1px 2px rgb(0 0 0 / 0.4);
+  --shadow-md:  0 8px 24px -8px rgb(0 0 0 / 0.5);
+  color-scheme: dark;
 }
+
+[data-theme="light"] {
+  --c-bg:       241 245 249;
+  --c-bg-deep:  226 232 240;
+  --c-card:     255 255 255;
+  --c-elev:     248 250 252;
+  --c-line:     226 232 240;
+  --c-ink:      15 23 42;
+  --c-mute:     100 116 139;
+  --c-faint:    148 163 184;
+  --c-brand:    22 163 74;
+  --c-brand-dk: 21 128 61;
+  --c-blue:     37 99 235;
+  --c-purple:   124 58 237;
+  --c-amber:    217 119 6;
+  --c-rose:     225 29 72;
+  --shadow-sm:  0 1px 2px rgb(15 23 42 / 0.06);
+  --shadow-md:  0 8px 24px -10px rgb(15 23 42 / 0.12);
+  color-scheme: light;
+}
+
+* { box-sizing: border-box; padding: 0; margin: 0; }
+
+html { scroll-behavior: smooth; }
 
 body {
-  background-color: #0F172A;
-  color: #F9FAFB;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Inter', system-ui, sans-serif;
+  background-color: rgb(var(--c-bg));
+  color: rgb(var(--c-ink));
+  -webkit-font-smoothing: antialiased;
+  transition: background-color .35s ease, color .35s ease;
 }
+
+::selection { background: rgb(var(--c-brand)); color: #fff; }
+
+*::-webkit-scrollbar { width: 10px; height: 10px; }
+*::-webkit-scrollbar-thumb {
+  background: rgb(var(--c-line));
+  border-radius: 99px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+
+.glow {
+  background: radial-gradient(circle at 50% 0%, rgb(var(--c-brand) / 0.14), transparent 60%);
+}
+
+.elev-sm { box-shadow: var(--shadow-sm); }
+.elev    { box-shadow: var(--shadow-md); }
+
+.nav-item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  color: rgb(var(--c-mute));
+  cursor: pointer;
+  transition: background-color .18s ease, color .18s ease;
+  white-space: nowrap;
+  text-decoration: none;
+}
+.nav-item:hover { background: rgb(var(--c-elev)); color: rgb(var(--c-ink)); }
+.nav-item.active { background: rgb(var(--c-brand) / 0.14); color: rgb(var(--c-brand)); }
+.nav-item.active::before {
+  content: "";
+  position: absolute;
+  left: -8px; top: 50%; transform: translateY(-50%);
+  width: 4px; height: 22px; border-radius: 99px;
+  background: rgb(var(--c-brand));
+}
+.nav-desc { font-size: 11px; color: rgb(var(--c-faint)); margin-top: 1px; line-height: 1; }
+.nav-item.active .nav-desc { color: rgb(var(--c-brand) / 0.7); }
+
+.sidebar-collapsed .nav-label,
+.sidebar-collapsed .nav-desc,
+.sidebar-collapsed .side-section-label,
+.sidebar-collapsed .side-foot { display: none; }
+.sidebar-collapsed .nav-item { justify-content: center; padding: 12px; }
+.sidebar-collapsed .brand-word { display: none; }
+
+.bar { border-radius: 6px 6px 0 0; }
+
+.seg {
+  display: inline-flex;
+  padding: 4px;
+  gap: 4px;
+  border-radius: 12px;
+  background: rgb(var(--c-bg));
+  border: 1px solid rgb(var(--c-line));
+}
+.seg button {
+  border: 0;
+  background: transparent;
+  color: rgb(var(--c-mute));
+  font: inherit;
+  font-weight: 600;
+  font-size: 14px;
+  padding: 7px 16px;
+  border-radius: 9px;
+  cursor: pointer;
+  transition: all .18s ease;
+}
+.seg button.on {
+  background: rgb(var(--c-card));
+  color: rgb(var(--c-ink));
+  box-shadow: var(--shadow-sm);
+}
+
+.tgl {
+  width: 44px; height: 26px; border-radius: 99px;
+  background: rgb(var(--c-line));
+  position: relative; cursor: pointer;
+  transition: background-color .2s ease;
+  flex: 0 0 auto;
+}
+.tgl::after {
+  content: ""; position: absolute; top: 3px; left: 3px;
+  width: 20px; height: 20px; border-radius: 99px; background: #fff;
+  transition: transform .2s ease; box-shadow: var(--shadow-sm);
+}
+.tgl.on { background: rgb(var(--c-brand)); }
+.tgl.on::after { transform: translateX(18px); }
