@@ -42,7 +42,7 @@ export function Header({ onMenuToggle }: HeaderProps) {
       className="sticky top-0 z-30 flex h-16 items-center gap-4 border-b px-6 backdrop-blur-xl"
       style={{ borderColor: 'rgb(var(--c-line))', backgroundColor: 'rgb(var(--c-bg) / 0.85)' }}
     >
-      {/* mobile menu toggle */}
+      {/* botão de menu para dispositivos móveis */}
       <button
         onClick={onMenuToggle}
         className="grid h-9 w-9 shrink-0 place-items-center rounded-md transition-colors hover:bg-elev md:hidden"
@@ -51,13 +51,13 @@ export function Header({ onMenuToggle }: HeaderProps) {
         <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
       </button>
 
-      {/* page title */}
+      {/* título da página */}
       <div className="min-w-0 flex-1">
         <h1 className="truncate text-lg font-bold leading-tight" style={{ color: 'rgb(var(--c-ink))' }}>{meta.title}</h1>
         {meta.sub && <p className="truncate text-xs" style={{ color: 'rgb(var(--c-mute))' }}>{meta.sub}</p>}
       </div>
 
-      {/* search */}
+      {/* campo de busca */}
       <div className="relative hidden w-64 md:block">
         <svg className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2" style={{ color: 'rgb(var(--c-faint))' }} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
         <input
@@ -68,7 +68,7 @@ export function Header({ onMenuToggle }: HeaderProps) {
         />
       </div>
 
-      {/* theme toggle */}
+      {/* alternador de tema */}
       <button
         onClick={toggleTheme}
         className="grid h-9 w-9 shrink-0 place-items-center rounded-md border transition-colors hover:text-ink"

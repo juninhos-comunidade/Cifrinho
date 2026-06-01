@@ -80,7 +80,7 @@ export default function SettingsPage() {
         </div>
       </div>
 
-      {/* danger zone */}
+      {/* zona de risco */}
       <div className="rounded-lg border p-6 elev-sm" style={{ borderColor: 'rgb(var(--c-rose) / 0.3)', backgroundColor: 'rgb(var(--c-card))' }}>
         <h3 className="text-base font-bold text-rose">Zona de risco</h3>
         <div className="mt-3 flex items-center justify-between">

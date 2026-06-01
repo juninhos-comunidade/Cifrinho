@@ -1,7 +1,7 @@
 export default function ProfilePage() {
   return (
     <div className="grid gap-5 lg:grid-cols-[1fr_1.6fr]">
-      {/* profile card */}
+      {/* cartão de perfil */}
       <div className="rounded-lg border border-line bg-card p-6 text-center elev-sm">
         <span className="mx-auto grid h-24 w-24 place-items-center rounded-full bg-gradient-to-br from-brand to-blue text-3xl font-bold text-white">RA</span>
         <h3 className="mt-4 text-xl font-bold text-ink">Rafhael Almeida</h3>

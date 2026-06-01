@@ -2,7 +2,7 @@ export default function IncomeTaxPage() {
   return (
     <div className="grid gap-5 lg:grid-cols-[1.4fr_1fr]">
       <div className="space-y-5">
-        {/* status */}
+        {/* situação */}
         <div className="relative overflow-hidden rounded-lg border border-line bg-card p-6 elev-sm">
           <div className="glow pointer-events-none absolute inset-0" />
           <div className="relative flex flex-wrap items-center justify-between gap-4">
@@ -26,7 +26,7 @@ export default function IncomeTaxPage() {
           </div>
         </div>
 
-        {/* checklist */}
+        {/* lista de verificação */}
         <div className="rounded-lg border border-line bg-card p-6 elev-sm">
           <h3 className="text-base font-bold text-ink">Checklist de documentos</h3>
           <div className="mt-4 space-y-2.5">
