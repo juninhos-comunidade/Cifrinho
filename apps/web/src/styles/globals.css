@@ -74,6 +74,17 @@ body {
 .elev-sm { box-shadow: var(--shadow-sm); }
 .elev    { box-shadow: var(--shadow-md); }
 
+/* scroll reveal */
+.reveal-hidden {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 0.65s ease, transform 0.65s ease;
+}
+.reveal-in {
+  opacity: 1;
+  transform: translateY(0);
+}
+
 .nav-item {
   position: relative;
   display: flex;
