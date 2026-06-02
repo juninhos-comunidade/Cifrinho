@@ -20,7 +20,7 @@ export default function GamificationPage() {
   return (
     <div className="grid gap-5 lg:grid-cols-[1.5fr_1fr]">
       <div className="space-y-5">
-        {/* level */}
+        {/* nível */}
         <div className="relative overflow-hidden rounded-lg border border-line bg-card p-6 elev-sm">
           <div className="glow pointer-events-none absolute inset-0" />
           <div className="relative flex items-center gap-5">
@@ -37,7 +37,7 @@ export default function GamificationPage() {
           </div>
         </div>
 
-        {/* badges */}
+        {/* conquistas */}
         <div className="rounded-lg border border-line bg-card p-6 elev-sm">
           <div className="flex items-center justify-between">
             <h3 className="text-base font-bold text-ink">Badges</h3>
@@ -63,7 +63,7 @@ export default function GamificationPage() {
       </div>
 
       <div className="space-y-5">
-        {/* streak + rank */}
+        {/* sequência + posição */}
         <div className="grid grid-cols-2 gap-4">
           <div className="rounded-lg border border-line bg-card p-5 text-center elev-sm">
             <p className="text-3xl font-extrabold text-amber">7</p>
@@ -75,7 +75,7 @@ export default function GamificationPage() {
           </div>
         </div>
 
-        {/* leaderboard */}
+        {/* ranking */}
         <div className="rounded-lg border border-line bg-card p-6 elev-sm">
           <h3 className="text-base font-bold text-ink">Ranking da comunidade</h3>
           <p className="text-xs text-mute">Comunidade Juninhos · maio</p>

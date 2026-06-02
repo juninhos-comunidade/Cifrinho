@@ -14,7 +14,7 @@ export default function LandingPage() {
   return (
     <div className="font-sans antialiased overflow-x-hidden" style={{ backgroundColor: '#0F172A', color: '#F9FAFB' }}>
 
-      {/* NAV */}
+      {/* NAVEGAÇÃO */}
       <header className="sticky top-0 z-50 border-b border-line/70 bg-bg/80 backdrop-blur-xl">
         <nav className="mx-auto flex h-16 max-w-7xl items-center justify-between px-5 sm:px-8">
           <a href="#" className="flex items-center gap-2.5">
@@ -33,7 +33,7 @@ export default function LandingPage() {
         </nav>
       </header>
 
-      {/* HERO */}
+      {/* DESTAQUE */}
       <section className="relative overflow-hidden">
         <div className="pointer-events-none absolute inset-0 -z-10" style={{ background: 'radial-gradient(circle at 50% 0%, rgba(33,194,94,0.18), transparent 60%)' }} />
         <div className="pointer-events-none absolute inset-0 -z-10 h-[120%]" style={{
@@ -44,7 +44,7 @@ export default function LandingPage() {
         }} />
 
         <div className="mx-auto grid max-w-7xl items-center gap-12 px-5 pt-16 pb-20 sm:px-8 md:pt-24 md:pb-28 lg:grid-cols-[1.05fr_0.95fr]">
-          {/* copy — hero entra imediatamente, sem delay */}
+          {/* texto — entra imediatamente, sem delay */}
           <div className="text-center lg:text-left">
             <a href="https://www.juninhos.com/" target="_blank" rel="noopener"
               className="mb-6 inline-flex items-center gap-2 rounded-full border border-line bg-card/60 px-3.5 py-1.5 text-xs font-medium text-mute transition-colors hover:text-ink">
@@ -82,7 +82,7 @@ export default function LandingPage() {
             </div>
           </div>
 
-          {/* mini dashboard mock */}
+          {/* simulação do mini dashboard */}
           <div className="relative">
             <div className="absolute -inset-6 -z-10 rounded-full blur-3xl" style={{ backgroundColor: 'rgba(33,194,94,0.1)' }} />
             <div className="relative mx-auto max-w-md rounded-xl border border-line bg-card/80 p-6 shadow-2xl backdrop-blur">
@@ -132,7 +132,7 @@ export default function LandingPage() {
           </div>
         </div>
 
-        {/* trust strip */}
+        {/* faixa de confiança */}
         <div className="mx-auto max-w-7xl border-t border-line/60 px-5 py-7 sm:px-8">
           <div className="flex flex-wrap items-center justify-center gap-x-10 gap-y-3 text-center text-sm text-mute">
             <span className="font-semibold text-ink">Confiado por quem leva grana a sério:</span>
@@ -141,7 +141,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* FEATURES */}
+      {/* RECURSOS */}
       <section id="recursos" className="mx-auto max-w-7xl px-5 py-20 sm:px-8 md:py-28">
         <ScrollReveal className="mx-auto max-w-2xl text-center">
           <p className="mb-3 text-sm font-bold uppercase tracking-widest" style={{ color: '#21C25E' }}>Recursos</p>
@@ -201,7 +201,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* GAMIFICATION */}
+      {/* GAMIFICAÇÃO */}
       <section id="badges" className="relative overflow-hidden border-y border-line/60 py-20 md:py-28" style={{ backgroundColor: 'rgba(17,24,39,0.3)' }}>
         <div className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-1/2 opacity-60" style={{ background: 'radial-gradient(circle at 50% 0%, rgba(33,194,94,0.18), transparent 60%)' }} />
         <div className="mx-auto max-w-7xl px-5 sm:px-8">
@@ -232,7 +232,7 @@ export default function LandingPage() {
               </div>
             </ScrollReveal>
 
-            {/* badge grid com imagens reais */}
+            {/* grade de badges com imagens reais */}
             <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
               {BADGES.map(({ file, title, sub, color, bg }, i) => (
                 <ScrollReveal key={title} delay={i * 80}>
@@ -252,7 +252,7 @@ export default function LandingPage() {
                   </div>
                 </ScrollReveal>
               ))}
-              {/* locked */}
+              {/* bloqueada */}
               <ScrollReveal delay={BADGES.length * 80}>
                 <div className="h-full rounded-lg border border-dashed border-line p-5 text-center opacity-60" style={{ backgroundColor: 'rgba(15,23,42,0.4)' }}>
                   <div className="mx-auto grid h-16 w-16 place-items-center rounded-full bg-line/40 text-mute">
@@ -267,7 +267,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* CTA */}
+      {/* CHAMADA PARA AÇÃO */}
       <section id="cta" className="mx-auto max-w-7xl px-5 py-20 sm:px-8 md:py-28">
         <ScrollReveal>
           <div className="relative overflow-hidden rounded-xl border border-line bg-card px-6 py-14 text-center sm:px-12 md:py-20">
@@ -290,7 +290,7 @@ export default function LandingPage() {
         </ScrollReveal>
       </section>
 
-      {/* FOOTER */}
+      {/* RODAPÉ */}
       <footer className="border-t border-line/70">
         <div className="mx-auto max-w-7xl px-5 py-14 sm:px-8">
           <div className="grid gap-10 md:grid-cols-[1.5fr_1fr_1fr_1fr]">

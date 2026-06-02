@@ -1,7 +1,7 @@
 export default function OverviewPage() {
   return (
     <div>
-      {/* KPI row */}
+      {/* linha de indicadores */}
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         {[
           { label: 'Saldo consolidado', value: 'R$ 24.780', cents: ',50', delta: '+12,4%', deltaColor: 'text-brand', up: true, iconBg: 'bg-brand/15 text-brand', icon: <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg> },
@@ -26,9 +26,9 @@ export default function OverviewPage() {
         ))}
       </div>
 
-      {/* chart + donut */}
+      {/* gráfico + rosca */}
       <div className="mt-5 grid gap-5 lg:grid-cols-[1.6fr_1fr]">
-        {/* bar chart */}
+        {/* gráfico de barras */}
         <div className="rounded-lg border border-line bg-card p-6 elev-sm">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
@@ -61,7 +61,7 @@ export default function OverviewPage() {
           </div>
         </div>
 
-        {/* donut */}
+        {/* gráfico rosca */}
         <div className="rounded-lg border border-line bg-card p-6 elev-sm">
           <h3 className="text-base font-bold text-ink">Pessoal × Empresarial</h3>
           <p className="text-xs text-mute">Distribuição do saldo</p>
@@ -90,9 +90,9 @@ export default function OverviewPage() {
         </div>
       </div>
 
-      {/* transactions + goals */}
+      {/* transações + metas */}
       <div className="mt-5 grid gap-5 lg:grid-cols-[1.6fr_1fr]">
-        {/* transactions */}
+        {/* transações */}
         <div className="rounded-lg border border-line bg-card elev-sm">
           <div className="flex items-center justify-between border-b border-line px-6 py-4">
             <h3 className="text-base font-bold text-ink">Transações recentes</h3>
@@ -117,7 +117,7 @@ export default function OverviewPage() {
           </div>
         </div>
 
-        {/* goals + xp */}
+        {/* metas + xp */}
         <div className="space-y-5">
           <div className="rounded-lg border border-line bg-card p-6 elev-sm">
             <div className="flex items-center justify-between">

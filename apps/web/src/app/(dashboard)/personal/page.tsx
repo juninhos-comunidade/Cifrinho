@@ -1,7 +1,7 @@
 export default function PersonalPage() {
   return (
     <div className="grid gap-5 lg:grid-cols-[1fr_1.4fr]">
-      {/* left: balance + categories */}
+      {/* esquerda: saldo + categorias */}
       <div className="space-y-5">
         <div className="rounded-lg border border-line bg-card p-6 elev-sm">
           <div className="flex items-start justify-between">
@@ -51,7 +51,7 @@ export default function PersonalPage() {
         </div>
       </div>
 
-      {/* right: transactions */}
+      {/* direita: transações */}
       <div className="rounded-lg border border-line bg-card elev-sm">
         <div className="flex flex-wrap items-center justify-between gap-3 border-b border-line px-6 py-4">
           <h3 className="text-base font-bold text-ink">Transações</h3>

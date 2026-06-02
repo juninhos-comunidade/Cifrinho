@@ -163,7 +163,7 @@ Respondemos em até 72 horas e não tomamos ações legais contra pesquisadores 
 export default function LegalPage() {
   return (
     <div className="min-h-screen font-sans" style={{ backgroundColor: '#0F172A', color: '#F9FAFB' }}>
-      {/* NAV */}
+      {/* NAVEGAÇÃO */}
       <header className="sticky top-0 z-50 border-b border-line/70 bg-bg/80 backdrop-blur-xl">
         <nav className="mx-auto flex h-16 max-w-7xl items-center justify-between px-5 sm:px-8">
           <Link href="/" className="flex items-center gap-2.5">
