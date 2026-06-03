@@ -90,3 +90,32 @@ model UserBadge {
   @@unique([userId, badgeId])
   @@map("user_badges")
 }
+
+model HelpCategory {
+  id        String    @id @default(cuid())
+  slug      String    @unique
+  label     String
+  color     String
+  bg        String
+  order     Int       @default(0)
+  createdAt DateTime  @default(now()) @map("created_at")
+
+  faqs HelpFaq[]
+
+  @@map("help_categories")
+}
+
+model HelpFaq {
+  id         String   @id @default(cuid())
+  categoryId String   @map("category_id")
+  question   String
+  answer     String
+  order      Int      @default(0)
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+
+  category HelpCategory @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  @@unique([categoryId, question])
+  @@map("help_faqs")
+}

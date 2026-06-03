@@ -6,6 +6,7 @@ import { transactionRoutes } from './modules/transactions/transactions.routes.js
 import { categoryRoutes } from './modules/categories/categories.routes.js'
 import { badgeRoutes } from './modules/badges/badges.routes.js'
 import { incomeTaxRoutes } from './modules/income-tax/income-tax.routes.js'
+import { helpRoutes } from './modules/help/help.routes.js'
 
 const app = Fastify({ logger: true })
 
@@ -17,6 +18,7 @@ app.register(transactionRoutes)
 app.register(categoryRoutes)
 app.register(badgeRoutes)
 app.register(incomeTaxRoutes)
+app.register(helpRoutes)
 
 app.setErrorHandler((error, _request, reply) => {
   if (error.name === 'ZodError') {
