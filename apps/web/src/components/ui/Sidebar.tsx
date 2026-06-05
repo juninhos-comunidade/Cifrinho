@@ -1,7 +1,9 @@
 'use client'
 
 import Link from 'next/link'
-import { usePathname, useRouter } from 'next/navigation'
+import { usePathname } from 'next/navigation'
+import { useAuth } from '@/contexts/AuthContext'
+import { useCurrentUser } from '@/hooks/useCurrentUser'
 
 const NAV_FINANCAS = [
   {
@@ -72,12 +74,8 @@ interface SidebarProps {
 
 export function Sidebar({ collapsed, onToggle }: SidebarProps) {
   const pathname = usePathname()
-  const router = useRouter()
-
-  function handleLogout() {
-    document.cookie = 'token=; path=/; max-age=0'
-    router.push('/login')
-  }
+  const { logout: handleLogout, initials, firstName } = useAuth()
+  const { user } = useCurrentUser()
 
   const w = collapsed ? 'w-[76px]' : 'w-[264px]'
 
@@ -135,13 +133,28 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
         </div>
       </nav>
 
-      {/* upgrade card */}
+      {/* usuário + logout */}
       <div className="side-foot border-t p-3" style={{ borderColor: 'rgb(var(--c-line))' }}>
-        <div className="relative overflow-hidden rounded-lg border p-4" style={{ borderColor: 'rgb(var(--c-line))', backgroundColor: 'rgb(var(--c-bg))' }}>
-          <div className="glow pointer-events-none absolute inset-0" />
-          <p className="relative text-sm font-bold" style={{ color: 'rgb(var(--c-ink))' }}>Plano Gratuito</p>
-          <p className="relative mt-1 text-xs" style={{ color: 'rgb(var(--c-mute))' }}>Desbloqueie relatórios avançados e contas ilimitadas.</p>
-          <button className="relative mt-3 w-full rounded-md bg-brand py-2 text-xs font-bold text-white transition-colors hover:bg-brand-dk">Fazer upgrade</button>
+        <div className="flex items-center gap-3 rounded-lg px-2 py-2">
+          <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-gradient-to-br from-brand to-blue text-sm font-bold text-white">
+            {initials}
+          </span>
+          <div className="nav-label min-w-0 flex-1">
+            <p className="truncate text-sm font-semibold" style={{ color: 'rgb(var(--c-ink))' }}>{firstName || '…'}</p>
+            <p className="truncate text-[11px]" style={{ color: 'rgb(var(--c-mute))' }}>{user?.email ?? ''}</p>
+          </div>
+          <button
+            onClick={handleLogout}
+            title="Sair"
+            className="grid h-8 w-8 shrink-0 place-items-center rounded-md transition-colors hover:bg-rose/15 hover:text-rose"
+            style={{ color: 'rgb(var(--c-faint))' }}
+          >
+            <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+              <polyline points="16 17 21 12 16 7"/>
+              <line x1="21" y1="12" x2="9" y2="12"/>
+            </svg>
+          </button>
         </div>
       </div>
     </aside>

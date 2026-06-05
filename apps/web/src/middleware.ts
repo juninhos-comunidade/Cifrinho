@@ -2,7 +2,8 @@ import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
 export function middleware(request: NextRequest) {
-  const token = request.cookies.get('token')?.value
+  // cookie leve (não-HttpOnly) usado apenas para saber se há sessão ativa
+  const isLoggedIn = !!request.cookies.get('auth')?.value
   const { pathname } = request.nextUrl
 
   const isAuthRoute = pathname.startsWith('/login')
@@ -15,11 +16,11 @@ export function middleware(request: NextRequest) {
     pathname.startsWith('/profile') ||
     pathname.startsWith('/settings')
 
-  if (isDashboardRoute && !token) {
+  if (isDashboardRoute && !isLoggedIn) {
     return NextResponse.redirect(new URL('/login', request.url))
   }
 
-  if (isAuthRoute && token) {
+  if (isAuthRoute && isLoggedIn) {
     return NextResponse.redirect(new URL('/overview', request.url))
   }
 

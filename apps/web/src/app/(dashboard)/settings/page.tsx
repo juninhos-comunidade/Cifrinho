@@ -67,13 +67,6 @@ export default function SettingsPage() {
             <Toggle defaultOn />
           </div>
           <div className="flex items-center justify-between py-3.5">
-            <div>
-              <p className="text-sm font-semibold text-ink">Login por biometria</p>
-              <p className="text-xs text-mute">Face ID / impressão digital no app</p>
-            </div>
-            <Toggle defaultOn />
-          </div>
-          <div className="flex items-center justify-between py-3.5">
             <p className="text-sm font-semibold text-ink">Alterar senha</p>
             <button className="rounded-md border border-line bg-bg px-3.5 py-1.5 text-xs font-bold text-ink transition-colors hover:border-brand/50">Alterar</button>
           </div>

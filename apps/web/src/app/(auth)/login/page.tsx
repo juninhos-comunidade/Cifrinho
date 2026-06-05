@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import Image from 'next/image'
 import { api } from '@/lib/api'
+import { useAuth } from '@/contexts/AuthContext'
 
 type Tab = 'login' | 'signup'
 
@@ -227,6 +228,7 @@ function EyeIcon({ open }: { open: boolean }) {
 
 export default function LoginPage() {
   const router = useRouter()
+  const { setUser } = useAuth()
   const [tab, setTab] = useState<Tab>('login')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
@@ -272,9 +274,8 @@ export default function LoginPage() {
     setError('')
     setLoading(true)
     try {
-      const { data } = await api.post('/auth/login', { email: loginEmail, password: loginPassword })
-      const maxAge = rememberMe ? 60 * 60 * 24 * 30 : 60 * 60 * 24 * 7
-      document.cookie = `token=${data.token}; path=/; max-age=${maxAge}; SameSite=Lax`
+      const { data } = await api.post('/auth/login', { email: loginEmail, password: loginPassword, rememberMe })
+      setUser(data.user)
       router.push('/overview')
     } catch (err: any) {
       setError(err.response?.data?.message ?? 'Erro ao fazer login.')
@@ -290,7 +291,7 @@ export default function LoginPage() {
     setLoading(true)
     try {
       const { data } = await api.post('/auth/register', { name: signupName, email: signupEmail, password: signupPassword })
-      document.cookie = `token=${data.token}; path=/; max-age=${60 * 60 * 24 * 7}; SameSite=Lax`
+      setUser(data.user)
       router.push('/overview')
     } catch (err: any) {
       setError(err.response?.data?.message ?? 'Erro ao criar conta.')

@@ -1,7 +1,8 @@
 'use client'
 
 import { useState } from 'react'
-import { usePathname, useRouter } from 'next/navigation'
+import { usePathname } from 'next/navigation'
+import { useAuth } from '@/contexts/AuthContext'
 
 const PAGE_META: Record<string, { title: string; sub: string }> = {
   '/overview':     { title: 'Visão geral',        sub: 'Tudo em um só lugar' },
@@ -19,16 +20,11 @@ interface HeaderProps {
 
 export function Header({ onMenuToggle }: HeaderProps) {
   const pathname = usePathname()
-  const router = useRouter()
+  const { initials, firstName } = useAuth()
   const [bellOpen, setBellOpen] = useState(false)
 
   const meta = Object.entries(PAGE_META).find(([key]) => pathname.startsWith(key))?.[1]
     ?? { title: 'Cifrinho', sub: '' }
-
-  function handleLogout() {
-    document.cookie = 'token=; path=/; max-age=0'
-    router.push('/login')
-  }
 
   function toggleTheme() {
     const html = document.documentElement
@@ -78,7 +74,7 @@ export function Header({ onMenuToggle }: HeaderProps) {
         <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
       </button>
 
-      {/* notifications */}
+      {/* notificações */}
       <div className="relative shrink-0">
         <button
           onClick={() => setBellOpen(!bellOpen)}
@@ -116,18 +112,22 @@ export function Header({ onMenuToggle }: HeaderProps) {
         )}
       </div>
 
-      {/* avatar */}
-      <button
-        onClick={handleLogout}
+      {/* avatar → link para perfil */}
+      <a
+        href="/profile"
         className="flex shrink-0 items-center gap-2.5 rounded-md py-1 pl-1 pr-2 transition-colors hover:bg-elev"
-        title="Sair"
+        title="Meu perfil"
       >
-        <span className="grid h-9 w-9 place-items-center rounded-full bg-gradient-to-br from-brand to-blue text-sm font-bold text-white">RA</span>
-        <span className="hidden text-left leading-tight sm:block">
-          <span className="block text-sm font-semibold" style={{ color: 'rgb(var(--c-ink))' }}>Rafhael</span>
-          <span className="block text-[11px]" style={{ color: 'rgb(var(--c-mute))' }}>Freelancer · MEI</span>
+        <span className="grid h-9 w-9 place-items-center rounded-full bg-gradient-to-br from-brand to-blue text-sm font-bold text-white">
+          {initials}
         </span>
-      </button>
+        <span className="hidden text-left leading-tight sm:block">
+          <span className="block text-sm font-semibold" style={{ color: 'rgb(var(--c-ink))' }}>
+            {firstName || 'Carregando…'}
+          </span>
+          <span className="block text-[11px]" style={{ color: 'rgb(var(--c-mute))' }}>Ver perfil</span>
+        </span>
+      </a>
     </header>
   )
 }

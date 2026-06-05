@@ -1,4 +1,5 @@
 import Fastify from 'fastify'
+import fastifyCookie from '@fastify/cookie'
 import { corsPlugin } from './plugins/cors.js'
 import { jwtPlugin } from './plugins/jwt.js'
 import { authRoutes } from './modules/auth/auth.routes.js'
@@ -11,6 +12,7 @@ import { helpRoutes } from './modules/help/help.routes.js'
 const app = Fastify({ logger: true })
 
 app.register(corsPlugin)
+app.register(fastifyCookie)
 app.register(jwtPlugin)
 
 app.register(authRoutes)
