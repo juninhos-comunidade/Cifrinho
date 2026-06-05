@@ -1,13 +1,104 @@
 'use client'
 
 import { useState } from 'react'
+import { usePreferences } from '@/contexts/PreferencesContext'
+import { useAuth } from '@/contexts/AuthContext'
+import { api } from '@/lib/api'
 
-function Toggle({ defaultOn = false }: { defaultOn?: boolean }) {
+function Toggle({ defaultOn = false, onChange }: { defaultOn?: boolean; onChange?: (v: boolean) => void }) {
   const [on, setOn] = useState(defaultOn)
-  return <div className={`tgl${on ? ' on' : ''}`} onClick={() => setOn(!on)} />
+  return (
+    <div
+      className={`tgl${on ? ' on' : ''}`}
+      onClick={() => {
+        const next = !on
+        setOn(next)
+        onChange?.(next)
+      }}
+    />
+  )
+}
+
+function DeleteAccountModal({ onClose }: { onClose: () => void }) {
+  const { logout } = useAuth()
+  const [confirm, setConfirm] = useState('')
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
+
+  async function handleDelete() {
+    setLoading(true)
+    setError('')
+    try {
+      await api.delete('/auth/account')
+      await logout()
+    } catch {
+      setError('Não foi possível encerrar a conta. Tente novamente.')
+      setLoading(false)
+    }
+  }
+
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm"
+      onClick={(e) => { if (e.target === e.currentTarget) onClose() }}
+    >
+      <div className="w-full max-w-md rounded-xl border bg-card shadow-2xl" style={{ borderColor: 'rgb(var(--c-rose) / 0.3)' }}>
+        <div className="p-6">
+          <div className="flex items-start gap-4">
+            <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-rose/10 text-rose">
+              <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            </span>
+            <div>
+              <h2 className="text-base font-bold text-ink">Encerrar conta permanentemente</h2>
+              <p className="mt-1 text-sm text-mute">
+                Todos os seus dados — transações, categorias, badges e configurações — serão excluídos de forma irreversível.
+              </p>
+            </div>
+          </div>
+
+          <div className="mt-5">
+            <label className="text-xs font-semibold text-mute">
+              Digite <span className="font-bold text-rose">ENCERRAR</span> para confirmar
+            </label>
+            <input
+              className="mt-1.5 w-full rounded-lg border border-line bg-bg px-3 py-2.5 text-sm text-ink outline-none transition-colors focus:border-rose/60"
+              placeholder="ENCERRAR"
+              value={confirm}
+              onChange={(e) => setConfirm(e.target.value)}
+              autoComplete="off"
+            />
+          </div>
+
+          {error && (
+            <p className="mt-3 rounded-lg border border-rose/20 bg-rose/10 px-3 py-2 text-xs text-rose">{error}</p>
+          )}
+        </div>
+
+        <div className="flex justify-end gap-3 border-t px-6 py-4" style={{ borderColor: 'rgb(var(--c-line))' }}>
+          <button
+            onClick={onClose}
+            disabled={loading}
+            className="rounded-lg border border-line bg-bg px-4 py-2 text-sm font-semibold text-mute transition-colors hover:text-ink disabled:opacity-50"
+          >
+            Cancelar
+          </button>
+          <button
+            onClick={handleDelete}
+            disabled={confirm !== 'ENCERRAR' || loading}
+            className="rounded-lg bg-rose px-4 py-2 text-sm font-bold text-white transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
+          >
+            {loading ? 'Encerrando…' : 'Encerrar conta'}
+          </button>
+        </div>
+      </div>
+    </div>
+  )
 }
 
 export default function SettingsPage() {
+  const { businessEnabled, setBusinessEnabled } = usePreferences()
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false)
+
   return (
     <div className="mx-auto max-w-3xl space-y-5">
       {/* aparência */}
@@ -31,6 +122,21 @@ export default function SettingsPage() {
               </span>
             </button>
           ))}
+        </div>
+      </div>
+
+      {/* contas */}
+      <div className="rounded-lg border border-line bg-card p-6 elev-sm">
+        <h3 className="text-base font-bold text-ink">Contas</h3>
+        <p className="text-xs text-mute">Ative ou desative módulos do dashboard</p>
+        <div className="mt-4 divide-y divide-line">
+          <div className="flex items-center justify-between py-3.5">
+            <div>
+              <p className="text-sm font-semibold text-ink">Conta empresarial (MEI / PJ)</p>
+              <p className="text-xs text-mute">Exibe o módulo Empresarial e a opção "Empresarial" nos lançamentos</p>
+            </div>
+            <Toggle defaultOn={businessEnabled} onChange={setBusinessEnabled} />
+          </div>
         </div>
       </div>
 
@@ -81,9 +187,17 @@ export default function SettingsPage() {
             <p className="text-sm font-semibold text-ink">Encerrar conta</p>
             <p className="text-xs text-mute">Exclui permanentemente seus dados</p>
           </div>
-          <button className="rounded-md border px-3.5 py-1.5 text-xs font-bold text-rose transition-colors hover:bg-rose/10" style={{ borderColor: 'rgb(var(--c-rose) / 0.4)' }}>Encerrar</button>
+          <button
+            onClick={() => setDeleteModalOpen(true)}
+            className="rounded-md border px-3.5 py-1.5 text-xs font-bold text-rose transition-colors hover:bg-rose/10"
+            style={{ borderColor: 'rgb(var(--c-rose) / 0.4)' }}
+          >
+            Encerrar
+          </button>
         </div>
       </div>
+
+      {deleteModalOpen && <DeleteAccountModal onClose={() => setDeleteModalOpen(false)} />}
     </div>
   )
 }

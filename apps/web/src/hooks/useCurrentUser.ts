@@ -21,6 +21,8 @@ export function useCurrentUser() {
   useEffect(() => {
     if (query.data && !user) {
       setUser(query.data)
+      // garante que categorias padrão existam para usuários criados antes deste recurso
+      api.post('/auth/seed-categories').catch(() => {})
     }
   }, [query.data, user, setUser])
 

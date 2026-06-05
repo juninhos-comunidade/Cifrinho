@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { useTransactions, calcBusiness, calcCashFlowBars, fmt, type Transaction } from '@/hooks/useTransactions'
 import { TransactionModal } from '@/components/ui/TransactionModal'
+import { usePreferences } from '@/contexts/PreferencesContext'
 
 function Skeleton({ className }: { className?: string }) {
   return <div className={`animate-pulse rounded bg-line/40 ${className ?? ''}`} />
@@ -19,9 +20,27 @@ export default function BusinessPage() {
   const { data: txs, isLoading, isError } = useTransactions()
   const [modalOpen, setModalOpen] = useState(false)
   const [editing, setEditing] = useState<Transaction | null>(null)
+  const { businessEnabled } = usePreferences()
 
   function openNew() { setEditing(null); setModalOpen(true) }
   function openEdit(t: Transaction) { setEditing(t); setModalOpen(true) }
+
+  if (!businessEnabled) {
+    return (
+      <div className="flex flex-col items-center justify-center gap-4 py-24 text-center">
+        <span className="grid h-16 w-16 place-items-center rounded-full bg-line/30 text-mute">
+          <svg className="h-8 w-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 21h18"/><path d="M5 21V7l8-4v18"/><path d="M19 21V11l-6-4"/></svg>
+        </span>
+        <div>
+          <p className="text-base font-bold text-ink">Conta empresarial desativada</p>
+          <p className="mt-1 text-sm text-mute">Ative nas configurações para acessar o módulo empresarial.</p>
+        </div>
+        <a href="/settings" className="rounded-lg border border-line bg-card px-5 py-2 text-sm font-semibold text-ink transition-colors hover:border-brand/50">
+          Ir para Configurações
+        </a>
+      </div>
+    )
+  }
 
   if (isError) {
     return <div className="flex items-center justify-center py-20 text-sm text-mute">Não foi possível carregar os dados.</div>

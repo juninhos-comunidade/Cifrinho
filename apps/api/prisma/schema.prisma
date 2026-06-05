@@ -34,17 +34,19 @@ enum AccountType {
 }
 
 model Category {
-  id          String      @id @default(cuid())
-  name        String
-  icon        String?
-  color       String?
-  accountType AccountType @default(PERSONAL) @map("account_type")
-  userId      String      @map("user_id")
-  createdAt   DateTime    @default(now()) @map("created_at")
+  id              String           @id @default(cuid())
+  name            String
+  icon            String?
+  color           String?
+  accountType     AccountType      @default(PERSONAL) @map("account_type")
+  transactionType TransactionType? @map("transaction_type")
+  userId          String           @map("user_id")
+  createdAt       DateTime         @default(now()) @map("created_at")
 
   user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
   transactions Transaction[]
 
+  @@unique([userId, name])
   @@map("categories")
 }
 
