@@ -5,7 +5,15 @@ import { createRequire } from 'module'
 const _require = createRequire(import.meta.url)
 const pdfParse: (buf: Buffer) => Promise<{ text: string }> = _require('pdf-parse')
 
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY })
+// Usa OpenAI se a key estiver disponível, senão cai pro Groq (gratuito)
+const openai = process.env.OPENAI_API_KEY
+  ? new OpenAI({ apiKey: process.env.OPENAI_API_KEY })
+  : new OpenAI({
+      apiKey: process.env.GROQ_API_KEY ?? '',
+      baseURL: 'https://api.groq.com/openai/v1',
+    })
+
+const AI_MODEL = process.env.OPENAI_API_KEY ? 'gpt-4o-mini' : 'llama-3.3-70b-versatile'
 
 const SYSTEM_PROMPT = `Você é um assistente especializado em extratos bancários brasileiros.
 Sua tarefa é extrair transações de um extrato e retornar um JSON estruturado.
@@ -52,7 +60,7 @@ interface ParsedTransaction {
 
 async function extractWithGPT(text: string): Promise<ParsedTransaction[]> {
   const response = await openai.chat.completions.create({
-    model: 'gpt-4o-mini',
+    model: AI_MODEL,
     temperature: 0,
     messages: [
       { role: 'system', content: SYSTEM_PROMPT },
