@@ -3,10 +3,13 @@
 import { useState } from 'react'
 import { Sidebar } from '@/components/ui/Sidebar'
 import { Header } from '@/components/ui/Header'
+import { useCurrentUser } from '@/hooks/useCurrentUser'
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const [collapsed, setCollapsed] = useState(false)
   const pl = collapsed ? 'md:pl-[76px]' : 'md:pl-[264px]'
+
+  useCurrentUser()
 
   return (
     <div className="flex min-h-screen" style={{ backgroundColor: 'rgb(var(--c-bg))' }}>
