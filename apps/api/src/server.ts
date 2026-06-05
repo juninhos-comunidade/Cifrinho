@@ -10,6 +10,9 @@ import { badgeRoutes } from './modules/badges/badges.routes.js'
 import { incomeTaxRoutes } from './modules/income-tax/income-tax.routes.js'
 import { helpRoutes } from './modules/help/help.routes.js'
 import { statementRoutes } from './modules/statements/statements.routes.js'
+import { gamificationRoutes } from './modules/gamification/gamification.routes.js'
+import { goalRoutes } from './modules/goals/goals.routes.js'
+import { notificationRoutes } from './modules/notifications/notifications.routes.js'
 
 const app = Fastify({ logger: true })
 
@@ -25,6 +28,9 @@ app.register(badgeRoutes)
 app.register(incomeTaxRoutes)
 app.register(helpRoutes)
 app.register(statementRoutes)
+app.register(gamificationRoutes)
+app.register(goalRoutes)
+app.register(notificationRoutes)
 
 app.setErrorHandler((error, _request, reply) => {
   if (error.name === 'ZodError') {

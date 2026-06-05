@@ -9,36 +9,35 @@ export interface Badge {
   condition: string | null
 }
 
-export interface UserBadge {
-  id: string
-  userId: string
-  badgeId: string
-  earnedAt: string
-  badge: Badge
+export interface GamificationProgress {
+  xp: number
+  level: number
+  title: string
+  currentXp: number
+  nextLevelXp: number
+  progress: number
+  txCount: number
+  badgesEarned: number
+  badgesTotal: number
+  earned: Badge[]
+  locked: Badge[]
+  newlyUnlocked: Badge[]
 }
 
-async function fetchAllBadges(): Promise<Badge[]> {
-  const { data } = await api.get<Badge[]>('/badges')
-  return data
-}
-
-async function fetchMyBadges(): Promise<UserBadge[]> {
-  const { data } = await api.get<UserBadge[]>('/badges/me')
+async function fetchProgress(): Promise<GamificationProgress> {
+  const { data } = await api.get<GamificationProgress>('/gamification/progress')
   return data
 }
 
 export function useBadges() {
-  const all  = useQuery({ queryKey: ['badges', 'all'], queryFn: fetchAllBadges })
-  const mine = useQuery({ queryKey: ['badges', 'me'],  queryFn: fetchMyBadges })
-
-  const earnedIds = new Set((mine.data ?? []).map(ub => ub.badgeId))
-  const earned  = (mine.data ?? []).map(ub => ub.badge)
-  const locked  = (all.data  ?? []).filter(b => !earnedIds.has(b.id))
+  const query = useQuery({ queryKey: ['gamification'], queryFn: fetchProgress })
 
   return {
-    earned,
-    locked,
-    isLoading: all.isLoading || mine.isLoading,
-    isError:   all.isError   || mine.isError,
+    earned: query.data?.earned ?? [],
+    locked: query.data?.locked ?? [],
+    progress: query.data ?? null,
+    newlyUnlocked: query.data?.newlyUnlocked ?? [],
+    isLoading: query.isLoading,
+    isError: query.isError,
   }
 }

@@ -1,8 +1,57 @@
 'use client'
 
-import { useState } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { usePathname } from 'next/navigation'
 import { useAuth } from '@/contexts/AuthContext'
+import { useNotifications, type Notification } from '@/hooks/useNotifications'
+
+function timeAgo(iso: string): string {
+  const diff = Date.now() - new Date(iso).getTime()
+  const m = Math.floor(diff / 60_000)
+  if (m < 1)   return 'agora mesmo'
+  if (m < 60)  return `há ${m} min`
+  const h = Math.floor(m / 60)
+  if (h < 24)  return `há ${h}h`
+  const d = Math.floor(h / 24)
+  if (d === 1) return 'ontem'
+  if (d < 7)   return `há ${d} dias`
+  return new Date(iso).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' })
+}
+
+const NOTIF_CONFIG: Record<Notification['type'], { color: string; icon: React.ReactNode }> = {
+  badge: {
+    color: 'bg-purple/15 text-purple',
+    icon: <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/></svg>,
+  },
+  goal_completed: {
+    color: 'bg-brand/15 text-brand',
+    icon: <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><path d="M20 6 9 17l-5-5"/></svg>,
+  },
+  goal_expired: {
+    color: 'bg-amber/15 text-amber',
+    icon: <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M12 9v4M12 17h.01"/><path d="M10.3 3.3 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.3a2 2 0 0 0-3.4 0Z"/></svg>,
+  },
+  transaction_high: {
+    color: 'bg-rose/15 text-rose',
+    icon: <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>,
+  },
+}
+
+function NotificationItem({ n }: { n: Notification }) {
+  const cfg = NOTIF_CONFIG[n.type]
+  return (
+    <div className="flex gap-3 px-4 py-3 transition-colors hover:bg-elev/50">
+      <span className={`mt-0.5 grid h-8 w-8 shrink-0 place-items-center rounded-md ${cfg.color}`}>
+        {cfg.icon}
+      </span>
+      <div className="min-w-0">
+        <p className="text-sm font-semibold leading-snug" style={{ color: 'rgb(var(--c-ink))' }}>{n.title}</p>
+        <p className="mt-0.5 text-xs" style={{ color: 'rgb(var(--c-mute))' }}>{n.desc}</p>
+        <p className="mt-1 text-[11px]" style={{ color: 'rgb(var(--c-faint))' }}>{timeAgo(n.time)}</p>
+      </div>
+    </div>
+  )
+}
 
 const PAGE_META: Record<string, { title: string; sub: string }> = {
   '/overview':     { title: 'Visão geral',        sub: 'Tudo em um só lugar' },
@@ -22,6 +71,20 @@ export function Header({ onMenuToggle }: HeaderProps) {
   const pathname = usePathname()
   const { initials, firstName } = useAuth()
   const [bellOpen, setBellOpen] = useState(false)
+  const bellRef = useRef<HTMLDivElement>(null)
+  const { notifications, count } = useNotifications()
+
+  // Fecha ao clicar fora
+  useEffect(() => {
+    if (!bellOpen) return
+    function handler(e: MouseEvent) {
+      if (bellRef.current && !bellRef.current.contains(e.target as Node)) {
+        setBellOpen(false)
+      }
+    }
+    document.addEventListener('mousedown', handler)
+    return () => document.removeEventListener('mousedown', handler)
+  }, [bellOpen])
 
   const meta = Object.entries(PAGE_META).find(([key]) => pathname.startsWith(key))?.[1]
     ?? { title: 'Cifrinho', sub: '' }
@@ -75,39 +138,39 @@ export function Header({ onMenuToggle }: HeaderProps) {
       </button>
 
       {/* notificações */}
-      <div className="relative shrink-0">
+      <div className="relative shrink-0" ref={bellRef}>
         <button
           onClick={() => setBellOpen(!bellOpen)}
           className="relative grid h-9 w-9 place-items-center rounded-md border transition-colors"
           style={{ borderColor: 'rgb(var(--c-line))', backgroundColor: 'rgb(var(--c-card))', color: 'rgb(var(--c-mute))' }}
         >
           <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
-          <span className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-brand ring-2 ring-card"></span>
+          {count > 0 && (
+            <span className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-brand ring-2 ring-card" />
+          )}
         </button>
 
         {bellOpen && (
           <div className="absolute right-0 top-12 w-80 overflow-hidden rounded-lg border shadow-lg z-50" style={{ borderColor: 'rgb(var(--c-line))', backgroundColor: 'rgb(var(--c-card))' }}>
             <div className="flex items-center justify-between border-b px-4 py-3" style={{ borderColor: 'rgb(var(--c-line))' }}>
               <p className="text-sm font-bold" style={{ color: 'rgb(var(--c-ink))' }}>Notificações</p>
-              <span className="rounded-full bg-brand/15 px-2 py-0.5 text-[11px] font-bold text-brand">3 novas</span>
+              {count > 0 && (
+                <span className="rounded-full bg-brand/15 px-2 py-0.5 text-[11px] font-bold text-brand">{count} {count === 1 ? 'nova' : 'novas'}</span>
+              )}
             </div>
-            <div className="max-h-80 overflow-y-auto divide-y" style={{ borderColor: 'rgb(var(--c-line))' }}>
-              {[
-                { color: 'purple', icon: <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/></svg>, title: 'Nova badge desbloqueada!', desc: 'Você conquistou "Sequência 7". Continue assim.', time: 'há 2 horas' },
-                { color: 'amber', icon: <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M12 9v4M12 17h.01"/><path d="M10.3 3.3 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.3a2 2 0 0 0-3.4 0Z"/></svg>, title: 'Meta de gastos quase no limite', desc: 'Categoria "Alimentação" em 86% do orçamento.', time: 'há 5 horas' },
-                { color: 'brand', icon: <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M20 6 9 17l-5-5"/></svg>, title: 'Comprovante categorizado', desc: 'NF-e de R$ 1.200 marcada como dedutível no IR.', time: 'ontem' },
-              ].map((n, i) => (
-                <div key={i} className="flex gap-3 px-4 py-3">
-                  <span className={`mt-0.5 grid h-8 w-8 shrink-0 place-items-center rounded-md bg-${n.color}/15 text-${n.color}`}>{n.icon}</span>
-                  <div>
-                    <p className="text-sm font-semibold leading-snug" style={{ color: 'rgb(var(--c-ink))' }}>{n.title}</p>
-                    <p className="mt-0.5 text-xs" style={{ color: 'rgb(var(--c-mute))' }}>{n.desc}</p>
-                    <p className="mt-1 text-[11px]" style={{ color: 'rgb(var(--c-faint))' }}>{n.time}</p>
-                  </div>
+
+            <div className="max-h-80 overflow-y-auto divide-y divide-line">
+              {count === 0 ? (
+                <div className="flex flex-col items-center gap-2 px-4 py-8 text-center">
+                  <svg className="h-8 w-8" style={{ color: 'rgb(var(--c-faint))' }} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
+                  <p className="text-sm" style={{ color: 'rgb(var(--c-mute))' }}>Nenhuma notificação por aqui.</p>
                 </div>
-              ))}
+              ) : (
+                notifications.map(n => (
+                  <NotificationItem key={n.id} n={n} />
+                ))
+              )}
             </div>
-            <button className="block w-full border-t py-2.5 text-center text-xs font-bold text-brand transition-colors hover:bg-elev" style={{ borderColor: 'rgb(var(--c-line))' }}>Ver todas</button>
           </div>
         )}
       </div>
