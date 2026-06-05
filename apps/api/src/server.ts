@@ -1,5 +1,6 @@
 import Fastify from 'fastify'
 import fastifyCookie from '@fastify/cookie'
+import fastifyMultipart from '@fastify/multipart'
 import { corsPlugin } from './plugins/cors.js'
 import { jwtPlugin } from './plugins/jwt.js'
 import { authRoutes } from './modules/auth/auth.routes.js'
@@ -8,11 +9,13 @@ import { categoryRoutes } from './modules/categories/categories.routes.js'
 import { badgeRoutes } from './modules/badges/badges.routes.js'
 import { incomeTaxRoutes } from './modules/income-tax/income-tax.routes.js'
 import { helpRoutes } from './modules/help/help.routes.js'
+import { statementRoutes } from './modules/statements/statements.routes.js'
 
 const app = Fastify({ logger: true })
 
 app.register(corsPlugin)
 app.register(fastifyCookie)
+app.register(fastifyMultipart, { limits: { fileSize: 5 * 1024 * 1024 } })
 app.register(jwtPlugin)
 
 app.register(authRoutes)
@@ -21,6 +24,7 @@ app.register(categoryRoutes)
 app.register(badgeRoutes)
 app.register(incomeTaxRoutes)
 app.register(helpRoutes)
+app.register(statementRoutes)
 
 app.setErrorHandler((error, _request, reply) => {
   if (error.name === 'ZodError') {

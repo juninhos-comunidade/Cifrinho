@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useAuth } from '@/contexts/AuthContext'
 import { useCurrentUser } from '@/hooks/useCurrentUser'
+import { usePreferences } from '@/contexts/PreferencesContext'
 
 const NAV_FINANCAS = [
   {
@@ -76,6 +77,11 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
   const pathname = usePathname()
   const { logout: handleLogout, initials, firstName } = useAuth()
   const { user } = useCurrentUser()
+  const { businessEnabled } = usePreferences()
+
+  const visibleFinancas = businessEnabled
+    ? NAV_FINANCAS
+    : NAV_FINANCAS.filter((item) => item.href !== '/business')
 
   const w = collapsed ? 'w-[76px]' : 'w-[264px]'
 
@@ -102,7 +108,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
       <nav className="flex-1 overflow-y-auto px-3 py-4">
         <p className="side-section-label mb-2 px-3 text-[11px] font-bold uppercase tracking-widest" style={{ color: 'rgb(var(--c-faint))' }}>Finanças</p>
         <div className="flex flex-col gap-1">
-          {NAV_FINANCAS.map((item) => {
+          {visibleFinancas.map((item) => {
             const active = pathname === item.href || pathname.startsWith(item.href + '/')
             return (
               <Link key={item.href} href={item.href} className={`nav-item${active ? ' active' : ''}`} data-tip={item.tip}>

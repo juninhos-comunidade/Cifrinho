@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import '../styles/globals.css'
 import { QueryProvider } from '@/contexts/QueryProvider'
 import { AuthProvider } from '@/contexts/AuthContext'
+import { PreferencesProvider } from '@/contexts/PreferencesContext'
 
 export const metadata: Metadata = {
   title: 'Cifrinho',
@@ -14,7 +15,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body>
         <QueryProvider>
           <AuthProvider>
-            {children}
+            <PreferencesProvider>
+              {children}
+            </PreferencesProvider>
           </AuthProvider>
         </QueryProvider>
       </body>

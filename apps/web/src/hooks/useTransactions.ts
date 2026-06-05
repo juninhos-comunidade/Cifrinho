@@ -7,6 +7,7 @@ export interface Category {
   icon: string | null
   color: string | null
   accountType: 'PERSONAL' | 'BUSINESS'
+  transactionType: 'INCOME' | 'EXPENSE' | null
 }
 
 export interface Transaction {
@@ -146,6 +147,57 @@ export function calcBusiness(txs: Transaction[]) {
   const meiPct = Math.min(Math.round((yearIncome / MEI_LIMIT) * 100), 100)
 
   return { balance, curIncome, curExpense, meiPct, yearIncome }
+}
+
+const CATEGORY_COLORS = [
+  'rgb(var(--c-brand))',
+  'rgb(var(--c-blue))',
+  'rgb(var(--c-purple))',
+  'rgb(var(--c-amber))',
+  'rgb(var(--c-rose))',
+  'rgb(var(--c-faint))',
+]
+
+export interface PieSlice {
+  name: string
+  total: number
+  pct: number
+  color: string
+}
+
+export function calcCategoryPie(
+  txs: Transaction[],
+  type: 'INCOME' | 'EXPENSE',
+  year: number,
+  month: number, // 0-indexed
+): PieSlice[] {
+  const filtered = txs.filter(t => {
+    const d = new Date(t.date)
+    return t.type === type && d.getFullYear() === year && d.getMonth() === month
+  })
+
+  const total = filtered.reduce((s, t) => s + Number(t.amount), 0)
+  if (total === 0) return []
+
+  const byCategory: Record<string, number> = {}
+  for (const t of filtered) {
+    const key = t.category?.name ?? 'Outros'
+    byCategory[key] = (byCategory[key] ?? 0) + Number(t.amount)
+  }
+
+  const sorted = Object.entries(byCategory)
+    .sort((a, b) => b[1] - a[1])
+
+  const top = sorted.slice(0, 5)
+  const rest = sorted.slice(5).reduce((s, [, v]) => s + v, 0)
+  if (rest > 0) top.push(['Outros', rest])
+
+  return top.map(([name, value], i) => ({
+    name,
+    total: value,
+    pct: Math.round((value / total) * 100),
+    color: CATEGORY_COLORS[i] ?? CATEGORY_COLORS[CATEGORY_COLORS.length - 1],
+  }))
 }
 
 export function calcCashFlowBars(txs: Transaction[], accountType: 'PERSONAL' | 'BUSINESS') {

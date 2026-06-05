@@ -3,11 +3,13 @@
 import { useState, useEffect, useRef } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { api } from '@/lib/api'
+import { usePreferences } from '@/contexts/PreferencesContext'
 
 interface Category {
   id: string
   name: string
   accountType: 'PERSONAL' | 'BUSINESS'
+  transactionType: 'INCOME' | 'EXPENSE' | null
 }
 
 interface Transaction {
@@ -39,6 +41,7 @@ const EMPTY: Omit<Transaction, 'id'> = {
 export function TransactionModal({ open, onClose, defaultAccountType, editing }: Props) {
   const qc = useQueryClient()
   const overlayRef = useRef<HTMLDivElement>(null)
+  const { businessEnabled } = usePreferences()
 
   const [form, setForm] = useState({ ...EMPTY })
   const [error, setError] = useState('')
@@ -78,7 +81,10 @@ export function TransactionModal({ open, onClose, defaultAccountType, editing }:
     enabled: open,
   })
 
-  const filteredCats = categories.filter(c => c.accountType === form.accountType)
+  const filteredCats = categories.filter(c =>
+    c.accountType === form.accountType &&
+    (c.transactionType === null || c.transactionType === form.type)
+  )
 
   function parseAmount(raw: string): number {
     return Number(raw.replace(/\./g, '').replace(',', '.'))
@@ -181,22 +187,24 @@ export function TransactionModal({ open, onClose, defaultAccountType, editing }:
           </div>
 
           {/* conta: pessoal / empresarial */}
-          <div className="seg w-full">
-            <button
-              type="button"
-              className={`flex-1 ${form.accountType === 'PERSONAL' ? 'on' : ''}`}
-              onClick={() => set('accountType', 'PERSONAL')}
-            >
-              Pessoal
-            </button>
-            <button
-              type="button"
-              className={`flex-1 ${form.accountType === 'BUSINESS' ? 'on' : ''}`}
-              onClick={() => set('accountType', 'BUSINESS')}
-            >
-              Empresarial
-            </button>
-          </div>
+          {businessEnabled && (
+            <div className="seg w-full">
+              <button
+                type="button"
+                className={`flex-1 ${form.accountType === 'PERSONAL' ? 'on' : ''}`}
+                onClick={() => set('accountType', 'PERSONAL')}
+              >
+                Pessoal
+              </button>
+              <button
+                type="button"
+                className={`flex-1 ${form.accountType === 'BUSINESS' ? 'on' : ''}`}
+                onClick={() => set('accountType', 'BUSINESS')}
+              >
+                Empresarial
+              </button>
+            </div>
+          )}
 
           {/* descrição */}
           <div>

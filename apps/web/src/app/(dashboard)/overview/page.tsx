@@ -1,12 +1,51 @@
 'use client'
 
-import { useState } from 'react'
-import { useTransactions, calcOverview, calcMonthlyBars, fmt, type Transaction } from '@/hooks/useTransactions'
+import { useState, useMemo } from 'react'
+import { useTransactions, calcOverview, calcMonthlyBars, calcCategoryPie, fmt, type Transaction, type PieSlice } from '@/hooks/useTransactions'
 import { useAuth } from '@/contexts/AuthContext'
 import { TransactionModal } from '@/components/ui/TransactionModal'
+import { StatementImportModal } from '@/components/ui/StatementImportModal'
 
 function Skeleton({ className }: { className?: string }) {
   return <div className={`animate-pulse rounded bg-line/40 ${className ?? ''}`} />
+}
+
+function PieChart({ slices, total, fmt }: { slices: PieSlice[]; total: number; fmt: (n: number) => string }) {
+  const cx = 50, cy = 50, r = 38
+  const circumference = 2 * Math.PI * r
+  let offset = 0
+
+  const paths = slices.map((s) => {
+    const len = (s.pct / 100) * circumference
+    const path = { slice: s, dasharray: `${len - 1.5} ${circumference - len + 1.5}`, dashoffset: -offset }
+    offset += len
+    return path
+  })
+
+  return (
+    <div className="relative h-[120px] w-[120px] shrink-0">
+      <svg viewBox="0 0 100 100" className="h-[120px] w-[120px] -rotate-90">
+        <circle cx={cx} cy={cy} r={r} fill="none" stroke="rgb(var(--c-line))" strokeWidth="12" />
+        {paths.map(({ slice, dasharray, dashoffset }, i) => (
+          <circle
+            key={i}
+            cx={cx} cy={cy} r={r}
+            fill="none"
+            stroke={slice.color}
+            strokeWidth="12"
+            strokeDasharray={dasharray}
+            strokeDashoffset={dashoffset}
+          />
+        ))}
+      </svg>
+      <div className="absolute inset-0 grid place-items-center text-center">
+        <div>
+          <p className="text-[11px] font-extrabold text-ink leading-tight">{fmt(total)}</p>
+          <p className="text-[9px] text-mute">total</p>
+        </div>
+      </div>
+    </div>
+  )
 }
 
 export default function OverviewPage() {
@@ -14,6 +53,20 @@ export default function OverviewPage() {
   const { firstName } = useAuth()
   const [modalOpen, setModalOpen] = useState(false)
   const [editing, setEditing] = useState<Transaction | null>(null)
+  const [importOpen, setImportOpen] = useState(false)
+
+  const now = new Date()
+  const [selectedYear, setSelectedYear] = useState(now.getFullYear())
+  const [selectedMonth, setSelectedMonth] = useState(now.getMonth())
+  const [pieType, setPieType] = useState<'EXPENSE' | 'INCOME'>('EXPENSE')
+
+  const pieSlices = useMemo(
+    () => txs ? calcCategoryPie(txs, pieType, selectedYear, selectedMonth) : [],
+    [txs, pieType, selectedYear, selectedMonth]
+  )
+
+  const monthLabel = new Date(selectedYear, selectedMonth, 1)
+    .toLocaleString('pt-BR', { month: 'long', year: 'numeric' })
 
   function openNew() { setEditing(null); setModalOpen(true) }
   function openEdit(t: Transaction) { setEditing(t); setModalOpen(true) }
@@ -44,13 +97,9 @@ export default function OverviewPage() {
     )
   }
 
-  const { balance, personalBalance, businessBalance, curIncome, curExpense, savingsRate, deltaIncome, deltaExpense } = calcOverview(txs)
+  const { balance, curIncome, curExpense, savingsRate, deltaIncome, deltaExpense } = calcOverview(txs)
   const bars = calcMonthlyBars(txs)
   const recent = txs.slice(0, 5)
-
-  const total = personalBalance + businessBalance
-  const personalPct = total > 0 ? Math.round((personalBalance / total) * 100) : 0
-  const businessPct = total > 0 ? 100 - personalPct : 0
 
   const kpis = [
     {
@@ -98,6 +147,7 @@ export default function OverviewPage() {
         onClose={() => { setModalOpen(false); setEditing(null) }}
         editing={editing}
       />
+      <StatementImportModal open={importOpen} onClose={() => setImportOpen(false)} />
 
       <div>
         <div className="mb-4 flex items-center justify-between">
@@ -106,13 +156,26 @@ export default function OverviewPage() {
               Olá, <span className="font-semibold text-ink">{firstName}</span>. Aqui está seu resumo financeiro.
             </p>
           )}
-          <button
-            onClick={openNew}
-            className="ml-auto flex items-center gap-1.5 rounded-lg bg-brand px-4 py-2 text-sm font-bold text-white transition-colors hover:bg-brand-dk"
-          >
-            <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><path d="M12 5v14M5 12h14"/></svg>
-            Lançar
-          </button>
+          <div className="ml-auto flex items-center gap-2">
+            <button
+              onClick={() => setImportOpen(true)}
+              className="flex items-center gap-1.5 rounded-lg border border-line bg-card px-4 py-2 text-sm font-bold text-ink transition-colors hover:border-brand/50"
+            >
+              <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                <polyline points="17 8 12 3 7 8"/>
+                <line x1="12" y1="3" x2="12" y2="15"/>
+              </svg>
+              Importar extrato
+            </button>
+            <button
+              onClick={openNew}
+              className="flex items-center gap-1.5 rounded-lg bg-brand px-4 py-2 text-sm font-bold text-white transition-colors hover:bg-brand-dk"
+            >
+              <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><path d="M12 5v14M5 12h14"/></svg>
+              Lançar
+            </button>
+          </div>
         </div>
 
         {/* KPIs */}
@@ -135,8 +198,9 @@ export default function OverviewPage() {
           ))}
         </div>
 
-        {/* gráfico + rosca */}
+        {/* gráfico de barras + pizza de categorias */}
         <div className="mt-5 grid gap-5 lg:grid-cols-[1.6fr_1fr]">
+          {/* barras — Receitas × Despesas */}
           <div className="rounded-lg border border-line bg-card p-6 elev-sm">
             <div className="flex flex-wrap items-center justify-between gap-3">
               <div>
@@ -150,7 +214,16 @@ export default function OverviewPage() {
             </div>
             <div className="mt-6 flex h-52 items-end justify-between gap-3 sm:gap-5">
               {bars.map((m) => (
-                <div key={m.month} className="flex flex-1 flex-col items-center gap-2">
+                <div
+                  key={m.month}
+                  className="flex flex-1 cursor-pointer flex-col items-center gap-2"
+                  onClick={() => {
+                    const idx = bars.indexOf(m)
+                    const d = new Date(now.getFullYear(), now.getMonth() - (bars.length - 1 - idx), 1)
+                    setSelectedYear(d.getFullYear())
+                    setSelectedMonth(d.getMonth())
+                  }}
+                >
                   <div className="flex w-full items-end justify-center gap-1">
                     <div className="bar w-1/2 bg-brand" style={{ height: m.inH || 4 }}></div>
                     <div className="bar w-1/2 bg-line" style={{ height: m.outH || 4 }}></div>
@@ -161,42 +234,41 @@ export default function OverviewPage() {
             </div>
           </div>
 
+          {/* pizza — gastos por categoria */}
           <div className="rounded-lg border border-line bg-card p-6 elev-sm">
-            <h3 className="text-base font-bold text-ink">Pessoal × Empresarial</h3>
-            <p className="text-xs text-mute">Distribuição do saldo</p>
-            <div className="mt-5 flex items-center gap-6">
-              <div className="relative h-32 w-32 shrink-0">
-                <svg viewBox="0 0 36 36" className="h-32 w-32 -rotate-90">
-                  <circle cx="18" cy="18" r="15.5" fill="none" stroke="rgb(var(--c-line))" strokeWidth="5"/>
-                  <circle cx="18" cy="18" r="15.5" fill="none" stroke="rgb(var(--c-blue))" strokeWidth="5"
-                    strokeDasharray={`${businessPct} 100`} strokeDashoffset="0" strokeLinecap="round"/>
-                  <circle cx="18" cy="18" r="15.5" fill="none" stroke="rgb(var(--c-brand))" strokeWidth="5"
-                    strokeDasharray={`${personalPct} 100`} strokeDashoffset={`-${businessPct}`} strokeLinecap="round"/>
-                </svg>
-                <div className="absolute inset-0 grid place-items-center text-center">
-                  <div>
-                    <p className="text-lg font-extrabold text-ink leading-none">{fmt(Math.abs(balance))}</p>
-                    <p className="text-[10px] text-mute">total</p>
-                  </div>
-                </div>
+            <div className="flex flex-wrap items-start justify-between gap-2">
+              <div>
+                <h3 className="text-base font-bold text-ink">Por categoria</h3>
+                <p className="text-xs text-mute capitalize">{monthLabel}</p>
               </div>
-              <div className="flex-1 space-y-4">
-                <div>
-                  <div className="flex items-center justify-between text-sm text-ink">
-                    <span className="flex items-center gap-2"><span className="h-2.5 w-2.5 rounded-sm bg-brand"></span>Pessoal</span>
-                    <span className="font-bold">{fmt(personalBalance)}</span>
-                  </div>
-                  <p className="mt-0.5 pl-4 text-xs text-mute">{personalPct}% do total</p>
-                </div>
-                <div>
-                  <div className="flex items-center justify-between text-sm text-ink">
-                    <span className="flex items-center gap-2"><span className="h-2.5 w-2.5 rounded-sm bg-blue"></span>Empresarial</span>
-                    <span className="font-bold">{fmt(businessBalance)}</span>
-                  </div>
-                  <p className="mt-0.5 pl-4 text-xs text-mute">{businessPct}% do total</p>
-                </div>
+              <div className="seg shrink-0">
+                <button className={pieType === 'EXPENSE' ? 'on' : ''} onClick={() => setPieType('EXPENSE')}>Despesas</button>
+                <button className={pieType === 'INCOME'  ? 'on' : ''} onClick={() => setPieType('INCOME')}>Receitas</button>
               </div>
             </div>
+
+            {pieSlices.length === 0 ? (
+              <div className="mt-6 flex flex-col items-center justify-center gap-2 py-8 text-center">
+                <svg className="h-10 w-10 text-faint" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><circle cx="12" cy="12" r="10"/><path d="M8 12h8M12 8v8"/></svg>
+                <p className="text-sm text-mute">Sem lançamentos neste mês</p>
+              </div>
+            ) : (
+              <div className="mt-4 flex items-center gap-5">
+                {/* SVG pizza */}
+                <PieChart slices={pieSlices} total={pieSlices.reduce((s, p) => s + p.total, 0)} fmt={fmt} />
+
+                {/* legenda */}
+                <div className="flex-1 space-y-2 overflow-hidden">
+                  {pieSlices.map((s) => (
+                    <div key={s.name} className="flex items-center gap-2">
+                      <span className="h-2.5 w-2.5 shrink-0 rounded-sm" style={{ backgroundColor: s.color }} />
+                      <span className="min-w-0 flex-1 truncate text-xs text-mute">{s.name}</span>
+                      <span className="text-xs font-semibold text-ink">{s.pct}%</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         </div>
 
