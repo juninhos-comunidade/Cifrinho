@@ -5,6 +5,8 @@ import { useTransactions, calcOverview, calcMonthlyBars, calcCategoryPie, fmt, t
 import { useAuth } from '@/contexts/AuthContext'
 import { TransactionModal } from '@/components/ui/TransactionModal'
 import { StatementImportModal } from '@/components/ui/StatementImportModal'
+import { GoalModal } from '@/components/ui/GoalModal'
+import { useGoals } from '@/hooks/useGoals'
 
 function Skeleton({ className }: { className?: string }) {
   return <div className={`animate-pulse rounded bg-line/40 ${className ?? ''}`} />
@@ -54,6 +56,8 @@ export default function OverviewPage() {
   const [modalOpen, setModalOpen] = useState(false)
   const [editing, setEditing] = useState<Transaction | null>(null)
   const [importOpen, setImportOpen] = useState(false)
+  const [goalOpen, setGoalOpen] = useState(false)
+  const { active: activeGoals, complete: completeGoal } = useGoals()
 
   const now = new Date()
   const [selectedYear, setSelectedYear] = useState(now.getFullYear())
@@ -148,6 +152,7 @@ export default function OverviewPage() {
         editing={editing}
       />
       <StatementImportModal open={importOpen} onClose={() => setImportOpen(false)} />
+      <GoalModal open={goalOpen} onClose={() => setGoalOpen(false)} />
 
       <div>
         <div className="mb-4 flex items-center justify-between">
@@ -317,15 +322,68 @@ export default function OverviewPage() {
             )}
           </div>
 
-          {/* gamificação */}
+          {/* metas + gamificação */}
           <div className="space-y-5">
+            {/* metas ativas */}
             <div className="rounded-lg border border-line bg-card p-6 elev-sm">
               <div className="flex items-center justify-between">
-                <h3 className="text-base font-bold text-ink">Metas</h3>
-                <span className="text-xs text-mute">Em breve</span>
+                <div>
+                  <h3 className="text-base font-bold text-ink">Metas de economia</h3>
+                  {activeGoals.length > 0 && (
+                    <p className="text-xs text-mute">{activeGoals.length} ativa{activeGoals.length !== 1 ? 's' : ''}</p>
+                  )}
+                </div>
+                <button
+                  onClick={() => setGoalOpen(true)}
+                  className="flex items-center gap-1 rounded-md bg-brand px-2.5 py-1.5 text-xs font-bold text-white transition-colors hover:bg-brand-dk"
+                >
+                  <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><path d="M12 5v14M5 12h14"/></svg>
+                  Nova
+                </button>
               </div>
-              <p className="mt-4 text-xs text-mute">O módulo de metas estará disponível em breve.</p>
+
+              {activeGoals.length === 0 ? (
+                <div className="mt-4 flex flex-col items-center gap-2 py-4 text-center">
+                  <span className="text-2xl">🎯</span>
+                  <p className="text-xs text-mute">Nenhuma meta ativa.</p>
+                  <button onClick={() => setGoalOpen(true)} className="text-xs font-bold text-brand hover:underline">
+                    Criar primeira meta
+                  </button>
+                </div>
+              ) : (
+                <div className="mt-4 space-y-3">
+                  {activeGoals.slice(0, 3).map(g => {
+                    const now = new Date()
+                    const start = new Date(g.startDate)
+                    const elapsed = (now.getFullYear() - start.getFullYear()) * 12 + (now.getMonth() - start.getMonth())
+                    const progress = Math.min(Math.round((elapsed / g.months) * 100), 100)
+                    return (
+                      <div key={g.id} className="rounded-lg border border-line bg-bg p-3">
+                        <div className="flex items-start justify-between gap-2">
+                          <div className="min-w-0">
+                            <p className="truncate text-sm font-semibold text-ink">{g.name}</p>
+                            <p className="text-xs text-mute">{fmt(Number(g.monthlyAmount))}/mês · {g.months} {g.months === 1 ? 'mês' : 'meses'}</p>
+                          </div>
+                          <button
+                            onClick={() => completeGoal.mutate(g.id)}
+                            title="Marcar como concluída"
+                            className="shrink-0 rounded-md border border-line px-2 py-1 text-[10px] font-bold text-mute transition-colors hover:border-brand/50 hover:text-brand"
+                          >
+                            Concluir
+                          </button>
+                        </div>
+                        <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-line/40">
+                          <div className="h-full rounded-full bg-brand transition-all" style={{ width: `${progress}%` }} />
+                        </div>
+                        <p className="mt-1 text-right text-[10px] text-faint">{progress}% do tempo</p>
+                      </div>
+                    )
+                  })}
+                </div>
+              )}
             </div>
+
+            {/* gamificação */}
             <div className="relative overflow-hidden rounded-lg border border-line bg-card p-6 elev-sm">
               <div className="glow pointer-events-none absolute inset-0" />
               <div className="relative flex items-center gap-4">

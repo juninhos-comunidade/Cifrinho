@@ -144,46 +144,50 @@ async function main() {
 
   const badges = [
     {
-      name: 'Primeiro Passo',
-      description: 'Cadastrou sua primeira transação',
-      icon: '🎯',
-      condition: 'first_transaction',
-    },
-    {
-      name: 'Economizador',
-      description: 'Terminou o mês no positivo',
-      icon: '💰',
-      condition: 'positive_month',
+      name: 'Primeiros Passos',
+      description: 'Conclua o tutorial de boas-vindas do Cifrinho',
+      icon: '/badges/Primeiros passos.png',
+      condition: null, // desbloqueado quando onboarding for implementado
     },
     {
       name: 'Organizado',
-      description: 'Categorizou 10 transações',
-      icon: '📂',
-      condition: 'categorized_10',
+      description: 'Crie 3 metas de economia',
+      icon: '/badges/Organizado.png',
+      condition: 'goals_3',
     },
     {
-      name: 'Declarante',
-      description: 'Acessou o módulo de Imposto de Renda',
-      icon: '📋',
-      condition: 'income_tax_access',
+      name: 'Economizador',
+      description: 'Crie e conclua 1 meta de economia',
+      icon: '/badges/Economizador.png',
+      condition: 'goals_completed_1',
     },
     {
       name: 'Empresário',
-      description: 'Cadastrou sua primeira transação empresarial',
-      icon: '🏢',
-      condition: 'first_business_transaction',
+      description: 'Liste 2 investimentos na conta empresarial',
+      icon: '/badges/Empresario.png',
+      condition: 'business_investment_2',
+    },
+    {
+      name: 'Declarante',
+      description: 'Exporte os dados do seu Imposto de Renda',
+      icon: '/badges/Declarante.png',
+      condition: null, // desbloqueado quando exportação IR for implementada
     },
   ]
+
+  // Remove badges que não fazem mais parte do conjunto oficial
+  const officialNames = badges.map(b => b.name)
+  await prisma.badge.deleteMany({ where: { name: { notIn: officialNames } } })
 
   for (const badge of badges) {
     await prisma.badge.upsert({
       where: { name: badge.name },
-      update: {},
+      update: { description: badge.description, icon: badge.icon, condition: badge.condition },
       create: badge,
     })
   }
 
-  console.log(`✅ ${badges.length} badges criados`)
+  console.log(`✅ ${badges.length} badges criados/atualizados`)
   console.log('✅ Seed concluído com sucesso!')
 }
 
