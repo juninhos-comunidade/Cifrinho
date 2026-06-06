@@ -29,9 +29,13 @@ export default function RoadmapPage() {
   return (
     
 <main className="min-h-screen bg-slate-950 text-white p-8">
-  <h1 className="text-4xl font-bold mb-8">
-    Roadmap do Produto
-  </h1>
+  <h1 className="text-4xl font-bold text-center mb-2">
+  Roadmap do Produto
+</h1>
+
+<p className="text-slate-400 text-center mb-8">
+  Acompanhe a evolução das funcionalidades do produto.
+</p>
 
   <div className="grid md:grid-cols-3 gap-6">
 
