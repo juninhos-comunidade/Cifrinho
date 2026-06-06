@@ -122,7 +122,7 @@ Um projeto completo só ganha vida com uma equipe sintonizada. Conheça as mente
 | Avatar | Membro | Função / Especialidade | GitHub |
 | :---: | :--- | :--- | :--- |
 | <img src="https://github.com/github.png" width="40" style="border-radius:50%"/> | **Pedro Augusto** | Pendente | ... |
-| <img src="https://github.com/github.png" width="40" style="border-radius:50%"/> | **Rayane dos Santos** | Pendente | ... |
+| <img src="https://github.com/github.png" width="40" style="border-radius:50%"/> | **Rayane dos Santos** | Full Stack | [hanxgxrl](https://github.com/hanxgxrl) |
 | <img src="https://github.com/github.png" width="40" style="border-radius:50%"/> | **Higor Dornelas** | Pendente | ... |
 | <img src="https://github.com/github.png" width="40" style="border-radius:50%"/> | **Lucas Schiavo** | Pendente | ... |
 | <img src="https://avatars.githubusercontent.com/u/139577518?v=4" width="40" style="border-radius:50%"/> | **Rafhael Hanry** | Full Stack | [MrRafha](https://github.com/MrRafha) |
