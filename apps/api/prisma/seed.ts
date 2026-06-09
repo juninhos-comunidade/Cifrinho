@@ -188,6 +188,41 @@ async function main() {
   }
 
   console.log(`✅ ${badges.length} badges criados/atualizados`)
+
+  // ── Incidents iniciais ───────────────────────────────────────────────────────
+
+  const incidents = [
+    {
+      title: 'Manutenção programada · Autenticação',
+      description: 'Janela de atualização do provedor de login. Logins podiam levar alguns segundos a mais.',
+      severity: 'MEDIUM' as const,
+      resolvedAt: new Date('2026-06-02T18:00:00Z'),
+      createdAt:  new Date('2026-06-02T14:00:00Z'),
+    },
+    {
+      title: 'Lentidão em relatórios',
+      description: 'Exportações de IR ficaram lentas por 22 min. Resolvido com escala de workers.',
+      severity: 'HIGH' as const,
+      resolvedAt: new Date('2026-05-28T12:22:00Z'),
+      createdAt:  new Date('2026-05-28T12:00:00Z'),
+    },
+    {
+      title: 'Ajuste em webhooks de PIX',
+      description: 'Pequeno atraso na confirmação de pagamentos. Sem impacto em saldos.',
+      severity: 'LOW' as const,
+      resolvedAt: new Date('2026-05-15T10:30:00Z'),
+      createdAt:  new Date('2026-05-15T09:45:00Z'),
+    },
+  ]
+
+  for (const inc of incidents) {
+    const existing = await prisma.incident.findFirst({ where: { title: inc.title } })
+    if (!existing) {
+      await prisma.incident.create({ data: inc })
+    }
+  }
+
+  console.log(`✅ ${incidents.length} incidents iniciais verificados`)
   console.log('✅ Seed concluído com sucesso!')
 }
 

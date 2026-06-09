@@ -13,6 +13,9 @@ import { statementRoutes } from './modules/statements/statements.routes.js'
 import { gamificationRoutes } from './modules/gamification/gamification.routes.js'
 import { goalRoutes } from './modules/goals/goals.routes.js'
 import { notificationRoutes } from './modules/notifications/notifications.routes.js'
+import { healthRoutes } from './modules/health/health.routes.js'
+import { statusRoutes } from './modules/status/status.routes.js'
+import { roadmapRoutes } from './modules/roadmap/roadmap.routes.js'
 
 const app = Fastify({ logger: true })
 
@@ -31,6 +34,9 @@ app.register(statementRoutes)
 app.register(gamificationRoutes)
 app.register(goalRoutes)
 app.register(notificationRoutes)
+app.register(healthRoutes)
+app.register(statusRoutes)
+app.register(roadmapRoutes)
 
 app.setErrorHandler((error, _request, reply) => {
   if (error.name === 'ZodError') {

@@ -118,6 +118,23 @@ model Goal {
   @@map("goals")
 }
 
+enum Severity {
+  LOW
+  MEDIUM
+  HIGH
+}
+
+model Incident {
+  id          String    @id @default(cuid())
+  title       String
+  description String
+  severity    Severity  @default(LOW)
+  resolvedAt  DateTime? @map("resolved_at")
+  createdAt   DateTime  @default(now()) @map("created_at")
+
+  @@map("incidents")
+}
+
 model HelpCategory {
   id        String    @id @default(cuid())
   slug      String    @unique

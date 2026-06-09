@@ -159,3 +159,8 @@ body {
 }
 .tgl.on { background: rgb(var(--c-brand)); }
 .tgl.on::after { transform: translateX(18px); }
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
