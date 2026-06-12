@@ -54,6 +54,7 @@ jobs:
           --health-retries 5
     env:
       DATABASE_URL: postgresql://cifrinho:cifrinho@localhost:5432/cifrinho_test
+      DIRECT_URL: postgresql://cifrinho:cifrinho@localhost:5432/cifrinho_test
       JWT_SECRET: ci-secret-para-testes
       NODE_ENV: test
     steps:
