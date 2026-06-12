@@ -32,22 +32,45 @@ Regras:
 - Descrições em português, limpas e legíveis.`
 
 // Mesmo vocabulário usado no prompt — base para upsert de categorias
-const CATEGORY_VOCAB: Record<string, { accountType: 'PERSONAL' | 'BUSINESS'; icon: string; color: string; transactionType: 'INCOME' | 'EXPENSE' | null }> = {
-  'Alimentação':      { accountType: 'PERSONAL',  icon: '🍔', color: '#F59E0B', transactionType: 'EXPENSE' },
-  'Transporte':       { accountType: 'PERSONAL',  icon: '🚗', color: '#3B82F6', transactionType: 'EXPENSE' },
-  'Saúde':            { accountType: 'PERSONAL',  icon: '🏥', color: '#10B981', transactionType: 'EXPENSE' },
-  'Educação':         { accountType: 'PERSONAL',  icon: '📚', color: '#8B5CF6', transactionType: 'EXPENSE' },
-  'Lazer':            { accountType: 'PERSONAL',  icon: '🎮', color: '#EC4899', transactionType: 'EXPENSE' },
-  'Assinaturas':      { accountType: 'PERSONAL',  icon: '📱', color: '#6366F1', transactionType: 'EXPENSE' },
-  'Vestuário':        { accountType: 'PERSONAL',  icon: '👕', color: '#F43F5E', transactionType: 'EXPENSE' },
-  'Casa':             { accountType: 'PERSONAL',  icon: '🏠', color: '#84CC16', transactionType: 'EXPENSE' },
-  'Salário':          { accountType: 'PERSONAL',  icon: '💼', color: '#14B8A6', transactionType: 'INCOME'  },
-  'Freelance':        { accountType: 'PERSONAL',  icon: '💻', color: '#0EA5E9', transactionType: 'INCOME'  },
-  'Aluguel recebido': { accountType: 'PERSONAL',  icon: '🏘️', color: '#22C55E', transactionType: 'INCOME'  },
-  'Faturamento':      { accountType: 'BUSINESS',  icon: '📊', color: '#0EA5E9', transactionType: 'INCOME'  },
-  'Investimentos':    { accountType: 'BUSINESS',  icon: '📈', color: '#22C55E', transactionType: null      },
-  'Transferência':    { accountType: 'PERSONAL',  icon: '↔️', color: '#94A3B8', transactionType: null      },
-  'Outros':           { accountType: 'PERSONAL',  icon: '📦', color: '#64748B', transactionType: null      },
+const CATEGORY_VOCAB: Record<
+  string,
+  {
+    accountType: 'PERSONAL' | 'BUSINESS'
+    icon: string
+    color: string
+    transactionType: 'INCOME' | 'EXPENSE' | null
+  }
+> = {
+  Alimentação: {
+    accountType: 'PERSONAL',
+    icon: '🍔',
+    color: '#F59E0B',
+    transactionType: 'EXPENSE',
+  },
+  Transporte: { accountType: 'PERSONAL', icon: '🚗', color: '#3B82F6', transactionType: 'EXPENSE' },
+  Saúde: { accountType: 'PERSONAL', icon: '🏥', color: '#10B981', transactionType: 'EXPENSE' },
+  Educação: { accountType: 'PERSONAL', icon: '📚', color: '#8B5CF6', transactionType: 'EXPENSE' },
+  Lazer: { accountType: 'PERSONAL', icon: '🎮', color: '#EC4899', transactionType: 'EXPENSE' },
+  Assinaturas: {
+    accountType: 'PERSONAL',
+    icon: '📱',
+    color: '#6366F1',
+    transactionType: 'EXPENSE',
+  },
+  Vestuário: { accountType: 'PERSONAL', icon: '👕', color: '#F43F5E', transactionType: 'EXPENSE' },
+  Casa: { accountType: 'PERSONAL', icon: '🏠', color: '#84CC16', transactionType: 'EXPENSE' },
+  Salário: { accountType: 'PERSONAL', icon: '💼', color: '#14B8A6', transactionType: 'INCOME' },
+  Freelance: { accountType: 'PERSONAL', icon: '💻', color: '#0EA5E9', transactionType: 'INCOME' },
+  'Aluguel recebido': {
+    accountType: 'PERSONAL',
+    icon: '🏘️',
+    color: '#22C55E',
+    transactionType: 'INCOME',
+  },
+  Faturamento: { accountType: 'BUSINESS', icon: '📊', color: '#0EA5E9', transactionType: 'INCOME' },
+  Investimentos: { accountType: 'BUSINESS', icon: '📈', color: '#22C55E', transactionType: null },
+  Transferência: { accountType: 'PERSONAL', icon: '↔️', color: '#94A3B8', transactionType: null },
+  Outros: { accountType: 'PERSONAL', icon: '📦', color: '#64748B', transactionType: null },
 }
 
 interface ParsedTransaction {
@@ -69,7 +92,10 @@ async function extractWithGPT(text: string): Promise<ParsedTransaction[]> {
   })
 
   const raw = response.choices[0]?.message?.content ?? '[]'
-  const cleaned = raw.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim()
+  const cleaned = raw
+    .replace(/```json\n?/g, '')
+    .replace(/```\n?/g, '')
+    .trim()
   return JSON.parse(cleaned) as ParsedTransaction[]
 }
 
@@ -120,7 +146,9 @@ export async function statementRoutes(app: FastifyInstance) {
     }
 
     if (!rawText.trim()) {
-      return reply.status(422).send({ message: 'Não foi possível extrair texto do arquivo. O PDF pode estar escaneado (imagem).' })
+      return reply.status(422).send({
+        message: 'Não foi possível extrair texto do arquivo. O PDF pode estar escaneado (imagem).',
+      })
     }
 
     const transactions = await extractWithGPT(rawText)
@@ -133,7 +161,7 @@ export async function statementRoutes(app: FastifyInstance) {
 
     const result = transactions.map((t) => {
       const matched = categories.find(
-        (c) => c.name.toLowerCase() === t.category.toLowerCase()
+        (c: { name: string }) => c.name.toLowerCase() === t.category.toLowerCase()
       )
       return {
         description: t.description,
@@ -167,11 +195,13 @@ export async function statementRoutes(app: FastifyInstance) {
     }
 
     // Coleta nomes de categorias que precisam existir (sem categoryId mas com suggestedCategory)
-    const needsUpsert = [...new Set(
-      transactions
-        .filter(t => !t.categoryId && t.suggestedCategory)
-        .map(t => t.suggestedCategory!)
-    )]
+    const needsUpsert = [
+      ...new Set(
+        transactions
+          .filter((t) => !t.categoryId && t.suggestedCategory)
+          .map((t) => t.suggestedCategory!)
+      ),
+    ]
 
     // Upsert de cada categoria sugerida — cria se não existir, ignora se já existir
     const upsertedMap: Record<string, string> = {}
@@ -194,8 +224,7 @@ export async function statementRoutes(app: FastifyInstance) {
     const created = await prisma.$transaction(
       transactions.map((t) => {
         const resolvedCategoryId =
-          t.categoryId ??
-          (t.suggestedCategory ? upsertedMap[t.suggestedCategory] ?? null : null)
+          t.categoryId ?? (t.suggestedCategory ? (upsertedMap[t.suggestedCategory] ?? null) : null)
 
         return prisma.transaction.create({
           data: {

@@ -39,21 +39,25 @@ function classifyIssue(issue: GitHubIssue): FeatureStatus {
 
 function buildPayload(issues: GitHubIssue[]) {
   const features: Feature[] = issues
-    .filter(i => i.labels.some(l => l.name === 'feature'))
-    .map(i => ({
-      id:         i.number,
-      name:       i.title,
-      detail:     (i.body ?? '').replace(/[#*_`\[\]]/g, '').trim().slice(0, 100) || i.title,
-      area:       i.labels.map(l => l.name).filter(n => AREA_LABELS.has(n)),
-      status:     classifyIssue(i),
+    .filter((i) => i.labels.some((l) => l.name === 'feature'))
+    .map((i) => ({
+      id: i.number,
+      name: i.title,
+      detail:
+        (i.body ?? '')
+          .replace(/[#*_`\[\]]/g, '')
+          .trim()
+          .slice(0, 100) || i.title,
+      area: i.labels.map((l) => l.name).filter((n) => AREA_LABELS.has(n)),
+      status: classifyIssue(i),
       github_url: i.html_url,
     }))
 
-  const planned     = features.filter(f => f.status === 'planned')
-  const in_progress = features.filter(f => f.status === 'in_progress')
-  const done        = features.filter(f => f.status === 'done')
-  const total       = features.length
-  const pct         = total > 0 ? Math.round((done.length / total) * 100) : 0
+  const planned = features.filter((f) => f.status === 'planned')
+  const in_progress = features.filter((f) => f.status === 'in_progress')
+  const done = features.filter((f) => f.status === 'done')
+  const total = features.length
+  const pct = total > 0 ? Math.round((done.length / total) * 100) : 0
 
   return { planned, in_progress, done, meta: { total, done_count: done.length, pct } }
 }
@@ -67,12 +71,15 @@ export async function roadmapRoutes(app: FastifyInstance) {
     }
 
     const owner = process.env.GITHUB_REPO_OWNER
-    const repo  = process.env.GITHUB_REPO_NAME
+    const repo = process.env.GITHUB_REPO_NAME
     const token = process.env.GITHUB_TOKEN
 
     if (!owner || !repo) {
       // fallback para o repositório padrão da organização
-      return reply.status(503).send({ message: 'GITHUB_REPO_OWNER e GITHUB_REPO_NAME não configurados. Defina GITHUB_REPO_OWNER=juninhos-comunidade e GITHUB_REPO_NAME=Cifrinho no .env.' })
+      return reply.status(503).send({
+        message:
+          'GITHUB_REPO_OWNER e GITHUB_REPO_NAME não configurados. Defina GITHUB_REPO_OWNER=juninhos-comunidade e GITHUB_REPO_NAME=Cifrinho no .env.',
+      })
     }
 
     const headers: Record<string, string> = {
@@ -87,7 +94,7 @@ export async function roadmapRoutes(app: FastifyInstance) {
     try {
       const res = await fetch(url, { headers })
       if (!res.ok) throw new Error(`GitHub API ${res.status}`)
-      issues = await res.json() as GitHubIssue[]
+      issues = (await res.json()) as GitHubIssue[]
     } catch (err) {
       app.log.error(err)
       // retorna cache velho se existir, ao invés de falhar completamente

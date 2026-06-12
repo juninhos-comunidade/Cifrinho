@@ -4,7 +4,7 @@ import type { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify'
 
 export const jwtPlugin = fp(async (app: FastifyInstance) => {
   app.register(fastifyJwt, {
-    secret: process.env.JWT_SECRET ?? 'dev-secret',
+    secret: process.env.JWT_SECRET || 'dev-secret',
     cookie: {
       cookieName: 'token',
       signed: false,

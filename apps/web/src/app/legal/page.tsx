@@ -8,7 +8,15 @@ const sections = [
     color: '#21C25E',
     bg: 'rgba(33,194,94,0.12)',
     icon: (
-      <svg className="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <svg
+        className="h-6 w-6"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
         <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
       </svg>
     ),
@@ -61,7 +69,15 @@ Para exercer qualquer um desses direitos, entre em contato via e-mail: privacida
     color: '#3B82F6',
     bg: 'rgba(59,130,246,0.12)',
     icon: (
-      <svg className="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <svg
+        className="h-6 w-6"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
         <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z" />
         <path d="M14 2v6h6" />
         <path d="M16 13H8M16 17H8M10 9H8" />
@@ -112,7 +128,15 @@ Violações podem resultar em suspensão imediata da conta.`,
     color: '#8B5CF6',
     bg: 'rgba(139,92,246,0.12)',
     icon: (
-      <svg className="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <svg
+        className="h-6 w-6"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
         <rect x="5" y="11" width="14" height="10" rx="2" />
         <path d="M8 11V7a4 4 0 0 1 8 0v4" />
         <circle cx="12" cy="16" r="1" />
@@ -162,15 +186,28 @@ Respondemos em até 72 horas e não tomamos ações legais contra pesquisadores 
 
 export default function LegalPage() {
   return (
-    <div className="min-h-screen font-sans" style={{ backgroundColor: '#0F172A', color: '#F9FAFB' }}>
+    <div
+      className="min-h-screen font-sans"
+      style={{ backgroundColor: '#0F172A', color: '#F9FAFB' }}
+    >
       {/* NAVEGAÇÃO */}
       <header className="sticky top-0 z-50 border-b border-line/70 bg-bg/80 backdrop-blur-xl">
         <nav className="mx-auto flex h-16 max-w-7xl items-center justify-between px-5 sm:px-8">
           <Link href="/" className="flex items-center gap-2.5">
-            <Image src="/cifrinho-mascot.png" alt="Cifrinho" width={36} height={36} className="rounded-full" />
+            <Image
+              src="/cifrinho-mascot.png"
+              alt="Cifrinho"
+              width={36}
+              height={36}
+              className="rounded-full"
+            />
             <span className="text-lg font-extrabold tracking-tight text-ink">Cifrinho</span>
           </Link>
-          <Link href="/login" className="rounded-md px-4 py-2 text-sm font-bold text-bg transition-all duration-200 hover:opacity-90" style={{ backgroundColor: '#21C25E' }}>
+          <Link
+            href="/login"
+            className="rounded-md px-4 py-2 text-sm font-bold text-bg transition-all duration-200 hover:opacity-90"
+            style={{ backgroundColor: '#21C25E' }}
+          >
             Entrar
           </Link>
         </nav>
@@ -179,16 +216,27 @@ export default function LegalPage() {
       <div className="mx-auto max-w-4xl px-5 py-16 sm:px-8">
         {/* Cabeçalho */}
         <div className="mb-12 text-center">
-          <p className="mb-3 text-sm font-bold uppercase tracking-widest" style={{ color: '#21C25E' }}>Legal</p>
-          <h1 className="text-4xl font-extrabold tracking-tight text-ink sm:text-5xl">Transparência total</h1>
+          <p
+            className="mb-3 text-sm font-bold uppercase tracking-widest"
+            style={{ color: '#21C25E' }}
+          >
+            Legal
+          </p>
+          <h1 className="text-4xl font-extrabold tracking-tight text-ink sm:text-5xl">
+            Transparência total
+          </h1>
           <p className="mx-auto mt-4 max-w-xl text-lg text-mute">
-            Aqui explicamos claramente como usamos seus dados, quais são as regras do serviço e como mantemos tudo seguro.
+            Aqui explicamos claramente como usamos seus dados, quais são as regras do serviço e como
+            mantemos tudo seguro.
           </p>
           {/* nav âncoras */}
           <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
             {sections.map((s) => (
-              <a key={s.id} href={`#${s.id}`}
-                className="flex items-center gap-2 rounded-full border border-line bg-card px-4 py-2 text-sm font-semibold text-mute transition-colors hover:text-ink">
+              <a
+                key={s.id}
+                href={`#${s.id}`}
+                className="flex items-center gap-2 rounded-full border border-line bg-card px-4 py-2 text-sm font-semibold text-mute transition-colors hover:text-ink"
+              >
                 <span className="h-2 w-2 rounded-full" style={{ backgroundColor: s.color }} />
                 {s.label}
               </a>
@@ -201,8 +249,14 @@ export default function LegalPage() {
           {sections.map((section) => (
             <section key={section.id} id={section.id} className="scroll-mt-24">
               {/* cabeçalho da seção */}
-              <div className="mb-8 flex items-center gap-4 rounded-xl border border-line p-6" style={{ backgroundColor: section.bg }}>
-                <div className="grid h-12 w-12 shrink-0 place-items-center rounded-lg" style={{ backgroundColor: `${section.color}20`, color: section.color }}>
+              <div
+                className="mb-8 flex items-center gap-4 rounded-xl border border-line p-6"
+                style={{ backgroundColor: section.bg }}
+              >
+                <div
+                  className="grid h-12 w-12 shrink-0 place-items-center rounded-lg"
+                  style={{ backgroundColor: `${section.color}20`, color: section.color }}
+                >
                   {section.icon}
                 </div>
                 <div>
@@ -218,9 +272,13 @@ export default function LegalPage() {
                     <h3 className="mb-3 text-base font-bold text-ink">{block.heading}</h3>
                     <div className="text-sm leading-relaxed text-mute whitespace-pre-line">
                       {block.body.split('**').map((part, i) =>
-                        i % 2 === 1
-                          ? <strong key={i} className="font-semibold text-ink">{part}</strong>
-                          : <span key={i}>{part}</span>
+                        i % 2 === 1 ? (
+                          <strong key={i} className="font-semibold text-ink">
+                            {part}
+                          </strong>
+                        ) : (
+                          <span key={i}>{part}</span>
+                        )
                       )}
                     </div>
                   </div>
@@ -234,16 +292,20 @@ export default function LegalPage() {
         <div className="mt-16 rounded-xl border border-line bg-card p-8 text-center">
           <p className="text-lg font-bold text-ink">Dúvidas sobre privacidade ou segurança?</p>
           <p className="mt-2 text-sm text-mute">Nossa equipe responde em até 3 dias úteis.</p>
-          <a href="mailto:privacidade@cifrinho.app"
+          <a
+            href="mailto:privacidade@cifrinho.app"
             className="mt-5 inline-flex items-center gap-2 rounded-md px-6 py-3 text-sm font-bold text-bg transition-all hover:opacity-90"
-            style={{ backgroundColor: '#21C25E' }}>
+            style={{ backgroundColor: '#21C25E' }}
+          >
             privacidade@cifrinho.app
           </a>
         </div>
 
         {/* voltar */}
         <div className="mt-10 text-center">
-          <Link href="/" className="text-sm text-mute transition-colors hover:text-ink">← Voltar para a página inicial</Link>
+          <Link href="/" className="text-sm text-mute transition-colors hover:text-ink">
+            ← Voltar para a página inicial
+          </Link>
         </div>
       </div>
     </div>

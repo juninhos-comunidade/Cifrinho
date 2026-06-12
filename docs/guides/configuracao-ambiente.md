@@ -4,11 +4,11 @@
 
 Antes de começar, instale as ferramentas abaixo:
 
-| Ferramenta  | Versão recomendada | Link                             |
-|-------------|-------------------|----------------------------------|
-| Node.js     | 20.x (LTS)        | https://nodejs.org               |
-| npm         | 10.x+             | Incluso com o Node.js            |
-| Git         | Qualquer recente  | https://git-scm.com              |
+| Ferramenta | Versão recomendada | Link                  |
+| ---------- | ------------------ | --------------------- |
+| Node.js    | 20.x (LTS)         | https://nodejs.org    |
+| npm        | 10.x+              | Incluso com o Node.js |
+| Git        | Qualquer recente   | https://git-scm.com   |
 
 ## Passo a Passo
 
@@ -42,10 +42,10 @@ cp apps/api/.env.example apps/api/.env
 
 Preencha os valores no arquivo `.env` gerado. Os campos obrigatórios são:
 
-| Variável        | Descrição                          |
-|-----------------|------------------------------------|
-| `DATABASE_URL`  | String de conexão do NeonDB        |
-| `JWT_SECRET`    | Chave secreta para assinar tokens  |
+| Variável       | Descrição                         |
+| -------------- | --------------------------------- |
+| `DATABASE_URL` | String de conexão do NeonDB       |
+| `JWT_SECRET`   | Chave secreta para assinar tokens |
 
 ### 4. Executar as migrations do banco
 

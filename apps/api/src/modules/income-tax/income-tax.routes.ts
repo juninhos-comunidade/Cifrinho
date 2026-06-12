@@ -20,12 +20,12 @@ export async function incomeTaxRoutes(app: FastifyInstance) {
     })
 
     const totalIncome = transactions
-      .filter((t) => t.type === 'INCOME')
-      .reduce((sum, t) => sum + Number(t.amount), 0)
+      .filter((t: { type: string; amount: unknown }) => t.type === 'INCOME')
+      .reduce((sum: number, t: { amount: unknown }) => sum + Number(t.amount), 0)
 
     const totalExpenses = transactions
-      .filter((t) => t.type === 'EXPENSE')
-      .reduce((sum, t) => sum + Number(t.amount), 0)
+      .filter((t: { type: string; amount: unknown }) => t.type === 'EXPENSE')
+      .reduce((sum: number, t: { amount: unknown }) => sum + Number(t.amount), 0)
 
     return {
       year,

@@ -10,6 +10,8 @@
     "dev": "tsx watch src/server.ts",
     "build": "tsc",
     "start": "node dist/server.js",
+    "test": "vitest run",
+    "test:watch": "vitest",
     "db:migrate": "prisma migrate dev",
     "db:generate": "prisma generate",
     "db:studio": "prisma studio"
@@ -35,8 +37,10 @@
     "@types/bcryptjs": "^2.4.6",
     "@types/node": "^20.16.0",
     "@types/pdf-parse": "^1.1.5",
+    "@vitest/coverage-v8": "^3.2.3",
     "prisma": "^5.22.0",
     "tsx": "^4.19.1",
-    "typescript": "^5.5.4"
+    "typescript": "^5.5.4",
+    "vitest": "^3.2.3"
   }
 }
