@@ -19,10 +19,11 @@ jobs:
           cache: npm
 
       - name: Instalar dependências
-        run: npm ci
+        run: npm install
 
       - name: Lint (web)
-        run: npm run lint --workspace=@cifrinho/web
+        run: npx eslint src --ext .ts,.tsx --max-warnings 0
+        working-directory: apps/web
 
       - name: Typecheck (web)
         run: npx tsc --noEmit
@@ -51,7 +52,7 @@ jobs:
           cache: npm
 
       - name: Instalar dependências
-        run: npm ci
+        run: npm install
 
       - name: Gerar Prisma Client
         run: npx prisma generate
