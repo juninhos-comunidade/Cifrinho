@@ -1,0 +1,61 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [main, Development]
+  push:
+    branches: [main]
+
+jobs:
+  lint-and-typecheck:
+    name: Lint & Typecheck
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Instalar dependências
+        run: npm ci
+
+      - name: Lint (web)
+        run: npm run lint --workspace=@cifrinho/web
+
+      - name: Typecheck (web)
+        run: npx tsc --noEmit
+        working-directory: apps/web
+
+      - name: Typecheck (api)
+        run: npx tsc --noEmit
+        working-directory: apps/api
+
+      - name: Prettier check
+        run: npx prettier --check .
+
+  tests:
+    name: Testes de integração
+    runs-on: ubuntu-latest
+    env:
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      JWT_SECRET: ${{ secrets.JWT_SECRET }}
+      NODE_ENV: test
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Instalar dependências
+        run: npm ci
+
+      - name: Gerar Prisma Client
+        run: npx prisma generate
+        working-directory: apps/api
+
+      - name: Rodar testes
+        run: npm test --workspace=@cifrinho/api
