@@ -146,12 +146,9 @@ export async function statementRoutes(app: FastifyInstance) {
     }
 
     if (!rawText.trim()) {
-      return reply
-        .status(422)
-        .send({
-          message:
-            'Não foi possível extrair texto do arquivo. O PDF pode estar escaneado (imagem).',
-        })
+      return reply.status(422).send({
+        message: 'Não foi possível extrair texto do arquivo. O PDF pode estar escaneado (imagem).',
+      })
     }
 
     const transactions = await extractWithGPT(rawText)

@@ -1,6 +1,7 @@
 # 🎨 Cifrinho — Proposta de Design System
 
 ## Objetivo
+
 Definir uma identidade visual moderna, confiável e tecnológica para a plataforma Cifrinho, alinhada com o conceito de gestão financeira híbrida (pessoal + empresarial).
 
 ---
@@ -45,16 +46,16 @@ A identidade visual escolhida busca transmitir:
 
 # 🎨 Paleta Oficial
 
-| Elemento | Cor |
-|---|---|
-| Background | `#0F172A` |
-| Cards | `#111827` |
-| Bordas | `#1F2937` |
-| Primária (Verde) | `#10B981` |
+| Elemento          | Cor       |
+| ----------------- | --------- |
+| Background        | `#0F172A` |
+| Cards             | `#111827` |
+| Bordas            | `#1F2937` |
+| Primária (Verde)  | `#10B981` |
 | Secundária (Azul) | `#3B82F6` |
-| Destaque (Roxo) | `#8B5CF6` |
-| Texto Principal | `#F9FAFB` |
-| Texto Secundário | `#9CA3AF` |
+| Destaque (Roxo)   | `#8B5CF6` |
+| Texto Principal   | `#F9FAFB` |
+| Texto Secundário  | `#9CA3AF` |
 
 ---
 
@@ -75,7 +76,7 @@ Motivos:
 
 # 🧩 Componentes
 
-## Botões   
+## Botões
 
 - Border radius: `12px`
 - Transição suave: `0.2s`

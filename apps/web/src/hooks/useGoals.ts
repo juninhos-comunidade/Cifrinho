@@ -47,8 +47,8 @@ export function useGoals() {
     onSuccess: () => qc.invalidateQueries({ queryKey: ['goals'] }),
   })
 
-  const active = (query.data ?? []).filter(g => g.status === 'ACTIVE')
-  const completed = (query.data ?? []).filter(g => g.status === 'COMPLETED')
+  const active = (query.data ?? []).filter((g) => g.status === 'ACTIVE')
+  const completed = (query.data ?? []).filter((g) => g.status === 'COMPLETED')
 
   return {
     goals: query.data ?? [],

@@ -7,53 +7,53 @@
 
 ## Bloco 1 — Fechar Sprint 1
 
-| # | Task | Prioridade |
-|---|------|-----------|
-| S1-1 | Fechar issues #26, #27, #28, #29, #30, #31, #32, #33 no GitHub (já implementados) | Alta |
-| S1-2 | Revisar issue #34 — token migrado para cookie ✅ | Alta |
-| S1-3 | Revisar issue #35 — layout + middleware implementados ✅ | Alta |
-| S1-4 | Confirmar status dos deploys #36 (Vercel) e #37 (Railway) | Média |
+| #    | Task                                                                              | Prioridade |
+| ---- | --------------------------------------------------------------------------------- | ---------- |
+| S1-1 | Fechar issues #26, #27, #28, #29, #30, #31, #32, #33 no GitHub (já implementados) | Alta       |
+| S1-2 | Revisar issue #34 — token migrado para cookie ✅                                  | Alta       |
+| S1-3 | Revisar issue #35 — layout + middleware implementados ✅                          | Alta       |
+| S1-4 | Confirmar status dos deploys #36 (Vercel) e #37 (Railway)                         | Média      |
 
 ---
 
 ## Bloco 2 — Dashboard Pessoal
 
-| # | Task | Prioridade |
-|---|------|-----------|
-| D-1 | Cards de resumo: saldo do mês, total de receitas, total de despesas | Alta |
-| D-2 | Listagem de transações recentes (últimas 10) com data, descrição, valor e categoria | Alta |
-| D-3 | Filtros básicos na listagem: tipo (receita/despesa) e período (mês atual) | Média |
-| D-4 | Empty state para quando não há transações cadastradas | Média |
+| #   | Task                                                                                | Prioridade |
+| --- | ----------------------------------------------------------------------------------- | ---------- |
+| D-1 | Cards de resumo: saldo do mês, total de receitas, total de despesas                 | Alta       |
+| D-2 | Listagem de transações recentes (últimas 10) com data, descrição, valor e categoria | Alta       |
+| D-3 | Filtros básicos na listagem: tipo (receita/despesa) e período (mês atual)           | Média      |
+| D-4 | Empty state para quando não há transações cadastradas                               | Média      |
 
 ---
 
 ## Bloco 3 — Transações
 
-| # | Task | Prioridade |
-|---|------|-----------|
-| T-1 | Modal/drawer para criar nova transação (descrição, valor, tipo, data, categoria) | Alta |
-| T-2 | Ação de deletar transação com confirmação | Alta |
-| T-3 | Ação de editar transação | Média |
-| T-4 | Hook `useTransactions` encapsulando fetch, create, update e delete | Média |
+| #   | Task                                                                             | Prioridade |
+| --- | -------------------------------------------------------------------------------- | ---------- |
+| T-1 | Modal/drawer para criar nova transação (descrição, valor, tipo, data, categoria) | Alta       |
+| T-2 | Ação de deletar transação com confirmação                                        | Alta       |
+| T-3 | Ação de editar transação                                                         | Média      |
+| T-4 | Hook `useTransactions` encapsulando fetch, create, update e delete               | Média      |
 
 ---
 
 ## Bloco 4 — Categorias
 
-| # | Task | Prioridade |
-|---|------|-----------|
-| C-1 | Listagem de categorias do usuário | Média |
-| C-2 | Formulário para criar categoria (nome, ícone, cor, tipo de conta) | Média |
-| C-3 | Seletor de categoria no formulário de transação | Alta |
+| #   | Task                                                              | Prioridade |
+| --- | ----------------------------------------------------------------- | ---------- |
+| C-1 | Listagem de categorias do usuário                                 | Média      |
+| C-2 | Formulário para criar categoria (nome, ícone, cor, tipo de conta) | Média      |
+| C-3 | Seletor de categoria no formulário de transação                   | Alta       |
 
 ---
 
 ## Bloco 5 — Auth & Sessão
 
-| # | Task | Prioridade |
-|---|------|-----------|
-| A-1 | Hook `useAuth` para acessar dados do usuário logado | Média |
-| A-2 | Exibir nome do usuário no header/sidebar | Baixa |
+| #   | Task                                                | Prioridade |
+| --- | --------------------------------------------------- | ---------- |
+| A-1 | Hook `useAuth` para acessar dados do usuário logado | Média      |
+| A-2 | Exibir nome do usuário no header/sidebar            | Baixa      |
 
 ---
 

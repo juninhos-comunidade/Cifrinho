@@ -23,7 +23,10 @@ function UploadZone({ onFile }: { onFile: (f: File) => void }) {
 
   return (
     <div
-      onDragOver={(e) => { e.preventDefault(); setDragging(true) }}
+      onDragOver={(e) => {
+        e.preventDefault()
+        setDragging(true)
+      }}
       onDragLeave={() => setDragging(false)}
       onDrop={handleDrop}
       onClick={() => inputRef.current?.click()}
@@ -31,17 +34,36 @@ function UploadZone({ onFile }: { onFile: (f: File) => void }) {
         ${dragging ? 'border-brand bg-brand/5' : 'border-line hover:border-brand/50'}`}
     >
       <span className="grid h-14 w-14 place-items-center rounded-full bg-brand/10 text-brand">
-        <svg className="h-7 w-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-          <polyline points="17 8 12 3 7 8"/>
-          <line x1="12" y1="3" x2="12" y2="15"/>
+        <svg
+          className="h-7 w-7"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+          <polyline points="17 8 12 3 7 8" />
+          <line x1="12" y1="3" x2="12" y2="15" />
         </svg>
       </span>
       <div className="text-center">
-        <p className="text-sm font-semibold text-ink">Arraste o extrato aqui ou clique para selecionar</p>
+        <p className="text-sm font-semibold text-ink">
+          Arraste o extrato aqui ou clique para selecionar
+        </p>
         <p className="mt-1 text-xs text-mute">PDF, CSV ou OFX · máx. 5 MB · qualquer banco</p>
       </div>
-      <input ref={inputRef} type="file" accept={ACCEPTED} className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (f) onFile(f) }} />
+      <input
+        ref={inputRef}
+        type="file"
+        accept={ACCEPTED}
+        className="hidden"
+        onChange={(e) => {
+          const f = e.target.files?.[0]
+          if (f) onFile(f)
+        }}
+      />
     </div>
   )
 }
@@ -51,8 +73,20 @@ function UploadingState() {
     <div className="flex flex-col items-center gap-4 py-12">
       <div className="relative h-16 w-16">
         <svg className="h-16 w-16 animate-spin text-brand" viewBox="0 0 24 24" fill="none">
-          <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2" strokeOpacity="0.2"/>
-          <path d="M12 2a10 10 0 0 1 10 10" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+          <circle
+            cx="12"
+            cy="12"
+            r="10"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeOpacity="0.2"
+          />
+          <path
+            d="M12 2a10 10 0 0 1 10 10"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+          />
         </svg>
       </div>
       <div className="text-center">
@@ -80,7 +114,8 @@ function ReviewTable({
       <div className="flex items-center justify-between">
         <p className="text-sm text-mute">
           <span className="font-semibold text-ink">{selectedCount}</span> de{' '}
-          <span className="font-semibold text-ink">{transactions.length}</span> transações selecionadas
+          <span className="font-semibold text-ink">{transactions.length}</span> transações
+          selecionadas
         </p>
         <button
           onClick={() => onToggleAll(!allSelected)}
@@ -111,10 +146,7 @@ function ReviewTable({
           </thead>
           <tbody className="divide-y divide-line">
             {transactions.map((t, i) => (
-              <tr
-                key={i}
-                className={`transition-colors ${t.selected ? '' : 'opacity-40'}`}
-              >
+              <tr key={i} className={`transition-colors ${t.selected ? '' : 'opacity-40'}`}>
                 <td className="px-3 py-2 text-center">
                   <input
                     type="checkbox"
@@ -147,14 +179,18 @@ function ReviewTable({
                   <select
                     className="rounded border border-transparent bg-transparent px-1 py-0.5 text-xs text-mute outline-none focus:border-brand/50 focus:bg-bg"
                     value={t.accountType}
-                    onChange={(e) => onUpdate(i, { accountType: e.target.value as 'PERSONAL' | 'BUSINESS' })}
+                    onChange={(e) =>
+                      onUpdate(i, { accountType: e.target.value as 'PERSONAL' | 'BUSINESS' })
+                    }
                   >
                     <option value="PERSONAL">Pessoal</option>
                     <option value="BUSINESS">Empresarial</option>
                   </select>
                 </td>
                 <td className="px-3 py-2 text-right">
-                  <span className={`font-semibold ${t.type === 'INCOME' ? 'text-brand' : 'text-rose'}`}>
+                  <span
+                    className={`font-semibold ${t.type === 'INCOME' ? 'text-brand' : 'text-rose'}`}
+                  >
                     {t.type === 'INCOME' ? '+' : '-'} R${' '}
                     {t.amount.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
                   </span>
@@ -184,7 +220,9 @@ export function StatementImportModal({ open, onClose }: Props) {
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm"
-      onClick={(e) => { if (e.target === e.currentTarget) handleClose() }}
+      onClick={(e) => {
+        if (e.target === e.currentTarget) handleClose()
+      }}
     >
       <div
         className="modal-in w-full max-w-3xl overflow-hidden rounded-xl border border-line bg-card shadow-2xl"
@@ -200,7 +238,15 @@ export function StatementImportModal({ open, onClose }: Props) {
             onClick={handleClose}
             className="grid h-8 w-8 place-items-center rounded-md text-mute transition-colors hover:bg-elev hover:text-ink"
           >
-            <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
+            <svg
+              className="h-5 w-5"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+            >
+              <path d="M18 6 6 18M6 6l12 12" />
+            </svg>
           </button>
         </div>
 
@@ -221,8 +267,20 @@ export function StatementImportModal({ open, onClose }: Props) {
           {step === 'saving' && (
             <div className="flex flex-col items-center gap-3 py-10">
               <svg className="h-12 w-12 animate-spin text-brand" viewBox="0 0 24 24" fill="none">
-                <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2" strokeOpacity="0.2"/>
-                <path d="M12 2a10 10 0 0 1 10 10" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                <circle
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeOpacity="0.2"
+                />
+                <path
+                  d="M12 2a10 10 0 0 1 10 10"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                />
               </svg>
               <p className="text-sm text-mute">Salvando transações…</p>
             </div>
@@ -231,15 +289,27 @@ export function StatementImportModal({ open, onClose }: Props) {
           {step === 'done' && (
             <div className="flex flex-col items-center gap-4 py-10">
               <span className="grid h-16 w-16 place-items-center rounded-full bg-brand/10 text-brand">
-                <svg className="h-8 w-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M20 6 9 17l-5-5"/></svg>
+                <svg
+                  className="h-8 w-8"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.5"
+                >
+                  <path d="M20 6 9 17l-5-5" />
+                </svg>
               </span>
               <div className="text-center">
                 <p className="text-base font-bold text-ink">Importação concluída!</p>
                 <p className="mt-1 text-sm text-mute">
-                  {selectedCount} transaç{selectedCount === 1 ? 'ão importada' : 'ões importadas'} com sucesso.
+                  {selectedCount} transaç{selectedCount === 1 ? 'ão importada' : 'ões importadas'}{' '}
+                  com sucesso.
                 </p>
               </div>
-              <button onClick={handleClose} className="rounded-lg bg-brand px-6 py-2 text-sm font-bold text-white transition-opacity hover:opacity-90">
+              <button
+                onClick={handleClose}
+                className="rounded-lg bg-brand px-6 py-2 text-sm font-bold text-white transition-opacity hover:opacity-90"
+              >
                 Fechar
               </button>
             </div>
@@ -248,13 +318,25 @@ export function StatementImportModal({ open, onClose }: Props) {
           {step === 'error' && (
             <div className="flex flex-col items-center gap-4 py-10">
               <span className="grid h-16 w-16 place-items-center rounded-full bg-rose/10 text-rose">
-                <svg className="h-8 w-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+                <svg
+                  className="h-8 w-8"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                >
+                  <circle cx="12" cy="12" r="10" />
+                  <path d="M12 8v4M12 16h.01" />
+                </svg>
               </span>
               <div className="text-center">
                 <p className="text-base font-bold text-ink">Ops, algo deu errado</p>
                 <p className="mt-1 text-sm text-mute">{errorMsg}</p>
               </div>
-              <button onClick={reset} className="rounded-lg border border-line bg-bg px-6 py-2 text-sm font-bold text-ink transition-colors hover:border-brand/50">
+              <button
+                onClick={reset}
+                className="rounded-lg border border-line bg-bg px-6 py-2 text-sm font-bold text-ink transition-colors hover:border-brand/50"
+              >
                 Tentar novamente
               </button>
             </div>
@@ -264,7 +346,10 @@ export function StatementImportModal({ open, onClose }: Props) {
         {/* footer — só na etapa de revisão */}
         {step === 'reviewing' && (
           <div className="flex items-center justify-between border-t border-line px-6 py-4">
-            <button onClick={handleClose} className="rounded-lg border border-line bg-bg px-4 py-2 text-sm font-semibold text-mute transition-colors hover:text-ink">
+            <button
+              onClick={handleClose}
+              className="rounded-lg border border-line bg-bg px-4 py-2 text-sm font-semibold text-mute transition-colors hover:text-ink"
+            >
               Cancelar
             </button>
             <button

@@ -8,9 +8,9 @@
 
 O repositório tem duas branches principais que você **nunca edita diretamente**:
 
-| Branch | Para que serve |
-|---|---|
-| `main` | Código em produção. Só recebe código 100% funcional. |
+| Branch        | Para que serve                                                                    |
+| ------------- | --------------------------------------------------------------------------------- |
+| `main`        | Código em produção. Só recebe código 100% funcional.                              |
 | `development` | Integração do time. É daqui que você cria sua branch e para onde você manda o PR. |
 
 > O merge de `development` para `main` é feito pelo responsável do projeto ao final de cada sprint, após validação completa.
@@ -42,14 +42,14 @@ git checkout -b feature/tela-de-login
 
 **Tipos disponíveis:**
 
-| Tipo | Quando usar | Exemplo |
-|---|---|---|
-| `feature/` | Nova funcionalidade | `feature/dashboard-pessoal` |
-| `fix/` | Corrigir um bug | `fix/erro-no-login` |
-| `style/` | Ajuste visual (sem mudar lógica) | `style/botao-primario` |
-| `refactor/` | Melhorar código sem mudar comportamento | `refactor/componente-card` |
-| `docs/` | Atualizar documentação | `docs/atualiza-readme` |
-| `chore/` | Configuração, dependências, etc. | `chore/atualiza-eslint` |
+| Tipo        | Quando usar                             | Exemplo                     |
+| ----------- | --------------------------------------- | --------------------------- |
+| `feature/`  | Nova funcionalidade                     | `feature/dashboard-pessoal` |
+| `fix/`      | Corrigir um bug                         | `fix/erro-no-login`         |
+| `style/`    | Ajuste visual (sem mudar lógica)        | `style/botao-primario`      |
+| `refactor/` | Melhorar código sem mudar comportamento | `refactor/componente-card`  |
+| `docs/`     | Atualizar documentação                  | `docs/atualiza-readme`      |
+| `chore/`    | Configuração, dependências, etc.        | `chore/atualiza-eslint`     |
 
 ---
 
@@ -65,6 +65,7 @@ git commit -m "feat: adiciona tela de login com abas"
 **Formato do commit:** `tipo: descrição curta em português`
 
 Exemplos:
+
 ```bash
 git commit -m "feat: cria componente de card de transação"
 git commit -m "fix: corrige validação do formulário de cadastro"
@@ -76,7 +77,7 @@ git commit -m "style: ajusta cores dos botões conforme design system"
 ---
 
 ### 4. Envie sua branch para o GitHub
-    
+
 ```bash
 git push origin feature/tela-de-login
 ```
