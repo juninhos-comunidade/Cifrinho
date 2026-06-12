@@ -57,7 +57,7 @@ export function useStatementImport() {
     setStep('saving')
     try {
       await api.post('/transactions/batch', {
-        transactions: toSave.map(({ selected: _, ...t }) => t),
+        transactions: toSave.map(({ selected: _selected, ...t }) => t),
       })
       qc.invalidateQueries({ queryKey: ['transactions'] })
       setStep('done')

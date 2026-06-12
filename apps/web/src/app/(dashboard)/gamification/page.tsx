@@ -1,4 +1,5 @@
 'use client'
+import Image from 'next/image'
 
 import { useBadges } from '@/hooks/useBadges'
 import { useAuth } from '@/contexts/AuthContext'
@@ -87,7 +88,7 @@ const LEADERBOARD_MOCK = [
 
 export default function GamificationPage() {
   const { earned, locked, progress, newlyUnlocked, isLoading, isError } = useBadges()
-  const { firstName, initials } = useAuth()
+  const { firstName: _firstName, initials } = useAuth()
   const shownRef = useRef(false)
 
   const showToast = newlyUnlocked.length > 0 && !shownRef.current
@@ -187,7 +188,13 @@ export default function GamificationPage() {
                 {earned.map((b) => (
                   <div key={b.id} className="rounded-lg border border-line bg-bg p-4 text-center">
                     {b.icon ? (
-                      <img src={b.icon} alt={b.name} className="mx-auto h-12 w-12 object-contain" />
+                      <Image
+                        src={b.icon}
+                        alt={b.name}
+                        width={48}
+                        height={48}
+                        className="mx-auto object-contain"
+                      />
                     ) : (
                       <div className="mx-auto grid h-12 w-12 place-items-center rounded-full bg-brand/15 text-brand">
                         <svg

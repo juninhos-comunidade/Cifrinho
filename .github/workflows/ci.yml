@@ -38,9 +38,23 @@ jobs:
   tests:
     name: Testes de integração
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: cifrinho
+          POSTGRES_PASSWORD: cifrinho
+          POSTGRES_DB: cifrinho_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
     env:
-      DATABASE_URL: ${{ secrets.DATABASE_URL }}
-      JWT_SECRET: ${{ secrets.JWT_SECRET }}
+      DATABASE_URL: postgresql://cifrinho:cifrinho@localhost:5432/cifrinho_test
+      JWT_SECRET: ci-secret-para-testes
       NODE_ENV: test
     steps:
       - uses: actions/checkout@v4
@@ -54,6 +68,10 @@ jobs:
 
       - name: Gerar Prisma Client
         run: npx prisma generate
+        working-directory: apps/api
+
+      - name: Rodar migrations
+        run: npx prisma migrate deploy
         working-directory: apps/api
 
       - name: Rodar testes
