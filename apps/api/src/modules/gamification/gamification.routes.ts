@@ -171,7 +171,7 @@ export async function gamificationRoutes(app: FastifyInstance) {
       ...myBadgeRecords.map((ub: { badge: (typeof allBadges)[0] }) => ub.badge),
       ...newlyUnlocked,
     ]
-    const locked = allBadges.filter((b) => !earnedIds.has(b.id))
+    const locked = allBadges.filter((b: { id: string }) => !earnedIds.has(b.id))
 
     return {
       xp,
