@@ -16,13 +16,12 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: npm
 
       - name: Instalar dependências
         run: npm install
 
       - name: Lint (web)
-        run: npx eslint src --ext .ts,.tsx --max-warnings 0
+        run: npx eslint src --max-warnings 0
         working-directory: apps/web
 
       - name: Typecheck (web)
@@ -49,7 +48,6 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: npm
 
       - name: Instalar dependências
         run: npm install
