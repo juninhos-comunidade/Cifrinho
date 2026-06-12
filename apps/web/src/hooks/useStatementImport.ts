@@ -27,17 +27,18 @@ export function useStatementImport() {
     try {
       const form = new FormData()
       form.append('file', file)
-      const { data } = await api.post<{ transactions: Omit<ParsedTransaction, 'accountType' | 'selected'>[] }>(
-        '/statements/parse',
-        form,
-        { headers: { 'Content-Type': 'multipart/form-data' } }
-      )
+      const { data } = await api.post<{
+        transactions: Omit<ParsedTransaction, 'accountType' | 'selected'>[]
+      }>('/statements/parse', form, { headers: { 'Content-Type': 'multipart/form-data' } })
       setTransactions(
         data.transactions.map((t) => ({ ...t, accountType: 'PERSONAL', selected: true }))
       )
       setStep('reviewing')
-    } catch (err: any) {
-      setErrorMsg(err?.response?.data?.message ?? 'Erro ao processar o extrato.')
+    } catch (err: unknown) {
+      setErrorMsg(
+        (err as { response?: { data?: { message?: string } } })?.response?.data?.message ??
+          'Erro ao processar o extrato.'
+      )
       setStep('error')
     }
   }
@@ -56,12 +57,15 @@ export function useStatementImport() {
     setStep('saving')
     try {
       await api.post('/transactions/batch', {
-        transactions: toSave.map(({ selected: _s, ...t }) => t),
+        transactions: toSave.map(({ selected: _, ...t }) => t),
       })
       qc.invalidateQueries({ queryKey: ['transactions'] })
       setStep('done')
-    } catch (err: any) {
-      setErrorMsg(err?.response?.data?.message ?? 'Erro ao salvar as transações.')
+    } catch (err: unknown) {
+      setErrorMsg(
+        (err as { response?: { data?: { message?: string } } })?.response?.data?.message ??
+          'Erro ao salvar as transações.'
+      )
       setStep('error')
     }
   }

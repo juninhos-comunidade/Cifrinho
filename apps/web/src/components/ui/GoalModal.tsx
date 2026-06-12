@@ -25,12 +25,19 @@ export function GoalModal({ open, onClose }: Props) {
   const [error, setError] = useState('')
 
   useEffect(() => {
-    if (open) { setName(''); setAmount(''); setMonths(1); setError('') }
+    if (open) {
+      setName('')
+      setAmount('')
+      setMonths(1)
+      setError('')
+    }
   }, [open])
 
   useEffect(() => {
     if (!open) return
-    const handler = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose() }
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose()
+    }
     window.addEventListener('keydown', handler)
     return () => window.removeEventListener('keydown', handler)
   }, [open, onClose])
@@ -46,21 +53,32 @@ export function GoalModal({ open, onClose }: Props) {
 
   async function handleSubmit() {
     const targetAmount = parseAmount(amount)
-    if (!name.trim()) { setError('Dê um nome para a meta.'); return }
-    if (isNaN(targetAmount) || targetAmount <= 0) { setError('Valor inválido.'); return }
+    if (!name.trim()) {
+      setError('Dê um nome para a meta.')
+      return
+    }
+    if (isNaN(targetAmount) || targetAmount <= 0) {
+      setError('Valor inválido.')
+      return
+    }
 
     try {
       await create.mutateAsync({ name: name.trim(), targetAmount, months })
       onClose()
-    } catch (err: any) {
-      setError(err.response?.data?.message ?? 'Erro ao criar meta.')
+    } catch (err: unknown) {
+      setError(
+        (err as { response?: { data?: { message?: string } } })?.response?.data?.message ??
+          'Erro ao criar meta.'
+      )
     }
   }
 
   return (
     <div
       ref={overlayRef}
-      onClick={e => { if (e.target === overlayRef.current) onClose() }}
+      onClick={(e) => {
+        if (e.target === overlayRef.current) onClose()
+      }}
       className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4"
       style={{ backgroundColor: 'rgb(0 0 0 / 0.6)', backdropFilter: 'blur(4px)' }}
     >
@@ -71,14 +89,25 @@ export function GoalModal({ open, onClose }: Props) {
         {/* cabeçalho */}
         <div className="flex items-center justify-between border-b border-line px-6 py-4">
           <div className="flex items-center gap-2.5">
-            <span className="grid h-8 w-8 place-items-center rounded-md bg-brand/15 text-brand text-lg">🎯</span>
+            <span className="grid h-8 w-8 place-items-center rounded-md bg-brand/15 text-brand text-lg">
+              🎯
+            </span>
             <h2 className="text-base font-bold text-ink">Nova meta de economia</h2>
           </div>
           <button
             onClick={onClose}
             className="grid h-8 w-8 place-items-center rounded-md text-mute transition-colors hover:bg-elev hover:text-ink"
           >
-            <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+            <svg
+              className="h-4 w-4"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+            >
+              <path d="M18 6 6 18M6 6l12 12" />
+            </svg>
           </button>
         </div>
 
@@ -91,20 +120,28 @@ export function GoalModal({ open, onClose }: Props) {
               type="text"
               placeholder="Ex: Reserva de emergência"
               value={name}
-              onChange={e => { setName(e.target.value); setError('') }}
+              onChange={(e) => {
+                setName(e.target.value)
+                setError('')
+              }}
               className="modal-field"
             />
           </div>
 
           {/* valor */}
           <div>
-            <label className="mb-1.5 block text-xs font-semibold text-mute">Quanto quer economizar? (R$)</label>
+            <label className="mb-1.5 block text-xs font-semibold text-mute">
+              Quanto quer economizar? (R$)
+            </label>
             <input
               type="text"
               inputMode="decimal"
               placeholder="0,00"
               value={amount}
-              onChange={e => { setAmount(e.target.value); setError('') }}
+              onChange={(e) => {
+                setAmount(e.target.value)
+                setError('')
+              }}
               className="modal-field"
             />
           </div>
@@ -113,7 +150,7 @@ export function GoalModal({ open, onClose }: Props) {
           <div>
             <label className="mb-1.5 block text-xs font-semibold text-mute">Em quanto tempo?</label>
             <div className="seg w-full">
-              {MONTHS_OPTIONS.map(opt => (
+              {MONTHS_OPTIONS.map((opt) => (
                 <button
                   key={opt.value}
                   type="button"
@@ -130,7 +167,10 @@ export function GoalModal({ open, onClose }: Props) {
           {monthly > 0 && (
             <div className="rounded-xl border border-brand/20 bg-brand/5 p-4">
               <p className="text-xs text-mute">Será lançado como despesa mensal</p>
-              <p className="mt-1 text-2xl font-extrabold text-brand">{fmt(monthly)}<span className="text-sm font-semibold text-mute">/mês</span></p>
+              <p className="mt-1 text-2xl font-extrabold text-brand">
+                {fmt(monthly)}
+                <span className="text-sm font-semibold text-mute">/mês</span>
+              </p>
               <p className="mt-0.5 text-xs text-mute">
                 por {months} {months === 1 ? 'mês' : 'meses'} · total {fmt(parsed)}
               </p>
@@ -138,7 +178,9 @@ export function GoalModal({ open, onClose }: Props) {
           )}
 
           {error && (
-            <p className="rounded-lg border border-rose/20 bg-rose/10 px-4 py-2.5 text-sm text-rose">{error}</p>
+            <p className="rounded-lg border border-rose/20 bg-rose/10 px-4 py-2.5 text-sm text-rose">
+              {error}
+            </p>
           )}
         </div>
 

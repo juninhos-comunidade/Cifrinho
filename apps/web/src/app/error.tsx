@@ -1,7 +1,8 @@
 'use client'
 
 import Image from 'next/image'
-import { useEffect, useId, useState } from 'react'
+import Link from 'next/link'
+import { useEffect, useState } from 'react'
 
 export default function GlobalError({
   error,
@@ -57,7 +58,7 @@ export default function GlobalError({
       <div className="relative flex min-h-screen flex-col">
         {/* top bar */}
         <header className="flex items-center justify-between px-6 py-6 sm:px-10">
-          <a href="/" className="flex items-center gap-2.5">
+          <Link href="/" className="flex items-center gap-2.5">
             <Image
               src="/cifrinho-mascot.png"
               alt="Cifrinho"
@@ -66,7 +67,7 @@ export default function GlobalError({
               className="rounded-full"
             />
             <span className="text-xl font-extrabold tracking-tight">Cifrinho</span>
-          </a>
+          </Link>
         </header>
 
         {/* centered content */}
@@ -282,7 +283,7 @@ export default function GlobalError({
                 </svg>
                 Tentar novamente
               </button>
-              <a
+              <Link
                 href="/"
                 className="flex items-center justify-center gap-2 rounded-xl px-6 py-3.5 text-base font-bold transition-colors"
                 style={{
@@ -303,7 +304,7 @@ export default function GlobalError({
                   <path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1Z" />
                 </svg>
                 Voltar ao início
-              </a>
+              </Link>
             </div>
 
             {/* status link + error id */}
@@ -311,7 +312,7 @@ export default function GlobalError({
               className="mt-9 flex flex-col items-center gap-2 text-sm"
               style={{ color: 'rgb(var(--c-faint))' }}
             >
-              <a
+              <Link
                 href="/status"
                 className="inline-flex items-center gap-1.5 font-semibold underline-offset-4 hover:underline"
                 style={{ color: 'rgb(var(--c-mute))' }}
@@ -321,7 +322,7 @@ export default function GlobalError({
                   style={{ background: 'rgb(var(--c-brand))' }}
                 />
                 Ver status dos sistemas
-              </a>
+              </Link>
               <p className="text-xs">
                 Código de referência:{' '}
                 <span className="font-mono font-semibold" style={{ color: 'rgb(var(--c-mute))' }}>

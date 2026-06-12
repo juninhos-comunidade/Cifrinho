@@ -1,6 +1,5 @@
-import { describe, it, expect, beforeAll, afterAll, beforeEach } from 'vitest'
+import { describe, it, expect, beforeAll, afterAll } from 'vitest'
 import { buildApp } from './app.js'
-import { prisma } from '../lib/prisma.js'
 import type { FastifyInstance } from 'fastify'
 
 const TEST_EMAIL = `test-auth-${Date.now()}@cifrinho.test`
@@ -14,9 +13,7 @@ beforeAll(async () => {
 })
 
 afterAll(async () => {
-  await prisma.user.deleteMany({ where: { email: { endsWith: '@cifrinho.test' } } })
   await app.close()
-  await prisma.$disconnect()
 })
 
 describe('POST /auth/register', () => {

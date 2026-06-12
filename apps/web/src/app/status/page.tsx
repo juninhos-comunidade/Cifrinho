@@ -1,4 +1,5 @@
 import Image from 'next/image'
+import Link from 'next/link'
 import type { ReactNode } from 'react'
 
 type ServiceStatus = 'operational' | 'maintenance' | 'offline'
@@ -284,7 +285,7 @@ export default async function StatusPage() {
           className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1.5 border-b px-4 py-4 sm:px-8 sm:py-5"
           style={{ borderColor: 'rgb(var(--c-line))' }}
         >
-          <a href="/" className="flex items-center gap-2.5">
+          <Link href="/" className="flex items-center gap-2.5">
             <Image src="/cifrinho-mascot.png" alt="Cifrinho" width={32} height={32} />
             <span className="text-lg font-extrabold tracking-tight text-ink">Cifrinho</span>
             <span
@@ -297,7 +298,7 @@ export default async function StatusPage() {
             >
               Status
             </span>
-          </a>
+          </Link>
           <p className="text-sm text-mute">
             Verificado <span className="font-semibold text-ink">{checkedLabel}</span>
           </p>
