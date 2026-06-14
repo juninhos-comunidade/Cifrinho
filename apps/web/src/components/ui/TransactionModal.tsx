@@ -1,175 +1,170 @@
-"use client";
+'use client'
 
-import { useState, useEffect, useRef } from "react";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { api } from "@/lib/api";
-import { usePreferences } from "@/contexts/PreferencesContext";
+import { useState, useEffect, useRef } from 'react'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { api } from '@/lib/api'
+import { usePreferences } from '@/contexts/PreferencesContext'
 
 interface Category {
-  id: string;
-  name: string;
-  accountType: "PERSONAL" | "BUSINESS";
-  transactionType: "INCOME" | "EXPENSE" | null;
+  id: string
+  name: string
+  accountType: 'PERSONAL' | 'BUSINESS'
+  transactionType: 'INCOME' | 'EXPENSE' | null
 }
 
 interface Transaction {
-  id: string;
-  description: string;
-  amount: string;
-  type: "INCOME" | "EXPENSE";
-  accountType: "PERSONAL" | "BUSINESS";
-  date: string;
-  categoryId: string | null;
+  id: string
+  description: string
+  amount: string
+  type: 'INCOME' | 'EXPENSE'
+  accountType: 'PERSONAL' | 'BUSINESS'
+  date: string
+  categoryId: string | null
 }
 
 interface Props {
-  open: boolean;
-  onClose: () => void;
-  defaultAccountType?: "PERSONAL" | "BUSINESS";
-  editing?: Transaction | null;
+  open: boolean
+  onClose: () => void
+  defaultAccountType?: 'PERSONAL' | 'BUSINESS'
+  editing?: Transaction | null
 }
 
-const EMPTY: Omit<Transaction, "id"> = {
-  description: "",
-  amount: "",
-  type: "EXPENSE",
-  accountType: "PERSONAL",
+const EMPTY: Omit<Transaction, 'id'> = {
+  description: '',
+  amount: '',
+  type: 'EXPENSE',
+  accountType: 'PERSONAL',
   date: new Date().toISOString().slice(0, 10),
   categoryId: null,
-};
+}
 
-export function TransactionModal({
-  open,
-  onClose,
-  defaultAccountType,
-  editing,
-}: Props) {
-  const qc = useQueryClient();
-  const overlayRef = useRef<HTMLDivElement>(null);
-  const { businessEnabled } = usePreferences();
+export function TransactionModal({ open, onClose, defaultAccountType, editing }: Props) {
+  const qc = useQueryClient()
+  const overlayRef = useRef<HTMLDivElement>(null)
+  const { businessEnabled } = usePreferences()
 
-  const [form, setForm] = useState({ ...EMPTY });
-  const [error, setError] = useState("");
+  const [form, setForm] = useState({ ...EMPTY })
+  const [error, setError] = useState('')
 
   useEffect(() => {
     if (open) {
       if (editing) {
         setForm({
           description: editing.description,
-          amount: Number(editing.amount).toFixed(2).replace(".", ","),
+          amount: Number(editing.amount).toFixed(2).replace('.', ','),
           type: editing.type,
           accountType: editing.accountType,
           date: editing.date.slice(0, 10),
           categoryId: editing.categoryId,
-        });
+        })
       } else {
-        setForm({ ...EMPTY, accountType: defaultAccountType ?? "PERSONAL" });
+        setForm({ ...EMPTY, accountType: defaultAccountType ?? 'PERSONAL' })
       }
-      setError("");
+      setError('')
     }
-  }, [open, editing, defaultAccountType]);
+  }, [open, editing, defaultAccountType])
 
   // Fechar com Escape
   useEffect(() => {
-    if (!open) return;
+    if (!open) return
     const handler = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
-    };
-    window.addEventListener("keydown", handler);
-    return () => window.removeEventListener("keydown", handler);
-  }, [open, onClose]);
+      if (e.key === 'Escape') onClose()
+    }
+    window.addEventListener('keydown', handler)
+    return () => window.removeEventListener('keydown', handler)
+  }, [open, onClose])
 
   const { data: categories = [] } = useQuery<Category[]>({
-    queryKey: ["categories"],
+    queryKey: ['categories'],
     queryFn: async () => {
-      const { data } = await api.get<Category[]>("/categories");
-      return data;
+      const { data } = await api.get<Category[]>('/categories')
+      return data
     },
     enabled: open,
-  });
+  })
 
   const filteredCats = categories.filter(
     (c) =>
       c.accountType === form.accountType &&
-      (c.transactionType === null || c.transactionType === form.type),
-  );
+      (c.transactionType === null || c.transactionType === form.type)
+  )
 
   function parseAmount(raw: string): number {
-    return Number(raw.replace(/\./g, "").replace(",", "."));
+    return Number(raw.replace(/\./g, '').replace(',', '.'))
   }
 
   const saveMutation = useMutation({
     mutationFn: async () => {
-      const amount = parseAmount(form.amount as string);
-      if (isNaN(amount) || amount <= 0) throw new Error("Valor inválido.");
-      if (!form.description.trim()) throw new Error("Descrição obrigatória.");
+      const amount = parseAmount(form.amount as string)
+      if (isNaN(amount) || amount <= 0) throw new Error('Valor inválido.')
+      if (!form.description.trim()) throw new Error('Descrição obrigatória.')
 
       const payload = {
         description: form.description.trim(),
         amount,
         type: form.type,
         accountType: form.accountType,
-        date: new Date(form.date + "T12:00:00.000Z").toISOString(),
+        date: new Date(form.date + 'T12:00:00.000Z').toISOString(),
         categoryId: form.categoryId || undefined,
-      };
+      }
 
       if (editing) {
-        await api.put(`/transactions/${editing.id}`, payload);
+        await api.put(`/transactions/${editing.id}`, payload)
       } else {
-        await api.post("/transactions", payload);
+        await api.post('/transactions', payload)
       }
     },
     onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ["transactions"] });
-      onClose();
+      qc.invalidateQueries({ queryKey: ['transactions'] })
+      onClose()
     },
-    onError: (err: any) => {
-      setError(err.message ?? err.response?.data?.message ?? "Erro ao salvar.");
+    onError: (err: Error & { response?: { data?: { message?: string } } }) => {
+      setError(err.message ?? err.response?.data?.message ?? 'Erro ao salvar.')
     },
-  });
+  })
 
   const deleteMutation = useMutation({
     mutationFn: async () => {
-      await api.delete(`/transactions/${editing!.id}`);
+      await api.delete(`/transactions/${editing!.id}`)
     },
     onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ["transactions"] });
-      onClose();
+      qc.invalidateQueries({ queryKey: ['transactions'] })
+      onClose()
     },
-    onError: (err: any) => {
-      setError(err.response?.data?.message ?? "Erro ao excluir.");
+    onError: (err: Error & { response?: { data?: { message?: string } } }) => {
+      setError(err.response?.data?.message ?? 'Erro ao excluir.')
     },
-  });
+  })
 
-  const busy = saveMutation.isPending || deleteMutation.isPending;
+  const busy = saveMutation.isPending || deleteMutation.isPending
 
   function set<K extends keyof typeof form>(k: K, v: (typeof form)[K]) {
-    setForm((f) => ({ ...f, [k]: v }));
-    setError("");
+    setForm((f) => ({ ...f, [k]: v }))
+    setError('')
   }
 
-  if (!open) return null;
+  if (!open) return null
 
   return (
     <div
       ref={overlayRef}
       onClick={(e) => {
-        if (e.target === overlayRef.current) onClose();
+        if (e.target === overlayRef.current) onClose()
       }}
       className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4"
       style={{
-        backgroundColor: "rgb(0 0 0 / 0.6)",
-        backdropFilter: "blur(4px)",
+        backgroundColor: 'rgb(0 0 0 / 0.6)',
+        backdropFilter: 'blur(4px)',
       }}
     >
       <div
         className="w-full max-w-md rounded-2xl border border-line bg-card shadow-xl"
-        style={{ animation: "modal-in .22s cubic-bezier(.2,1,.4,1) both" }}
+        style={{ animation: 'modal-in .22s cubic-bezier(.2,1,.4,1) both' }}
       >
         {/* cabeçalho */}
         <div className="flex items-center justify-between border-b border-line px-6 py-4">
           <h2 className="text-base font-bold text-ink">
-            {editing ? "Editar transação" : "Nova transação"}
+            {editing ? 'Editar transação' : 'Nova transação'}
           </h2>
           <button
             onClick={onClose}
@@ -194,15 +189,15 @@ export function TransactionModal({
           <div className="seg w-full">
             <button
               type="button"
-              className={`flex-1 ${form.type === "EXPENSE" ? "on" : ""}`}
-              onClick={() => set("type", "EXPENSE")}
+              className={`flex-1 ${form.type === 'EXPENSE' ? 'on' : ''}`}
+              onClick={() => set('type', 'EXPENSE')}
             >
               Saída
             </button>
             <button
               type="button"
-              className={`flex-1 ${form.type === "INCOME" ? "on" : ""}`}
-              onClick={() => set("type", "INCOME")}
+              className={`flex-1 ${form.type === 'INCOME' ? 'on' : ''}`}
+              onClick={() => set('type', 'INCOME')}
             >
               Entrada
             </button>
@@ -213,15 +208,15 @@ export function TransactionModal({
             <div className="seg w-full">
               <button
                 type="button"
-                className={`flex-1 ${form.accountType === "PERSONAL" ? "on" : ""}`}
-                onClick={() => set("accountType", "PERSONAL")}
+                className={`flex-1 ${form.accountType === 'PERSONAL' ? 'on' : ''}`}
+                onClick={() => set('accountType', 'PERSONAL')}
               >
                 Pessoal
               </button>
               <button
                 type="button"
-                className={`flex-1 ${form.accountType === "BUSINESS" ? "on" : ""}`}
-                onClick={() => set("accountType", "BUSINESS")}
+                className={`flex-1 ${form.accountType === 'BUSINESS' ? 'on' : ''}`}
+                onClick={() => set('accountType', 'BUSINESS')}
               >
                 Empresarial
               </button>
@@ -230,14 +225,12 @@ export function TransactionModal({
 
           {/* descrição */}
           <div>
-            <label className="mb-1.5 block text-xs font-semibold text-mute">
-              Descrição
-            </label>
+            <label className="mb-1.5 block text-xs font-semibold text-mute">Descrição</label>
             <input
               type="text"
               placeholder="Ex: Freela de design"
               value={form.description}
-              onChange={(e) => set("description", e.target.value)}
+              onChange={(e) => set('description', e.target.value)}
               className="modal-field"
             />
           </div>
@@ -245,26 +238,22 @@ export function TransactionModal({
           {/* valor + data */}
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="mb-1.5 block text-xs font-semibold text-mute">
-                Valor (R$)
-              </label>
+              <label className="mb-1.5 block text-xs font-semibold text-mute">Valor (R$)</label>
               <input
                 type="text"
                 inputMode="decimal"
                 placeholder="0,00"
                 value={form.amount as string}
-                onChange={(e) => set("amount", e.target.value)}
+                onChange={(e) => set('amount', e.target.value)}
                 className="modal-field"
               />
             </div>
             <div>
-              <label className="mb-1.5 block text-xs font-semibold text-mute">
-                Data
-              </label>
+              <label className="mb-1.5 block text-xs font-semibold text-mute">Data</label>
               <input
                 type="date"
                 value={form.date}
-                onChange={(e) => set("date", e.target.value)}
+                onChange={(e) => set('date', e.target.value)}
                 className="modal-field"
               />
             </div>
@@ -276,8 +265,8 @@ export function TransactionModal({
               Categoria (opcional)
             </label>
             <select
-              value={form.categoryId ?? ""}
-              onChange={(e) => set("categoryId", e.target.value || null)}
+              value={form.categoryId ?? ''}
+              onChange={(e) => set('categoryId', e.target.value || null)}
               className="modal-field"
             >
               <option value="">Sem categoria</option>
@@ -298,7 +287,7 @@ export function TransactionModal({
 
         {/* rodapé */}
         <div
-          className={`flex gap-3 border-t border-line px-6 py-4 ${editing ? "justify-between" : "justify-end"}`}
+          className={`flex gap-3 border-t border-line px-6 py-4 ${editing ? 'justify-between' : 'justify-end'}`}
         >
           {editing && (
             <button
@@ -321,7 +310,7 @@ export function TransactionModal({
                 <path d="M10 11v6M14 11v6" />
                 <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2" />
               </svg>
-              {deleteMutation.isPending ? "Excluindo…" : "Excluir"}
+              {deleteMutation.isPending ? 'Excluindo…' : 'Excluir'}
             </button>
           )}
           <div className="flex gap-3">
@@ -339,11 +328,7 @@ export function TransactionModal({
               disabled={busy}
               className="rounded-lg bg-brand px-5 py-2.5 text-sm font-bold text-white transition-colors hover:bg-brand-dk disabled:opacity-50"
             >
-              {saveMutation.isPending
-                ? "Salvando…"
-                : editing
-                  ? "Salvar"
-                  : "Lançar"}
+              {saveMutation.isPending ? 'Salvando…' : editing ? 'Salvar' : 'Lançar'}
             </button>
           </div>
         </div>
@@ -377,5 +362,5 @@ export function TransactionModal({
         }
       `}</style>
     </div>
-  );
+  )
 }

@@ -1,47 +1,48 @@
-import Image from "next/image";
-import type { ReactNode } from "react";
+import Image from 'next/image'
+import Link from 'next/link'
+import type { ReactNode } from 'react'
 
-type ServiceStatus = "operational" | "maintenance" | "offline";
-type Severity = "low" | "medium" | "high";
-type UptimeBar = "ok" | "mt" | "dn";
+type ServiceStatus = 'operational' | 'maintenance' | 'offline'
+type Severity = 'low' | 'medium' | 'high'
+type UptimeBar = 'ok' | 'mt' | 'dn'
 
 interface Service {
-  name: string;
-  key: string;
-  status: ServiceStatus;
-  latency_ms: number;
-  uptime_pct: string;
+  name: string
+  key: string
+  status: ServiceStatus
+  latency_ms: number
+  uptime_pct: string
 }
 
 interface Incident {
-  id: string;
-  title: string;
-  description: string;
-  severity: Severity;
-  date: string;
-  resolved: boolean;
+  id: string
+  title: string
+  description: string
+  severity: Severity
+  date: string
+  resolved: boolean
 }
 
 interface StatusPayload {
-  overall: ServiceStatus;
-  checked_at: string;
-  services: Service[];
-  incidents: Incident[];
-  uptime_bars: UptimeBar[];
+  overall: ServiceStatus
+  checked_at: string
+  services: Service[]
+  incidents: Incident[]
+  uptime_bars: UptimeBar[]
 }
 
 const COPY: Record<
   ServiceStatus,
   {
-    badge: string;
-    title: ReactNode;
-    sub: string;
-    uptime: string;
-    services: string;
+    badge: string
+    title: ReactNode
+    sub: string
+    uptime: string
+    services: string
   }
 > = {
   operational: {
-    badge: "Todos os sistemas operacionais",
+    badge: 'Todos os sistemas operacionais',
     title: (
       <>
         Tudo certo
@@ -49,12 +50,12 @@ const COPY: Record<
         por aqui.
       </>
     ),
-    sub: "Seus dados financeiros estão seguros e acessíveis. Operação normal em todos os serviços.",
-    uptime: "—",
-    services: "—",
+    sub: 'Seus dados financeiros estão seguros e acessíveis. Operação normal em todos os serviços.',
+    uptime: '—',
+    services: '—',
   },
   maintenance: {
-    badge: "Manutenção em andamento",
+    badge: 'Manutenção em andamento',
     title: (
       <>
         Em manutenção
@@ -62,12 +63,12 @@ const COPY: Record<
         programada.
       </>
     ),
-    sub: "Um serviço está passando por atualização. Você pode notar lentidão pontual.",
-    uptime: "—",
-    services: "—",
+    sub: 'Um serviço está passando por atualização. Você pode notar lentidão pontual.',
+    uptime: '—',
+    services: '—',
   },
   offline: {
-    badge: "Instabilidade detectada",
+    badge: 'Instabilidade detectada',
     title: (
       <>
         Estamos
@@ -75,17 +76,17 @@ const COPY: Record<
         resolvendo.
       </>
     ),
-    sub: "Identificamos uma falha e a equipe já está atuando. Acompanhe as atualizações abaixo.",
-    uptime: "—",
-    services: "—",
+    sub: 'Identificamos uma falha e a equipe já está atuando. Acompanhe as atualizações abaixo.',
+    uptime: '—',
+    services: '—',
   },
-};
+}
 
 const ACC_VAR: Record<ServiceStatus, string> = {
-  operational: "var(--c-brand)",
-  maintenance: "var(--c-amber)",
-  offline: "var(--c-rose)",
-};
+  operational: 'var(--c-brand)',
+  maintenance: 'var(--c-amber)',
+  offline: 'var(--c-rose)',
+}
 
 const SERVICE_ICONS: Record<string, ReactNode> = {
   api: (
@@ -159,181 +160,169 @@ const SERVICE_ICONS: Record<string, ReactNode> = {
       <rect x="13" y="7" width="3" height="10" rx="1" />
     </svg>
   ),
-};
+}
 
 const SERVICE_STATUS_LABELS: Record<ServiceStatus, string> = {
-  operational: "Operacional",
-  maintenance: "Manutenção",
-  offline: "Offline",
-};
+  operational: 'Operacional',
+  maintenance: 'Manutenção',
+  offline: 'Offline',
+}
 
 const SEVERITY_LABELS: Record<Severity, string> = {
-  low: "BAIXA",
-  medium: "MÉDIA",
-  high: "ALTA",
-};
+  low: 'BAIXA',
+  medium: 'MÉDIA',
+  high: 'ALTA',
+}
 const SEVERITY_VAR: Record<Severity, string> = {
-  low: "var(--c-blue)",
-  medium: "var(--c-amber)",
-  high: "var(--c-rose)",
-};
+  low: 'var(--c-blue)',
+  medium: 'var(--c-amber)',
+  high: 'var(--c-rose)',
+}
 
 async function fetchStatus(): Promise<StatusPayload | null> {
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3333";
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3333'
   try {
-    const res = await fetch(`${apiUrl}/status`, { cache: "no-store" });
-    if (!res.ok) return null;
-    return res.json();
+    const res = await fetch(`${apiUrl}/status`, { cache: 'no-store' })
+    if (!res.ok) return null
+    return res.json()
   } catch {
-    return null;
+    return null
   }
 }
 
 // fallback usado antes do backend estar pronto
 const FALLBACK: StatusPayload = {
-  overall: "operational",
+  overall: 'operational',
   checked_at: new Date().toISOString(),
   services: [
     {
-      name: "API",
-      key: "api",
-      status: "operational",
+      name: 'API',
+      key: 'api',
+      status: 'operational',
       latency_ms: 0,
-      uptime_pct: "99,99%",
+      uptime_pct: '99,99%',
     },
     {
-      name: "Banco de Dados",
-      key: "database",
-      status: "operational",
+      name: 'Banco de Dados',
+      key: 'database',
+      status: 'operational',
       latency_ms: 0,
-      uptime_pct: "99,97%",
+      uptime_pct: '99,97%',
     },
     {
-      name: "Autenticação",
-      key: "auth",
-      status: "operational",
+      name: 'Autenticação',
+      key: 'auth',
+      status: 'operational',
       latency_ms: 0,
-      uptime_pct: "99,82%",
+      uptime_pct: '99,82%',
     },
     {
-      name: "Notificações",
-      key: "notifications",
-      status: "operational",
+      name: 'Notificações',
+      key: 'notifications',
+      status: 'operational',
       latency_ms: 0,
-      uptime_pct: "99,90%",
+      uptime_pct: '99,90%',
     },
     {
-      name: "Relatórios & IR",
-      key: "reports",
-      status: "operational",
+      name: 'Relatórios & IR',
+      key: 'reports',
+      status: 'operational',
       latency_ms: 0,
-      uptime_pct: "99,90%",
+      uptime_pct: '99,90%',
     },
   ],
   incidents: [
     {
-      id: "1",
-      title: "Manutenção programada · Autenticação",
-      description: "Janela de atualização do provedor de login.",
-      severity: "medium",
-      date: "02/06/2026",
+      id: '1',
+      title: 'Manutenção programada · Autenticação',
+      description: 'Janela de atualização do provedor de login.',
+      severity: 'medium',
+      date: '02/06/2026',
       resolved: true,
     },
     {
-      id: "2",
-      title: "Lentidão em relatórios",
-      description: "Exportações de IR lentas por 22 min. Resolvido.",
-      severity: "high",
-      date: "28/05/2026",
+      id: '2',
+      title: 'Lentidão em relatórios',
+      description: 'Exportações de IR lentas por 22 min. Resolvido.',
+      severity: 'high',
+      date: '28/05/2026',
       resolved: true,
     },
     {
-      id: "3",
-      title: "Ajuste em webhooks de PIX",
-      description: "Pequeno atraso na confirmação de pagamentos.",
-      severity: "low",
-      date: "15/05/2026",
+      id: '3',
+      title: 'Ajuste em webhooks de PIX',
+      description: 'Pequeno atraso na confirmação de pagamentos.',
+      severity: 'low',
+      date: '15/05/2026',
       resolved: true,
     },
   ],
   uptime_bars: Array.from({ length: 45 }, (_, i) =>
-    i === 12 || i === 37 ? "mt" : i === 25 ? "dn" : "ok",
+    i === 12 || i === 37 ? 'mt' : i === 25 ? 'dn' : 'ok'
   ) as UptimeBar[],
-};
+}
 
 function operationalCount(services: Service[]) {
-  const up = services.filter((s) => s.status === "operational").length;
-  return `${up}/${services.length}`;
+  const up = services.filter((s) => s.status === 'operational').length
+  return `${up}/${services.length}`
 }
 
 function avgUptime(services: Service[]) {
-  const vals = services
-    .map((s) => parseFloat(s.uptime_pct.replace(",", ".")))
-    .filter(Boolean);
-  if (!vals.length) return "—";
-  const avg = vals.reduce((a, b) => a + b, 0) / vals.length;
-  return avg.toFixed(2).replace(".", ",") + "%";
+  const vals = services.map((s) => parseFloat(s.uptime_pct.replace(',', '.'))).filter(Boolean)
+  if (!vals.length) return '—'
+  const avg = vals.reduce((a, b) => a + b, 0) / vals.length
+  return avg.toFixed(2).replace('.', ',') + '%'
 }
 
 export default async function StatusPage() {
-  const data = (await fetchStatus()) ?? FALLBACK;
-  const state = data.overall;
-  const acc = ACC_VAR[state];
-  const copy = COPY[state];
+  const data = (await fetchStatus()) ?? FALLBACK
+  const state = data.overall
+  const acc = ACC_VAR[state]
+  const copy = COPY[state]
 
-  const uptimePct = avgUptime(data.services);
-  const servicesCt = operationalCount(data.services);
+  const uptimePct = avgUptime(data.services)
+  const servicesCt = operationalCount(data.services)
 
   const checkedLabel = (() => {
-    const diff = Math.round(
-      (Date.now() - new Date(data.checked_at).getTime()) / 60000,
-    );
-    if (diff < 1) return "agora mesmo";
-    if (diff === 1) return "há 1 minuto";
-    return `há ${diff} minutos`;
-  })();
+    const diff = Math.round((Date.now() - new Date(data.checked_at).getTime()) / 60000)
+    if (diff < 1) return 'agora mesmo'
+    if (diff === 1) return 'há 1 minuto'
+    return `há ${diff} minutos`
+  })()
 
   return (
     <div
       className="fixed inset-0 overflow-hidden font-sans"
-      style={{ backgroundColor: "rgb(var(--c-bg-deep))" }}
+      style={{ backgroundColor: 'rgb(var(--c-bg-deep))' }}
     >
       <div
         className="absolute inset-0 overflow-hidden rounded-2xl border"
         style={{
-          backgroundColor: "rgb(var(--c-bg))",
-          borderColor: "rgb(var(--c-line))",
+          backgroundColor: 'rgb(var(--c-bg))',
+          borderColor: 'rgb(var(--c-line))',
         }}
       >
         {/* TOP BAR */}
         <div
           className="flex items-center justify-between border-b px-8 py-5"
-          style={{ borderColor: "rgb(var(--c-line))" }}
+          style={{ borderColor: 'rgb(var(--c-line))' }}
         >
-          <a href="/" className="flex items-center gap-2.5">
-            <Image
-              src="/cifrinho-mascot.png"
-              alt="Cifrinho"
-              width={32}
-              height={32}
-            />
-            <span className="text-lg font-extrabold tracking-tight text-ink">
-              Cifrinho
-            </span>
+          <Link href="/" className="flex items-center gap-2.5">
+            <Image src="/cifrinho-mascot.png" alt="Cifrinho" width={32} height={32} />
+            <span className="text-lg font-extrabold tracking-tight text-ink">Cifrinho</span>
             <span
               className="ml-2 rounded-full border px-2.5 py-1 text-[11px] font-bold uppercase tracking-widest"
               style={{
-                borderColor: "rgb(var(--c-line))",
-                background: "rgb(var(--c-card))",
-                color: "rgb(var(--c-mute))",
+                borderColor: 'rgb(var(--c-line))',
+                background: 'rgb(var(--c-card))',
+                color: 'rgb(var(--c-mute))',
               }}
             >
               Status
             </span>
-          </a>
+          </Link>
           <p className="text-sm text-mute">
-            Verificado{" "}
-            <span className="font-semibold text-ink">{checkedLabel}</span>
+            Verificado <span className="font-semibold text-ink">{checkedLabel}</span>
           </p>
         </div>
 
@@ -344,8 +333,8 @@ export default async function StatusPage() {
             className="relative flex flex-col items-center justify-center overflow-hidden rounded-2xl border px-6 py-6 text-center"
             style={{
               background: `radial-gradient(circle at 50% 38%, rgb(${acc} / 0.16), transparent 62%)`,
-              borderColor: "rgb(var(--c-line))",
-              backgroundColor: "rgb(var(--c-card))",
+              borderColor: 'rgb(var(--c-line))',
+              backgroundColor: 'rgb(var(--c-card))',
               boxShadow: `0 0 120px -10px rgb(${acc} / 0.28)`,
             }}
           >
@@ -356,29 +345,21 @@ export default async function StatusPage() {
                 width={160}
                 height={160}
                 style={{
-                  animation:
-                    state === "operational"
-                      ? "float 6s ease-in-out infinite"
-                      : undefined,
-                  filter:
-                    state === "offline"
-                      ? "grayscale(0.6) brightness(0.92)"
-                      : undefined,
-                  transition: "filter .4s ease",
+                  animation: state === 'operational' ? 'float 6s ease-in-out infinite' : undefined,
+                  filter: state === 'offline' ? 'grayscale(0.6) brightness(0.92)' : undefined,
+                  transition: 'filter .4s ease',
                 }}
               />
               {/* badge manutenção — martelo */}
               <span
                 className="absolute -right-1 -top-3 flex h-11 w-11 items-center justify-center rounded-full text-white"
                 style={{
-                  background: "#F59E0B",
-                  boxShadow: "0 0 22px -2px rgba(245,158,11,.7)",
-                  opacity: state === "maintenance" ? 1 : 0,
-                  transform:
-                    state === "maintenance" ? "scale(1)" : "scale(0.5)",
-                  transition:
-                    "opacity .3s ease, transform .35s cubic-bezier(.2,1.4,.4,1)",
-                  pointerEvents: "none",
+                  background: '#F59E0B',
+                  boxShadow: '0 0 22px -2px rgba(245,158,11,.7)',
+                  opacity: state === 'maintenance' ? 1 : 0,
+                  transform: state === 'maintenance' ? 'scale(1)' : 'scale(0.5)',
+                  transition: 'opacity .3s ease, transform .35s cubic-bezier(.2,1.4,.4,1)',
+                  pointerEvents: 'none',
                 }}
               >
                 <svg
@@ -399,13 +380,12 @@ export default async function StatusPage() {
               <span
                 className="absolute -right-1 -top-3 flex h-11 w-11 items-center justify-center rounded-full text-white"
                 style={{
-                  background: "#F43F5E",
-                  boxShadow: "0 0 22px -2px rgba(244,63,94,.7)",
-                  opacity: state === "offline" ? 1 : 0,
-                  transform: state === "offline" ? "scale(1)" : "scale(0.5)",
-                  transition:
-                    "opacity .3s ease, transform .35s cubic-bezier(.2,1.4,.4,1)",
-                  pointerEvents: "none",
+                  background: '#F43F5E',
+                  boxShadow: '0 0 22px -2px rgba(244,63,94,.7)',
+                  opacity: state === 'offline' ? 1 : 0,
+                  transform: state === 'offline' ? 'scale(1)' : 'scale(0.5)',
+                  transition: 'opacity .3s ease, transform .35s cubic-bezier(.2,1.4,.4,1)',
+                  pointerEvents: 'none',
                 }}
               >
                 <svg
@@ -429,8 +409,8 @@ export default async function StatusPage() {
             <div
               className="mt-6 inline-flex items-center gap-2.5 rounded-full border px-4 py-2"
               style={{
-                borderColor: "rgb(var(--c-line))",
-                background: "rgb(var(--c-bg))",
+                borderColor: 'rgb(var(--c-line))',
+                background: 'rgb(var(--c-bg))',
               }}
             >
               <span className="relative flex h-2.5 w-2.5">
@@ -443,10 +423,7 @@ export default async function StatusPage() {
                   style={{ background: `rgb(${acc})` }}
                 />
               </span>
-              <span
-                className="text-sm font-bold"
-                style={{ color: `rgb(${acc})` }}
-              >
+              <span className="text-sm font-bold" style={{ color: `rgb(${acc})` }}>
                 {copy.badge}
               </span>
             </div>
@@ -454,22 +431,17 @@ export default async function StatusPage() {
             <h1 className="mt-5 whitespace-nowrap text-[2rem] font-extrabold leading-[1.08] tracking-tight text-ink">
               {copy.title}
             </h1>
-            <p className="mt-4 max-w-xs text-sm leading-relaxed text-mute">
-              {copy.sub}
-            </p>
+            <p className="mt-4 max-w-xs text-sm leading-relaxed text-mute">{copy.sub}</p>
 
             <div className="mt-6 grid w-full max-w-xs grid-cols-2 gap-3">
               <div
                 className="rounded-xl border p-3"
                 style={{
-                  borderColor: "rgb(var(--c-line))",
-                  background: "rgb(var(--c-bg))",
+                  borderColor: 'rgb(var(--c-line))',
+                  background: 'rgb(var(--c-bg))',
                 }}
               >
-                <p
-                  className="text-2xl font-extrabold"
-                  style={{ color: `rgb(${acc})` }}
-                >
+                <p className="text-2xl font-extrabold" style={{ color: `rgb(${acc})` }}>
                   {uptimePct}
                 </p>
                 <p className="text-[11px] text-mute">uptime 90 dias</p>
@@ -477,8 +449,8 @@ export default async function StatusPage() {
               <div
                 className="rounded-xl border p-3"
                 style={{
-                  borderColor: "rgb(var(--c-line))",
-                  background: "rgb(var(--c-bg))",
+                  borderColor: 'rgb(var(--c-line))',
+                  background: 'rgb(var(--c-bg))',
                 }}
               >
                 <p className="text-2xl font-extrabold text-ink">{servicesCt}</p>
@@ -491,29 +463,27 @@ export default async function StatusPage() {
           <div
             className="flex flex-col rounded-2xl border p-6"
             style={{
-              borderColor: "rgb(var(--c-line))",
-              background: "rgb(var(--c-card))",
+              borderColor: 'rgb(var(--c-line))',
+              background: 'rgb(var(--c-card))',
             }}
           >
-            <p className="text-xs font-semibold uppercase tracking-widest text-mute">
-              Serviços
-            </p>
+            <p className="text-xs font-semibold uppercase tracking-widest text-mute">Serviços</p>
             <div className="mt-4 flex flex-1 flex-col justify-between gap-3">
               {data.services.map((svc) => {
                 const svcAcc =
-                  svc.status === "maintenance"
-                    ? "var(--c-amber)"
-                    : svc.status === "offline"
-                      ? "var(--c-rose)"
-                      : "var(--c-brand)";
-                const icon = SERVICE_ICONS[svc.key] ?? SERVICE_ICONS.api;
+                  svc.status === 'maintenance'
+                    ? 'var(--c-amber)'
+                    : svc.status === 'offline'
+                      ? 'var(--c-rose)'
+                      : 'var(--c-brand)'
+                const icon = SERVICE_ICONS[svc.key] ?? SERVICE_ICONS.api
                 return (
                   <div
                     key={svc.key}
                     className="flex items-center gap-4 rounded-xl border px-4 py-3.5"
                     style={{
-                      borderColor: "rgb(var(--c-line))",
-                      background: "rgb(var(--c-bg))",
+                      borderColor: 'rgb(var(--c-line))',
+                      background: 'rgb(var(--c-bg))',
                     }}
                   >
                     <span
@@ -528,14 +498,10 @@ export default async function StatusPage() {
                     <div className="min-w-0 flex-1">
                       <p className="text-sm font-bold text-ink">{svc.name}</p>
                       <p className="text-xs text-mute">
-                        {svc.latency_ms > 0
-                          ? `${svc.latency_ms} ms`
-                          : "sem latência"}
+                        {svc.latency_ms > 0 ? `${svc.latency_ms} ms` : 'sem latência'}
                       </p>
                     </div>
-                    <span className="text-xs font-semibold text-mute">
-                      {svc.uptime_pct}
-                    </span>
+                    <span className="text-xs font-semibold text-mute">{svc.uptime_pct}</span>
                     <span
                       className="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-bold"
                       style={{
@@ -550,7 +516,7 @@ export default async function StatusPage() {
                       {SERVICE_STATUS_LABELS[svc.status]}
                     </span>
                   </div>
-                );
+                )
               })}
             </div>
           </div>
@@ -560,8 +526,8 @@ export default async function StatusPage() {
             <div
               className="flex flex-1 flex-col rounded-2xl border p-6"
               style={{
-                borderColor: "rgb(var(--c-line))",
-                background: "rgb(var(--c-card))",
+                borderColor: 'rgb(var(--c-line))',
+                background: 'rgb(var(--c-card))',
               }}
             >
               <p className="text-xs font-semibold uppercase tracking-widest text-mute">
@@ -573,8 +539,8 @@ export default async function StatusPage() {
                     key={inc.id}
                     className="rounded-xl border p-4"
                     style={{
-                      borderColor: "rgb(var(--c-line))",
-                      background: "rgb(var(--c-bg))",
+                      borderColor: 'rgb(var(--c-line))',
+                      background: 'rgb(var(--c-bg))',
                     }}
                   >
                     <div className="flex items-center justify-between">
@@ -587,35 +553,23 @@ export default async function StatusPage() {
                       >
                         {SEVERITY_LABELS[inc.severity]}
                       </span>
-                      <span
-                        className="text-[11px]"
-                        style={{ color: "rgb(var(--c-faint))" }}
-                      >
+                      <span className="text-[11px]" style={{ color: 'rgb(var(--c-faint))' }}>
                         {inc.date}
                       </span>
                     </div>
-                    <p className="mt-2 text-sm font-bold text-ink">
-                      {inc.title}
-                    </p>
-                    <p className="mt-1 text-xs leading-relaxed text-mute">
-                      {inc.description}
-                    </p>
+                    <p className="mt-2 text-sm font-bold text-ink">{inc.title}</p>
+                    <p className="mt-1 text-xs leading-relaxed text-mute">{inc.description}</p>
                   </div>
                 ))}
               </div>
 
               {/* UPTIME BARS */}
-              <div
-                className="mt-5 border-t pt-5"
-                style={{ borderColor: "rgb(var(--c-line))" }}
-              >
+              <div className="mt-5 border-t pt-5" style={{ borderColor: 'rgb(var(--c-line))' }}>
                 <div className="flex items-center justify-between">
                   <p className="text-xs font-semibold uppercase tracking-widest text-mute">
                     Uptime · 90 dias
                   </p>
-                  <span className="text-sm font-extrabold text-brand">
-                    {uptimePct}
-                  </span>
+                  <span className="text-sm font-extrabold text-brand">{uptimePct}</span>
                 </div>
                 <div className="mt-4 flex h-[34px] items-end gap-0.5">
                   {data.uptime_bars.map((t, i) => (
@@ -623,20 +577,20 @@ export default async function StatusPage() {
                       key={i}
                       className="flex-1 rounded-sm"
                       style={{
-                        height: "100%",
+                        height: '100%',
                         background:
-                          t === "dn"
-                            ? "rgb(var(--c-rose)  / 0.85)"
-                            : t === "mt"
-                              ? "rgb(var(--c-amber) / 0.85)"
-                              : "rgb(var(--c-brand) / 0.85)",
+                          t === 'dn'
+                            ? 'rgb(var(--c-rose)  / 0.85)'
+                            : t === 'mt'
+                              ? 'rgb(var(--c-amber) / 0.85)'
+                              : 'rgb(var(--c-brand) / 0.85)',
                       }}
                     />
                   ))}
                 </div>
                 <div
                   className="mt-3 flex items-center justify-between text-[11px]"
-                  style={{ color: "rgb(var(--c-faint))" }}
+                  style={{ color: 'rgb(var(--c-faint))' }}
                 >
                   <span>90 dias atrás</span>
                   <span>hoje</span>
@@ -647,5 +601,5 @@ export default async function StatusPage() {
         </div>
       </div>
     </div>
-  );
+  )
 }
