@@ -1,6 +1,6 @@
-"use client";
+'use client'
 
-import { useState, useMemo } from "react";
+import { useState, useMemo } from 'react'
 import {
   useTransactions,
   calcOverview,
@@ -9,17 +9,15 @@ import {
   fmt,
   type Transaction,
   type PieSlice,
-} from "@/hooks/useTransactions";
-import { useAuth } from "@/contexts/AuthContext";
-import { TransactionModal } from "@/components/ui/TransactionModal";
-import { StatementImportModal } from "@/components/ui/StatementImportModal";
-import { GoalModal } from "@/components/ui/GoalModal";
-import { useGoals } from "@/hooks/useGoals";
+} from '@/hooks/useTransactions'
+import { useAuth } from '@/contexts/AuthContext'
+import { TransactionModal } from '@/components/ui/TransactionModal'
+import { StatementImportModal } from '@/components/ui/StatementImportModal'
+import { GoalModal } from '@/components/ui/GoalModal'
+import { useGoals } from '@/hooks/useGoals'
 
 function Skeleton({ className }: { className?: string }) {
-  return (
-    <div className={`animate-pulse rounded bg-line/40 ${className ?? ""}`} />
-  );
+  return <div className={`animate-pulse rounded bg-line/40 ${className ?? ''}`} />
 }
 
 function PieChart({
@@ -27,38 +25,31 @@ function PieChart({
   total,
   fmt,
 }: {
-  slices: PieSlice[];
-  total: number;
-  fmt: (n: number) => string;
+  slices: PieSlice[]
+  total: number
+  fmt: (n: number) => string
 }) {
   const cx = 50,
     cy = 50,
-    r = 38;
-  const circumference = 2 * Math.PI * r;
-  let offset = 0;
+    r = 38
+  const circumference = 2 * Math.PI * r
+  let offset = 0
 
   const paths = slices.map((s) => {
-    const len = (s.pct / 100) * circumference;
+    const len = (s.pct / 100) * circumference
     const path = {
       slice: s,
       dasharray: `${len - 1.5} ${circumference - len + 1.5}`,
       dashoffset: -offset,
-    };
-    offset += len;
-    return path;
-  });
+    }
+    offset += len
+    return path
+  })
 
   return (
     <div className="relative h-[120px] w-[120px] shrink-0">
       <svg viewBox="0 0 100 100" className="h-[120px] w-[120px] -rotate-90">
-        <circle
-          cx={cx}
-          cy={cy}
-          r={r}
-          fill="none"
-          stroke="rgb(var(--c-line))"
-          strokeWidth="12"
-        />
+        <circle cx={cx} cy={cy} r={r} fill="none" stroke="rgb(var(--c-line))" strokeWidth="12" />
         {paths.map(({ slice, dasharray, dashoffset }, i) => (
           <circle
             key={i}
@@ -75,48 +66,45 @@ function PieChart({
       </svg>
       <div className="absolute inset-0 grid place-items-center text-center">
         <div>
-          <p className="text-[11px] font-extrabold text-ink leading-tight">
-            {fmt(total)}
-          </p>
+          <p className="text-[11px] font-extrabold text-ink leading-tight">{fmt(total)}</p>
           <p className="text-[9px] text-mute">total</p>
         </div>
       </div>
     </div>
-  );
+  )
 }
 
 export default function OverviewPage() {
-  const { data: txs, isLoading, isError } = useTransactions();
-  const { firstName } = useAuth();
-  const [modalOpen, setModalOpen] = useState(false);
-  const [editing, setEditing] = useState<Transaction | null>(null);
-  const [importOpen, setImportOpen] = useState(false);
-  const [goalOpen, setGoalOpen] = useState(false);
-  const { active: activeGoals, complete: completeGoal } = useGoals();
+  const { data: txs, isLoading, isError } = useTransactions()
+  const { firstName } = useAuth()
+  const [modalOpen, setModalOpen] = useState(false)
+  const [editing, setEditing] = useState<Transaction | null>(null)
+  const [importOpen, setImportOpen] = useState(false)
+  const [goalOpen, setGoalOpen] = useState(false)
+  const { active: activeGoals, complete: completeGoal } = useGoals()
 
-  const now = new Date();
-  const [selectedYear, setSelectedYear] = useState(now.getFullYear());
-  const [selectedMonth, setSelectedMonth] = useState(now.getMonth());
-  const [pieType, setPieType] = useState<"EXPENSE" | "INCOME">("EXPENSE");
+  const now = new Date()
+  const [selectedYear, setSelectedYear] = useState(now.getFullYear())
+  const [selectedMonth, setSelectedMonth] = useState(now.getMonth())
+  const [pieType, setPieType] = useState<'EXPENSE' | 'INCOME'>('EXPENSE')
 
   const pieSlices = useMemo(
-    () =>
-      txs ? calcCategoryPie(txs, pieType, selectedYear, selectedMonth) : [],
-    [txs, pieType, selectedYear, selectedMonth],
-  );
+    () => (txs ? calcCategoryPie(txs, pieType, selectedYear, selectedMonth) : []),
+    [txs, pieType, selectedYear, selectedMonth]
+  )
 
-  const monthLabel = new Date(selectedYear, selectedMonth, 1).toLocaleString(
-    "pt-BR",
-    { month: "long", year: "numeric" },
-  );
+  const monthLabel = new Date(selectedYear, selectedMonth, 1).toLocaleString('pt-BR', {
+    month: 'long',
+    year: 'numeric',
+  })
 
   function openNew() {
-    setEditing(null);
-    setModalOpen(true);
+    setEditing(null)
+    setModalOpen(true)
   }
   function openEdit(t: Transaction) {
-    setEditing(t);
-    setModalOpen(true);
+    setEditing(t)
+    setModalOpen(true)
   }
 
   if (isError) {
@@ -124,7 +112,7 @@ export default function OverviewPage() {
       <div className="flex items-center justify-center py-20 text-sm text-mute">
         Não foi possível carregar os dados. Verifique sua conexão.
       </div>
-    );
+    )
   }
 
   if (isLoading || !txs) {
@@ -144,28 +132,22 @@ export default function OverviewPage() {
           <Skeleton className="h-64 rounded-lg" />
         </div>
       </div>
-    );
+    )
   }
 
-  const {
-    balance,
-    curIncome,
-    curExpense,
-    savingsRate,
-    deltaIncome,
-    deltaExpense,
-  } = calcOverview(txs);
-  const bars = calcMonthlyBars(txs);
-  const recent = txs.slice(0, 5);
+  const { balance, curIncome, curExpense, savingsRate, deltaIncome, deltaExpense } =
+    calcOverview(txs)
+  const bars = calcMonthlyBars(txs)
+  const recent = txs.slice(0, 5)
 
   const kpis = [
     {
-      label: "Saldo consolidado",
+      label: 'Saldo consolidado',
       value: fmt(balance),
       delta: `${deltaIncome} vs. mês anterior`,
-      deltaColor: balance >= 0 ? "text-brand" : "text-rose",
+      deltaColor: balance >= 0 ? 'text-brand' : 'text-rose',
       up: balance >= 0,
-      iconBg: "bg-brand/15 text-brand",
+      iconBg: 'bg-brand/15 text-brand',
       icon: (
         <svg
           className="h-4 w-4"
@@ -179,12 +161,12 @@ export default function OverviewPage() {
       ),
     },
     {
-      label: "Receitas do mês",
+      label: 'Receitas do mês',
       value: fmt(curIncome),
       delta: `${deltaIncome} vs. mês anterior`,
-      deltaColor: "text-brand",
+      deltaColor: 'text-brand',
       up: true,
-      iconBg: "bg-blue/15 text-blue",
+      iconBg: 'bg-blue/15 text-blue',
       icon: (
         <svg
           className="h-4 w-4"
@@ -199,12 +181,12 @@ export default function OverviewPage() {
       ),
     },
     {
-      label: "Despesas do mês",
+      label: 'Despesas do mês',
       value: fmt(curExpense),
       delta: `${deltaExpense} vs. mês anterior`,
-      deltaColor: "text-rose",
+      deltaColor: 'text-rose',
       up: false,
-      iconBg: "bg-rose/15 text-rose",
+      iconBg: 'bg-rose/15 text-rose',
       icon: (
         <svg
           className="h-4 w-4"
@@ -219,12 +201,12 @@ export default function OverviewPage() {
       ),
     },
     {
-      label: "Taxa de poupança",
+      label: 'Taxa de poupança',
       value: `${savingsRate}%`,
-      delta: savingsRate >= 20 ? "Meta de 20% atingida" : "Meta: 20%",
-      deltaColor: savingsRate >= 20 ? "text-brand" : "text-amber",
+      delta: savingsRate >= 20 ? 'Meta de 20% atingida' : 'Meta: 20%',
+      deltaColor: savingsRate >= 20 ? 'text-brand' : 'text-amber',
       up: savingsRate >= 20,
-      iconBg: "bg-purple/15 text-purple",
+      iconBg: 'bg-purple/15 text-purple',
       icon: (
         <svg
           className="h-4 w-4"
@@ -241,30 +223,27 @@ export default function OverviewPage() {
         </svg>
       ),
     },
-  ];
+  ]
 
   return (
     <>
       <TransactionModal
         open={modalOpen}
         onClose={() => {
-          setModalOpen(false);
-          setEditing(null);
+          setModalOpen(false)
+          setEditing(null)
         }}
         editing={editing}
       />
-      <StatementImportModal
-        open={importOpen}
-        onClose={() => setImportOpen(false)}
-      />
+      <StatementImportModal open={importOpen} onClose={() => setImportOpen(false)} />
       <GoalModal open={goalOpen} onClose={() => setGoalOpen(false)} />
 
       <div>
         <div className="mb-4 flex items-center justify-between">
           {firstName && (
             <p className="text-sm text-mute">
-              Olá, <span className="font-semibold text-ink">{firstName}</span>.
-              Aqui está seu resumo financeiro.
+              Olá, <span className="font-semibold text-ink">{firstName}</span>. Aqui está seu resumo
+              financeiro.
             </p>
           )}
           <div className="ml-auto flex items-center gap-2">
@@ -309,21 +288,14 @@ export default function OverviewPage() {
         {/* KPIs */}
         <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
           {kpis.map((kpi, i) => (
-            <div
-              key={i}
-              className="rounded-lg border border-line bg-card p-5 elev-sm"
-            >
+            <div key={i} className="rounded-lg border border-line bg-card p-5 elev-sm">
               <div className="flex items-center justify-between">
                 <p className="text-sm text-mute">{kpi.label}</p>
-                <span
-                  className={`grid h-8 w-8 place-items-center rounded-md ${kpi.iconBg}`}
-                >
+                <span className={`grid h-8 w-8 place-items-center rounded-md ${kpi.iconBg}`}>
                   {kpi.icon}
                 </span>
               </div>
-              <p className="mt-3 text-3xl font-extrabold tracking-tight text-ink">
-                {kpi.value}
-              </p>
+              <p className="mt-3 text-3xl font-extrabold tracking-tight text-ink">{kpi.value}</p>
               <p
                 className={`mt-1.5 flex items-center gap-1 text-xs font-semibold ${kpi.deltaColor}`}
               >
@@ -360,9 +332,7 @@ export default function OverviewPage() {
           <div className="rounded-lg border border-line bg-card p-6 elev-sm">
             <div className="flex flex-wrap items-center justify-between gap-3">
               <div>
-                <h3 className="text-base font-bold text-ink">
-                  Receitas × Despesas
-                </h3>
+                <h3 className="text-base font-bold text-ink">Receitas × Despesas</h3>
                 <p className="text-xs text-mute">Últimos 7 meses</p>
               </div>
               <div className="flex items-center gap-4 text-xs text-ink">
@@ -382,28 +352,22 @@ export default function OverviewPage() {
                   key={m.month}
                   className="flex flex-1 cursor-pointer flex-col items-center gap-2"
                   onClick={() => {
-                    const idx = bars.indexOf(m);
+                    const idx = bars.indexOf(m)
                     const d = new Date(
                       now.getFullYear(),
                       now.getMonth() - (bars.length - 1 - idx),
-                      1,
-                    );
-                    setSelectedYear(d.getFullYear());
-                    setSelectedMonth(d.getMonth());
+                      1
+                    )
+                    setSelectedYear(d.getFullYear())
+                    setSelectedMonth(d.getMonth())
                   }}
                 >
                   <div className="flex w-full items-end justify-center gap-1">
-                    <div
-                      className="bar w-1/2 bg-brand"
-                      style={{ height: m.inH || 4 }}
-                    ></div>
-                    <div
-                      className="bar w-1/2 bg-line"
-                      style={{ height: m.outH || 4 }}
-                    ></div>
+                    <div className="bar w-1/2 bg-brand" style={{ height: m.inH || 4 }}></div>
+                    <div className="bar w-1/2 bg-line" style={{ height: m.outH || 4 }}></div>
                   </div>
                   <span
-                    className={`text-[11px] ${m.current ? "font-semibold text-ink" : "text-faint"}`}
+                    className={`text-[11px] ${m.current ? 'font-semibold text-ink' : 'text-faint'}`}
                   >
                     {m.month}
                   </span>
@@ -421,14 +385,14 @@ export default function OverviewPage() {
               </div>
               <div className="seg shrink-0">
                 <button
-                  className={pieType === "EXPENSE" ? "on" : ""}
-                  onClick={() => setPieType("EXPENSE")}
+                  className={pieType === 'EXPENSE' ? 'on' : ''}
+                  onClick={() => setPieType('EXPENSE')}
                 >
                   Despesas
                 </button>
                 <button
-                  className={pieType === "INCOME" ? "on" : ""}
-                  onClick={() => setPieType("INCOME")}
+                  className={pieType === 'INCOME' ? 'on' : ''}
+                  onClick={() => setPieType('INCOME')}
                 >
                   Receitas
                 </button>
@@ -466,12 +430,8 @@ export default function OverviewPage() {
                         className="h-2.5 w-2.5 shrink-0 rounded-sm"
                         style={{ backgroundColor: s.color }}
                       />
-                      <span className="min-w-0 flex-1 truncate text-xs text-mute">
-                        {s.name}
-                      </span>
-                      <span className="text-xs font-semibold text-ink">
-                        {s.pct}%
-                      </span>
+                      <span className="min-w-0 flex-1 truncate text-xs text-mute">{s.name}</span>
+                      <span className="text-xs font-semibold text-ink">{s.pct}%</span>
                     </div>
                   ))}
                 </div>
@@ -484,30 +444,22 @@ export default function OverviewPage() {
         <div className="mt-5 grid gap-5 lg:grid-cols-[1.6fr_1fr]">
           <div className="rounded-lg border border-line bg-card elev-sm">
             <div className="flex items-center justify-between border-b border-line px-6 py-4">
-              <h3 className="text-base font-bold text-ink">
-                Transações recentes
-              </h3>
-              <a
-                href="/personal"
-                className="text-xs font-bold text-brand hover:underline"
-              >
+              <h3 className="text-base font-bold text-ink">Transações recentes</h3>
+              <a href="/personal" className="text-xs font-bold text-brand hover:underline">
                 Ver todas
               </a>
             </div>
             {recent.length === 0 ? (
               <div className="flex flex-col items-center gap-3 px-6 py-10 text-center">
                 <p className="text-sm text-mute">Nenhuma transação ainda.</p>
-                <button
-                  onClick={openNew}
-                  className="text-sm font-bold text-brand hover:underline"
-                >
+                <button onClick={openNew} className="text-sm font-bold text-brand hover:underline">
                   Fazer primeiro lançamento
                 </button>
               </div>
             ) : (
               <div className="divide-y divide-line">
                 {recent.map((t) => {
-                  const isIncome = t.type === "INCOME";
+                  const isIncome = t.type === 'INCOME'
                   return (
                     <button
                       key={t.id}
@@ -515,7 +467,7 @@ export default function OverviewPage() {
                       className="flex w-full items-center gap-4 px-6 py-3.5 text-left transition-colors hover:bg-elev/50"
                     >
                       <span
-                        className={`grid h-10 w-10 shrink-0 place-items-center rounded-md ${isIncome ? "bg-brand/12 text-brand" : "bg-rose/12 text-rose"}`}
+                        className={`grid h-10 w-10 shrink-0 place-items-center rounded-md ${isIncome ? 'bg-brand/12 text-brand' : 'bg-rose/12 text-rose'}`}
                       >
                         <svg
                           className="h-5 w-5"
@@ -537,28 +489,21 @@ export default function OverviewPage() {
                         </svg>
                       </span>
                       <div className="min-w-0 flex-1">
-                        <p className="truncate text-sm font-semibold text-ink">
-                          {t.description}
-                        </p>
+                        <p className="truncate text-sm font-semibold text-ink">{t.description}</p>
                         <p className="text-xs text-mute">
-                          {t.accountType === "PERSONAL"
-                            ? "Pessoal"
-                            : "Empresarial"}{" "}
-                          ·{" "}
-                          {new Date(t.date).toLocaleDateString("pt-BR", {
-                            day: "2-digit",
-                            month: "short",
+                          {t.accountType === 'PERSONAL' ? 'Pessoal' : 'Empresarial'} ·{' '}
+                          {new Date(t.date).toLocaleDateString('pt-BR', {
+                            day: '2-digit',
+                            month: 'short',
                           })}
                         </p>
                       </div>
-                      <p
-                        className={`text-sm font-bold ${isIncome ? "text-brand" : "text-ink"}`}
-                      >
-                        {isIncome ? "+" : "−"}
+                      <p className={`text-sm font-bold ${isIncome ? 'text-brand' : 'text-ink'}`}>
+                        {isIncome ? '+' : '−'}
                         {fmt(Number(t.amount))}
                       </p>
                     </button>
-                  );
+                  )
                 })}
               </div>
             )}
@@ -570,13 +515,11 @@ export default function OverviewPage() {
             <div className="rounded-lg border border-line bg-card p-6 elev-sm">
               <div className="flex items-center justify-between">
                 <div>
-                  <h3 className="text-base font-bold text-ink">
-                    Metas de economia
-                  </h3>
+                  <h3 className="text-base font-bold text-ink">Metas de economia</h3>
                   {activeGoals.length > 0 && (
                     <p className="text-xs text-mute">
                       {activeGoals.length} ativa
-                      {activeGoals.length !== 1 ? "s" : ""}
+                      {activeGoals.length !== 1 ? 's' : ''}
                     </p>
                   )}
                 </div>
@@ -612,28 +555,20 @@ export default function OverviewPage() {
               ) : (
                 <div className="mt-4 space-y-3">
                   {activeGoals.slice(0, 3).map((g) => {
-                    const now = new Date();
-                    const start = new Date(g.startDate);
+                    const now = new Date()
+                    const start = new Date(g.startDate)
                     const elapsed =
                       (now.getFullYear() - start.getFullYear()) * 12 +
-                      (now.getMonth() - start.getMonth());
-                    const progress = Math.min(
-                      Math.round((elapsed / g.months) * 100),
-                      100,
-                    );
+                      (now.getMonth() - start.getMonth())
+                    const progress = Math.min(Math.round((elapsed / g.months) * 100), 100)
                     return (
-                      <div
-                        key={g.id}
-                        className="rounded-lg border border-line bg-bg p-3"
-                      >
+                      <div key={g.id} className="rounded-lg border border-line bg-bg p-3">
                         <div className="flex items-start justify-between gap-2">
                           <div className="min-w-0">
-                            <p className="truncate text-sm font-semibold text-ink">
-                              {g.name}
-                            </p>
+                            <p className="truncate text-sm font-semibold text-ink">{g.name}</p>
                             <p className="text-xs text-mute">
-                              {fmt(Number(g.monthlyAmount))}/mês · {g.months}{" "}
-                              {g.months === 1 ? "mês" : "meses"}
+                              {fmt(Number(g.monthlyAmount))}/mês · {g.months}{' '}
+                              {g.months === 1 ? 'mês' : 'meses'}
                             </p>
                           </div>
                           <button
@@ -654,7 +589,7 @@ export default function OverviewPage() {
                           {progress}% do tempo
                         </p>
                       </div>
-                    );
+                    )
                   })}
                 </div>
               )}
@@ -684,9 +619,7 @@ export default function OverviewPage() {
                 </span>
                 <div className="flex-1">
                   <p className="text-sm font-bold text-ink">Gamificação</p>
-                  <p className="text-xs text-mute">
-                    Confira suas conquistas e nível
-                  </p>
+                  <p className="text-xs text-mute">Confira suas conquistas e nível</p>
                 </div>
               </div>
               <a
@@ -700,5 +633,5 @@ export default function OverviewPage() {
         </div>
       </div>
     </>
-  );
+  )
 }

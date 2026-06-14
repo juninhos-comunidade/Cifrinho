@@ -1,43 +1,38 @@
-"use client";
+'use client'
 
-import { useQuery } from "@tanstack/react-query";
-import { api } from "@/lib/api";
-import { fmt } from "@/hooks/useTransactions";
+import { useQuery } from '@tanstack/react-query'
+import { api } from '@/lib/api'
+import { fmt } from '@/hooks/useTransactions'
 
 interface IncomeTaxSummary {
-  year: number;
-  totalIncome: number;
-  totalExpenses: number;
-  balance: number;
-  transactionCount: number;
+  year: number
+  totalIncome: number
+  totalExpenses: number
+  balance: number
+  transactionCount: number
 }
 
 async function fetchIncomeTax(): Promise<IncomeTaxSummary> {
-  const { data } = await api.get<IncomeTaxSummary>("/income-tax/summary");
-  return data;
+  const { data } = await api.get<IncomeTaxSummary>('/income-tax/summary')
+  return data
 }
 
 function Skeleton({ className }: { className?: string }) {
-  return (
-    <div className={`animate-pulse rounded bg-line/40 ${className ?? ""}`} />
-  );
+  return <div className={`animate-pulse rounded bg-line/40 ${className ?? ''}`} />
 }
 
 export default function IncomeTaxPage() {
   const { data, isLoading, isError } = useQuery({
-    queryKey: ["income-tax", "summary"],
+    queryKey: ['income-tax', 'summary'],
     queryFn: fetchIncomeTax,
-  });
+  })
 
   const pct = data
     ? Math.min(
-        Math.round(
-          (data.transactionCount / Math.max(data.transactionCount + 3, 1)) *
-            100,
-        ),
-        100,
+        Math.round((data.transactionCount / Math.max(data.transactionCount + 3, 1)) * 100),
+        100
       )
-    : 0;
+    : 0
 
   return (
     <div className="grid gap-5 lg:grid-cols-[1.4fr_1fr]">
@@ -50,7 +45,7 @@ export default function IncomeTaxPage() {
               <span className="inline-flex items-center gap-2 rounded-full border border-line bg-bg px-3 py-1 text-xs font-semibold text-brand">
                 <span className="h-1.5 w-1.5 rounded-full bg-brand"></span>
                 {isLoading
-                  ? "Carregando…"
+                  ? 'Carregando…'
                   : `Exercício ${(data?.year ?? new Date().getFullYear()) + 1} · ano-base ${data?.year ?? new Date().getFullYear()}`}
               </span>
               {isLoading ? (
@@ -59,7 +54,7 @@ export default function IncomeTaxPage() {
                 <h3 className="mt-3 text-2xl font-extrabold text-ink">
                   {data && data.transactionCount > 0
                     ? `${data.transactionCount} lançamentos registrados este ano`
-                    : "Nenhum lançamento registrado este ano"}
+                    : 'Nenhum lançamento registrado este ano'}
                 </h3>
               )}
               <p className="mt-1 text-sm text-mute">
@@ -97,11 +92,7 @@ export default function IncomeTaxPage() {
         {/* resumo financeiro do ano */}
         <div className="rounded-lg border border-line bg-card p-6 elev-sm">
           <h3 className="text-base font-bold text-ink">Resumo do ano-base</h3>
-          {isError && (
-            <p className="mt-4 text-sm text-mute">
-              Não foi possível carregar o resumo.
-            </p>
-          )}
+          {isError && <p className="mt-4 text-sm text-mute">Não foi possível carregar o resumo.</p>}
           {isLoading ? (
             <div className="mt-4 space-y-3">
               {[...Array(3)].map((_, i) => (
@@ -112,19 +103,19 @@ export default function IncomeTaxPage() {
             <div className="mt-4 space-y-3">
               {[
                 {
-                  label: "Total de receitas",
+                  label: 'Total de receitas',
                   value: fmt(data.totalIncome),
-                  color: "text-brand",
+                  color: 'text-brand',
                 },
                 {
-                  label: "Total de despesas",
+                  label: 'Total de despesas',
                   value: fmt(data.totalExpenses),
-                  color: "text-ink",
+                  color: 'text-ink',
                 },
                 {
-                  label: "Saldo do período",
+                  label: 'Saldo do período',
                   value: fmt(data.balance),
-                  color: data.balance >= 0 ? "text-brand" : "text-rose",
+                  color: data.balance >= 0 ? 'text-brand' : 'text-rose',
                 },
               ].map((row, i) => (
                 <div
@@ -132,9 +123,7 @@ export default function IncomeTaxPage() {
                   className="flex items-center justify-between rounded-md border border-line bg-bg px-4 py-3"
                 >
                   <span className="text-sm text-mute">{row.label}</span>
-                  <span className={`text-sm font-bold ${row.color}`}>
-                    {row.value}
-                  </span>
+                  <span className={`text-sm font-bold ${row.color}`}>{row.value}</span>
                 </div>
               ))}
             </div>
@@ -143,32 +132,30 @@ export default function IncomeTaxPage() {
 
         {/* checklist (estático — aguarda endpoints dedicados) */}
         <div className="rounded-lg border border-line bg-card p-6 elev-sm">
-          <h3 className="text-base font-bold text-ink">
-            Checklist de documentos
-          </h3>
+          <h3 className="text-base font-bold text-ink">Checklist de documentos</h3>
           <div className="mt-4 space-y-2.5">
             {[
               {
-                label: "Informes de rendimento (PF)",
-                status: "Não iniciado",
+                label: 'Informes de rendimento (PF)',
+                status: 'Não iniciado',
                 done: false,
                 warn: false,
               },
               {
-                label: "Notas fiscais emitidas (MEI)",
-                status: "Não iniciado",
+                label: 'Notas fiscais emitidas (MEI)',
+                status: 'Não iniciado',
                 done: false,
                 warn: false,
               },
               {
-                label: "Recibos médicos dedutíveis",
-                status: "Não iniciado",
+                label: 'Recibos médicos dedutíveis',
+                status: 'Não iniciado',
                 done: false,
                 warn: false,
               },
               {
-                label: "Comprovante de previdência",
-                status: "Não iniciado",
+                label: 'Comprovante de previdência',
+                status: 'Não iniciado',
                 done: false,
                 warn: false,
               },
@@ -204,11 +191,9 @@ export default function IncomeTaxPage() {
                 ) : (
                   <span className="h-6 w-6 rounded-full border-2 border-faint"></span>
                 )}
-                <p className="flex-1 text-sm font-medium text-ink">
-                  {item.label}
-                </p>
+                <p className="flex-1 text-sm font-medium text-ink">{item.label}</p>
                 <span
-                  className={`text-xs ${item.done ? "text-brand" : item.warn ? "text-amber" : "text-faint"}`}
+                  className={`text-xs ${item.done ? 'text-brand' : item.warn ? 'text-amber' : 'text-faint'}`}
                 >
                   {item.status}
                 </span>
@@ -226,7 +211,7 @@ export default function IncomeTaxPage() {
             <Skeleton className="mt-2 h-10 w-36" />
           ) : (
             <p className="mt-2 text-4xl font-extrabold tracking-tight text-brand">
-              {data ? fmt(Math.max(data.balance * 0.075, 0)) : "R$ 0,00"}
+              {data ? fmt(Math.max(data.balance * 0.075, 0)) : 'R$ 0,00'}
             </p>
           )}
           <p className="mt-1.5 text-xs text-mute">
@@ -236,21 +221,15 @@ export default function IncomeTaxPage() {
             <div className="mt-5 space-y-3 border-t border-line pt-4 text-sm">
               <div className="flex justify-between">
                 <span className="text-mute">Receitas tributáveis</span>
-                <span className="font-semibold text-ink">
-                  {fmt(data.totalIncome)}
-                </span>
+                <span className="font-semibold text-ink">{fmt(data.totalIncome)}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-mute">Despesas dedutíveis</span>
-                <span className="font-semibold text-ink">
-                  {fmt(data.totalExpenses)}
-                </span>
+                <span className="font-semibold text-ink">{fmt(data.totalExpenses)}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-mute">Base de cálculo</span>
-                <span
-                  className={`font-semibold ${data.balance >= 0 ? "text-brand" : "text-rose"}`}
-                >
+                <span className={`font-semibold ${data.balance >= 0 ? 'text-brand' : 'text-rose'}`}>
                   {fmt(data.balance)}
                 </span>
               </div>
@@ -264,42 +243,34 @@ export default function IncomeTaxPage() {
           <div className="mt-4 space-y-4">
             {[
               {
-                label: "Abertura da declaração",
-                sub: "Março de 2026",
-                color: "bg-brand",
+                label: 'Abertura da declaração',
+                sub: 'Março de 2026',
+                color: 'bg-brand',
                 done: true,
               },
               {
-                label: "Revisão dos dados",
-                sub: "Até 30 de abril",
-                color: "bg-amber",
+                label: 'Revisão dos dados',
+                sub: 'Até 30 de abril',
+                color: 'bg-amber',
                 done: true,
               },
               {
-                label: "Prazo final de envio",
-                sub: "31 de maio de 2026",
-                color: "border-2 border-faint",
+                label: 'Prazo final de envio',
+                sub: '31 de maio de 2026',
+                color: 'border-2 border-faint',
                 done: false,
               },
             ].map((p, i) => (
               <div key={i} className="flex gap-3">
                 <div className="flex flex-col items-center">
-                  <span
-                    className={`h-2.5 w-2.5 rounded-full ${p.color}`}
-                  ></span>
+                  <span className={`h-2.5 w-2.5 rounded-full ${p.color}`}></span>
                   {i < 2 && <span className="mt-1 w-px flex-1 bg-line"></span>}
                 </div>
                 <div className="-mt-1 pb-1">
-                  <p
-                    className={`text-sm font-semibold ${p.done ? "text-ink" : "text-mute"}`}
-                  >
+                  <p className={`text-sm font-semibold ${p.done ? 'text-ink' : 'text-mute'}`}>
                     {p.label}
                   </p>
-                  <p
-                    className={`text-xs ${p.done ? "text-mute" : "text-faint"}`}
-                  >
-                    {p.sub}
-                  </p>
+                  <p className={`text-xs ${p.done ? 'text-mute' : 'text-faint'}`}>{p.sub}</p>
                 </div>
               </div>
             ))}
@@ -307,5 +278,5 @@ export default function IncomeTaxPage() {
         </div>
       </div>
     </div>
-  );
+  )
 }

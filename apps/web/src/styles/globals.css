@@ -2,10 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
 
 :root,
-[data-theme="dark"] {
+[data-theme='dark'] {
   --c-bg: 15 23 42;
   --c-bg-deep: 2 6 23;
   --c-card: 17 24 39;
@@ -25,7 +25,7 @@
   color-scheme: dark;
 }
 
-[data-theme="light"] {
+[data-theme='light'] {
   --c-bg: 241 245 249;
   --c-bg-deep: 226 232 240;
   --c-card: 255 255 255;
@@ -56,7 +56,7 @@ html {
 }
 
 body {
-  font-family: "Inter", system-ui, sans-serif;
+  font-family: 'Inter', system-ui, sans-serif;
   background-color: rgb(var(--c-bg));
   color: rgb(var(--c-ink));
   -webkit-font-smoothing: antialiased;
@@ -82,11 +82,7 @@ body {
 }
 
 .glow {
-  background: radial-gradient(
-    circle at 50% 0%,
-    rgb(var(--c-brand) / 0.14),
-    transparent 60%
-  );
+  background: radial-gradient(circle at 50% 0%, rgb(var(--c-brand) / 0.14), transparent 60%);
 }
 
 .elev-sm {
@@ -133,7 +129,7 @@ body {
   color: rgb(var(--c-brand));
 }
 .nav-item.active::before {
-  content: "";
+  content: '';
   position: absolute;
   left: -8px;
   top: 50%;
@@ -208,7 +204,7 @@ body {
   flex: 0 0 auto;
 }
 .tgl::after {
-  content: "";
+  content: '';
   position: absolute;
   top: 3px;
   left: 3px;

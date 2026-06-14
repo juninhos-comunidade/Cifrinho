@@ -1,19 +1,15 @@
-import type { Metadata } from "next";
-import "../styles/globals.css";
-import { QueryProvider } from "@/contexts/QueryProvider";
-import { AuthProvider } from "@/contexts/AuthContext";
-import { PreferencesProvider } from "@/contexts/PreferencesContext";
+import type { Metadata } from 'next'
+import '../styles/globals.css'
+import { QueryProvider } from '@/contexts/QueryProvider'
+import { AuthProvider } from '@/contexts/AuthContext'
+import { PreferencesProvider } from '@/contexts/PreferencesContext'
 
 export const metadata: Metadata = {
-  title: "Cifrinho",
-  description: "Gestão financeira inteligente para a comunidade Juninhos",
-};
+  title: 'Cifrinho',
+  description: 'Gestão financeira inteligente para a comunidade Juninhos',
+}
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="pt-BR" data-theme="dark">
       <body>
@@ -24,5 +20,5 @@ export default function RootLayout({
         </QueryProvider>
       </body>
     </html>
-  );
+  )
 }

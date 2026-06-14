@@ -1,32 +1,29 @@
-"use client";
+'use client'
 
-import React, { useState, useEffect, useRef } from "react";
-import { usePathname } from "next/navigation";
-import { useAuth } from "@/contexts/AuthContext";
-import { useNotifications, type Notification } from "@/hooks/useNotifications";
+import React, { useState, useEffect, useRef } from 'react'
+import { usePathname } from 'next/navigation'
+import { useAuth } from '@/contexts/AuthContext'
+import { useNotifications, type Notification } from '@/hooks/useNotifications'
 
 function timeAgo(iso: string): string {
-  const diff = Date.now() - new Date(iso).getTime();
-  const m = Math.floor(diff / 60_000);
-  if (m < 1) return "agora mesmo";
-  if (m < 60) return `há ${m} min`;
-  const h = Math.floor(m / 60);
-  if (h < 24) return `há ${h}h`;
-  const d = Math.floor(h / 24);
-  if (d === 1) return "ontem";
-  if (d < 7) return `há ${d} dias`;
-  return new Date(iso).toLocaleDateString("pt-BR", {
-    day: "2-digit",
-    month: "short",
-  });
+  const diff = Date.now() - new Date(iso).getTime()
+  const m = Math.floor(diff / 60_000)
+  if (m < 1) return 'agora mesmo'
+  if (m < 60) return `há ${m} min`
+  const h = Math.floor(m / 60)
+  if (h < 24) return `há ${h}h`
+  const d = Math.floor(h / 24)
+  if (d === 1) return 'ontem'
+  if (d < 7) return `há ${d} dias`
+  return new Date(iso).toLocaleDateString('pt-BR', {
+    day: '2-digit',
+    month: 'short',
+  })
 }
 
-const NOTIF_CONFIG: Record<
-  Notification["type"],
-  { color: string; icon: React.ReactNode }
-> = {
+const NOTIF_CONFIG: Record<Notification['type'], { color: string; icon: React.ReactNode }> = {
   badge: {
-    color: "bg-purple/15 text-purple",
+    color: 'bg-purple/15 text-purple',
     icon: (
       <svg
         className="h-4 w-4"
@@ -41,7 +38,7 @@ const NOTIF_CONFIG: Record<
     ),
   },
   goal_completed: {
-    color: "bg-brand/15 text-brand",
+    color: 'bg-brand/15 text-brand',
     icon: (
       <svg
         className="h-4 w-4"
@@ -56,7 +53,7 @@ const NOTIF_CONFIG: Record<
     ),
   },
   goal_expired: {
-    color: "bg-amber/15 text-amber",
+    color: 'bg-amber/15 text-amber',
     icon: (
       <svg
         className="h-4 w-4"
@@ -72,7 +69,7 @@ const NOTIF_CONFIG: Record<
     ),
   },
   transaction_high: {
-    color: "bg-rose/15 text-rose",
+    color: 'bg-rose/15 text-rose',
     icon: (
       <svg
         className="h-4 w-4"
@@ -86,96 +83,89 @@ const NOTIF_CONFIG: Record<
       </svg>
     ),
   },
-};
+}
 
 function NotificationItem({ n }: { n: Notification }) {
-  const cfg = NOTIF_CONFIG[n.type];
+  const cfg = NOTIF_CONFIG[n.type]
   return (
     <div className="flex gap-3 px-4 py-3 transition-colors hover:bg-elev/50">
-      <span
-        className={`mt-0.5 grid h-8 w-8 shrink-0 place-items-center rounded-md ${cfg.color}`}
-      >
+      <span className={`mt-0.5 grid h-8 w-8 shrink-0 place-items-center rounded-md ${cfg.color}`}>
         {cfg.icon}
       </span>
       <div className="min-w-0">
-        <p
-          className="text-sm font-semibold leading-snug"
-          style={{ color: "rgb(var(--c-ink))" }}
-        >
+        <p className="text-sm font-semibold leading-snug" style={{ color: 'rgb(var(--c-ink))' }}>
           {n.title}
         </p>
-        <p className="mt-0.5 text-xs" style={{ color: "rgb(var(--c-mute))" }}>
+        <p className="mt-0.5 text-xs" style={{ color: 'rgb(var(--c-mute))' }}>
           {n.desc}
         </p>
-        <p
-          className="mt-1 text-[11px]"
-          style={{ color: "rgb(var(--c-faint))" }}
-        >
+        <p className="mt-1 text-[11px]" style={{ color: 'rgb(var(--c-faint))' }}>
           {timeAgo(n.time)}
         </p>
       </div>
     </div>
-  );
+  )
 }
 
 const PAGE_META: Record<string, { title: string; sub: string }> = {
-  "/overview": { title: "Visão geral", sub: "Tudo em um só lugar" },
-  "/personal": {
-    title: "Gestão pessoal",
-    sub: "Acompanhe gastos, categorias e metas",
+  '/overview': { title: 'Visão geral', sub: 'Tudo em um só lugar' },
+  '/personal': {
+    title: 'Gestão pessoal',
+    sub: 'Acompanhe gastos, categorias e metas',
   },
-  "/business": {
-    title: "Gestão empresarial",
-    sub: "Fluxo de caixa separado por PF e PJ",
+  '/business': {
+    title: 'Gestão empresarial',
+    sub: 'Fluxo de caixa separado por PF e PJ',
   },
-  "/income-tax": {
-    title: "Imposto de Renda",
-    sub: "Sua declaração organizada o ano inteiro",
+  '/income-tax': {
+    title: 'Imposto de Renda',
+    sub: 'Sua declaração organizada o ano inteiro',
   },
-  "/gamification": {
-    title: "Gamificação",
-    sub: "Conquistas, níveis e ranking da comunidade",
+  '/gamification': {
+    title: 'Gamificação',
+    sub: 'Conquistas, níveis e ranking da comunidade',
   },
-  "/profile": { title: "Perfil", sub: "Seus dados pessoais e plano" },
-  "/settings": {
-    title: "Configurações",
-    sub: "Preferências, notificações e segurança",
+  '/profile': { title: 'Perfil', sub: 'Seus dados pessoais e plano' },
+  '/settings': {
+    title: 'Configurações',
+    sub: 'Preferências, notificações e segurança',
   },
-};
+}
 
 interface HeaderProps {
-  onMenuToggle: () => void;
+  onMenuToggle: () => void
 }
 
 export function Header({ onMenuToggle }: HeaderProps) {
-  const pathname = usePathname();
-  const { initials, firstName } = useAuth();
-  const [bellOpen, setBellOpen] = useState(false);
-  const bellRef = useRef<HTMLDivElement>(null);
-  const { notifications, count } = useNotifications();
+  const pathname = usePathname()
+  const { initials, firstName } = useAuth()
+  const [bellOpen, setBellOpen] = useState(false)
+  const bellRef = useRef<HTMLDivElement>(null)
+  const { notifications, count } = useNotifications()
 
   // Fecha ao clicar fora
   useEffect(() => {
-    if (!bellOpen) return;
+    if (!bellOpen) return
     function handler(e: MouseEvent) {
       if (bellRef.current && !bellRef.current.contains(e.target as Node)) {
-        setBellOpen(false);
+        setBellOpen(false)
       }
     }
-    document.addEventListener("mousedown", handler);
-    return () => document.removeEventListener("mousedown", handler);
-  }, [bellOpen]);
+    document.addEventListener('mousedown', handler)
+    return () => document.removeEventListener('mousedown', handler)
+  }, [bellOpen])
 
-  const meta = Object.entries(PAGE_META).find(([key]) =>
-    pathname.startsWith(key),
-  )?.[1] ?? { title: "Cifrinho", sub: "" };
+  const meta = Object.entries(PAGE_META).find(([key]) => pathname.startsWith(key))?.[1] ?? {
+    title: 'Cifrinho',
+    sub: '',
+  }
 
   function toggleTheme() {
-    const html = document.documentElement;
-    const next = html.getAttribute("data-theme") === "dark" ? "light" : "dark";
-    html.setAttribute("data-theme", next);
+    const html = document.documentElement
+    const next = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark'
+    html.setAttribute('data-theme', next)
     try {
-      localStorage.setItem("cif.theme", next);
+      localStorage.setItem('cif.theme', next)
     } catch {}
   }
 
@@ -183,15 +173,15 @@ export function Header({ onMenuToggle }: HeaderProps) {
     <header
       className="sticky top-0 z-30 flex h-16 items-center gap-4 border-b px-6 backdrop-blur-xl"
       style={{
-        borderColor: "rgb(var(--c-line))",
-        backgroundColor: "rgb(var(--c-bg) / 0.85)",
+        borderColor: 'rgb(var(--c-line))',
+        backgroundColor: 'rgb(var(--c-bg) / 0.85)',
       }}
     >
       {/* botão de menu para dispositivos móveis */}
       <button
         onClick={onMenuToggle}
         className="grid h-9 w-9 shrink-0 place-items-center rounded-md transition-colors hover:bg-elev md:hidden"
-        style={{ color: "rgb(var(--c-mute))" }}
+        style={{ color: 'rgb(var(--c-mute))' }}
       >
         <svg
           className="h-5 w-5"
@@ -209,15 +199,12 @@ export function Header({ onMenuToggle }: HeaderProps) {
       <div className="min-w-0 flex-1">
         <h1
           className="truncate text-lg font-bold leading-tight"
-          style={{ color: "rgb(var(--c-ink))" }}
+          style={{ color: 'rgb(var(--c-ink))' }}
         >
           {meta.title}
         </h1>
         {meta.sub && (
-          <p
-            className="truncate text-xs"
-            style={{ color: "rgb(var(--c-mute))" }}
-          >
+          <p className="truncate text-xs" style={{ color: 'rgb(var(--c-mute))' }}>
             {meta.sub}
           </p>
         )}
@@ -227,7 +214,7 @@ export function Header({ onMenuToggle }: HeaderProps) {
       <div className="relative hidden w-64 md:block">
         <svg
           className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2"
-          style={{ color: "rgb(var(--c-faint))" }}
+          style={{ color: 'rgb(var(--c-faint))' }}
           viewBox="0 0 24 24"
           fill="none"
           stroke="currentColor"
@@ -241,9 +228,9 @@ export function Header({ onMenuToggle }: HeaderProps) {
           placeholder="Buscar transações…"
           className="w-full rounded-md border py-2 pl-9 pr-3 text-sm outline-none transition-colors"
           style={{
-            borderColor: "rgb(var(--c-line))",
-            backgroundColor: "rgb(var(--c-card))",
-            color: "rgb(var(--c-ink))",
+            borderColor: 'rgb(var(--c-line))',
+            backgroundColor: 'rgb(var(--c-card))',
+            color: 'rgb(var(--c-ink))',
           }}
         />
       </div>
@@ -253,9 +240,9 @@ export function Header({ onMenuToggle }: HeaderProps) {
         onClick={toggleTheme}
         className="grid h-9 w-9 shrink-0 place-items-center rounded-md border transition-colors hover:text-ink"
         style={{
-          borderColor: "rgb(var(--c-line))",
-          backgroundColor: "rgb(var(--c-card))",
-          color: "rgb(var(--c-mute))",
+          borderColor: 'rgb(var(--c-line))',
+          backgroundColor: 'rgb(var(--c-card))',
+          color: 'rgb(var(--c-mute))',
         }}
         title="Alternar tema"
       >
@@ -278,9 +265,9 @@ export function Header({ onMenuToggle }: HeaderProps) {
           onClick={() => setBellOpen(!bellOpen)}
           className="relative grid h-9 w-9 place-items-center rounded-md border transition-colors"
           style={{
-            borderColor: "rgb(var(--c-line))",
-            backgroundColor: "rgb(var(--c-card))",
-            color: "rgb(var(--c-mute))",
+            borderColor: 'rgb(var(--c-line))',
+            backgroundColor: 'rgb(var(--c-card))',
+            color: 'rgb(var(--c-mute))',
           }}
         >
           <svg
@@ -304,23 +291,20 @@ export function Header({ onMenuToggle }: HeaderProps) {
           <div
             className="absolute right-0 top-12 w-80 overflow-hidden rounded-lg border shadow-lg z-50"
             style={{
-              borderColor: "rgb(var(--c-line))",
-              backgroundColor: "rgb(var(--c-card))",
+              borderColor: 'rgb(var(--c-line))',
+              backgroundColor: 'rgb(var(--c-card))',
             }}
           >
             <div
               className="flex items-center justify-between border-b px-4 py-3"
-              style={{ borderColor: "rgb(var(--c-line))" }}
+              style={{ borderColor: 'rgb(var(--c-line))' }}
             >
-              <p
-                className="text-sm font-bold"
-                style={{ color: "rgb(var(--c-ink))" }}
-              >
+              <p className="text-sm font-bold" style={{ color: 'rgb(var(--c-ink))' }}>
                 Notificações
               </p>
               {count > 0 && (
                 <span className="rounded-full bg-brand/15 px-2 py-0.5 text-[11px] font-bold text-brand">
-                  {count} {count === 1 ? "nova" : "novas"}
+                  {count} {count === 1 ? 'nova' : 'novas'}
                 </span>
               )}
             </div>
@@ -330,7 +314,7 @@ export function Header({ onMenuToggle }: HeaderProps) {
                 <div className="flex flex-col items-center gap-2 px-4 py-8 text-center">
                   <svg
                     className="h-8 w-8"
-                    style={{ color: "rgb(var(--c-faint))" }}
+                    style={{ color: 'rgb(var(--c-faint))' }}
                     viewBox="0 0 24 24"
                     fill="none"
                     stroke="currentColor"
@@ -341,10 +325,7 @@ export function Header({ onMenuToggle }: HeaderProps) {
                     <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9" />
                     <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0" />
                   </svg>
-                  <p
-                    className="text-sm"
-                    style={{ color: "rgb(var(--c-mute))" }}
-                  >
+                  <p className="text-sm" style={{ color: 'rgb(var(--c-mute))' }}>
                     Nenhuma notificação por aqui.
                   </p>
                 </div>
@@ -366,20 +347,14 @@ export function Header({ onMenuToggle }: HeaderProps) {
           {initials}
         </span>
         <span className="hidden text-left leading-tight sm:block">
-          <span
-            className="block text-sm font-semibold"
-            style={{ color: "rgb(var(--c-ink))" }}
-          >
-            {firstName || "Carregando…"}
+          <span className="block text-sm font-semibold" style={{ color: 'rgb(var(--c-ink))' }}>
+            {firstName || 'Carregando…'}
           </span>
-          <span
-            className="block text-[11px]"
-            style={{ color: "rgb(var(--c-mute))" }}
-          >
+          <span className="block text-[11px]" style={{ color: 'rgb(var(--c-mute))' }}>
             Ver perfil
           </span>
         </span>
       </a>
     </header>
-  );
+  )
 }

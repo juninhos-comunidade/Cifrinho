@@ -1,36 +1,28 @@
-"use client";
+'use client'
 
-import { useCurrentUser } from "@/hooks/useCurrentUser";
-import { useAuth } from "@/contexts/AuthContext";
-import { useBadges } from "@/hooks/useBadges";
+import { useCurrentUser } from '@/hooks/useCurrentUser'
+import { useAuth } from '@/contexts/AuthContext'
+import { useBadges } from '@/hooks/useBadges'
 
 function Skeleton({ className }: { className?: string }) {
-  return (
-    <div className={`animate-pulse rounded bg-line/40 ${className ?? ""}`} />
-  );
+  return <div className={`animate-pulse rounded bg-line/40 ${className ?? ''}`} />
 }
 
 export default function ProfilePage() {
-  const { user, isLoading } = useCurrentUser();
-  const { initials } = useAuth();
-  const { earned } = useBadges();
+  const { user, isLoading } = useCurrentUser()
+  const { initials } = useAuth()
+  const { earned } = useBadges()
 
-  const joinedYear = user
-    ? new Date().getFullYear() - new Date(user.createdAt).getFullYear()
-    : null;
+  const joinedYear = user ? new Date().getFullYear() - new Date(user.createdAt).getFullYear() : null
   const joinedLabel =
-    joinedYear === 0
-      ? "este ano"
-      : joinedYear === 1
-        ? "1 ano"
-        : `${joinedYear} anos`;
+    joinedYear === 0 ? 'este ano' : joinedYear === 1 ? '1 ano' : `${joinedYear} anos`
 
   return (
     <div className="grid gap-5 lg:grid-cols-[1fr_1.6fr]">
       {/* cartão de perfil */}
       <div className="rounded-lg border border-line bg-card p-6 text-center elev-sm">
         <span className="mx-auto grid h-24 w-24 place-items-center rounded-full bg-gradient-to-br from-brand to-blue text-3xl font-bold text-white">
-          {isLoading ? "…" : initials}
+          {isLoading ? '…' : initials}
         </span>
 
         {isLoading ? (
@@ -55,9 +47,7 @@ export default function ProfilePage() {
 
         <div className="mt-5 grid grid-cols-3 gap-2 border-t border-line pt-5 text-center">
           <div>
-            <p className="text-lg font-extrabold text-ink">
-              {Math.min(earned.length + 1, 10)}
-            </p>
+            <p className="text-lg font-extrabold text-ink">{Math.min(earned.length + 1, 10)}</p>
             <p className="text-[11px] text-mute">nível</p>
           </div>
           <div>
@@ -65,9 +55,7 @@ export default function ProfilePage() {
             <p className="text-[11px] text-mute">badges</p>
           </div>
           <div>
-            <p className="text-lg font-extrabold text-ink">
-              {isLoading ? "…" : joinedLabel}
-            </p>
+            <p className="text-lg font-extrabold text-ink">{isLoading ? '…' : joinedLabel}</p>
             <p className="text-[11px] text-mute">na plataforma</p>
           </div>
         </div>
@@ -86,26 +74,24 @@ export default function ProfilePage() {
                   </div>
                 ))
               : [
-                  { label: "Nome completo", value: user?.name ?? "—" },
-                  { label: "E-mail", value: user?.email ?? "—" },
+                  { label: 'Nome completo', value: user?.name ?? '—' },
+                  { label: 'E-mail', value: user?.email ?? '—' },
                   {
-                    label: "Membro desde",
+                    label: 'Membro desde',
                     value: user
-                      ? new Date(user.createdAt).toLocaleDateString("pt-BR", {
-                          month: "long",
-                          year: "numeric",
+                      ? new Date(user.createdAt).toLocaleDateString('pt-BR', {
+                          month: 'long',
+                          year: 'numeric',
                         })
-                      : "—",
+                      : '—',
                   },
                   {
-                    label: "ID da conta",
-                    value: user ? `#${user.id.slice(0, 8).toUpperCase()}` : "—",
+                    label: 'ID da conta',
+                    value: user ? `#${user.id.slice(0, 8).toUpperCase()}` : '—',
                   },
                 ].map((f, i) => (
                   <div key={i}>
-                    <label className="text-xs font-medium text-mute">
-                      {f.label}
-                    </label>
+                    <label className="text-xs font-medium text-mute">{f.label}</label>
                     <div className="mt-1.5 rounded-md border border-line bg-bg px-3.5 py-2.5 text-sm text-ink">
                       {f.value}
                     </div>
@@ -135,5 +121,5 @@ export default function ProfilePage() {
         </div>
       </div>
     </div>
-  );
+  )
 }
