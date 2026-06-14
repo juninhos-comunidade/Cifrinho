@@ -37,6 +37,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     try {
       await api.post('/auth/logout')
     } catch {}
+    localStorage.removeItem('token')
+    document.cookie = 'auth=; Path=/; Max-Age=0'
     setUserState(null)
     window.location.href = '/login'
   }, [])

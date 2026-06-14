@@ -228,7 +228,7 @@ export async function authRoutes(app: FastifyInstance) {
     const token = app.jwt.sign({ sub: user.id }, { expiresIn: '7d' })
     setAuthCookies(reply, token)
 
-    return reply.status(201).send({ user })
+    return reply.status(201).send({ user, token })
   })
 
   app.post('/auth/login', async (request, reply) => {
@@ -249,6 +249,7 @@ export async function authRoutes(app: FastifyInstance) {
 
     return reply.send({
       user: { id: user.id, name: user.name, email: user.email },
+      token,
     })
   })
 }

@@ -393,6 +393,11 @@ export default function LoginPage() {
         password: loginPassword,
         rememberMe,
       })
+      if (data.token) {
+        localStorage.setItem('token', data.token)
+        const maxAge = rememberMe ? 60 * 60 * 24 * 30 : 60 * 60 * 24 * 7
+        document.cookie = `auth=1; Path=/; Max-Age=${maxAge}; SameSite=Lax`
+      }
       setUser(data.user)
       router.push('/overview')
     } catch (err: unknown) {
@@ -419,6 +424,10 @@ export default function LoginPage() {
         email: signupEmail,
         password: signupPassword,
       })
+      if (data.token) {
+        localStorage.setItem('token', data.token)
+        document.cookie = `auth=1; Path=/; Max-Age=${60 * 60 * 24 * 7}; SameSite=Lax`
+      }
       setUser(data.user)
       router.push('/overview')
     } catch (err: unknown) {
