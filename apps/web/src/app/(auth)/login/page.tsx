@@ -1,34 +1,25 @@
-"use client";
+'use client'
 
-import { useState, useEffect, useRef } from "react";
-import { useRouter } from "next/navigation";
-import Image from "next/image";
-import { api } from "@/lib/api";
-import { useAuth } from "@/contexts/AuthContext";
+import { useState, useEffect, useRef } from 'react'
+import { useRouter } from 'next/navigation'
+import Image from 'next/image'
+import Link from 'next/link'
+import { api } from '@/lib/api'
+import { useAuth } from '@/contexts/AuthContext'
 
-type Tab = "login" | "signup";
+type Tab = 'login' | 'signup'
 
 function passwordStrength(v: string): number {
-  let score = 0;
-  if (v.length >= 8) score++;
-  if (/[A-Z]/.test(v) && /[a-z]/.test(v)) score++;
-  if (/\d/.test(v)) score++;
-  if (/[^A-Za-z0-9]/.test(v)) score++;
-  return score;
+  let score = 0
+  if (v.length >= 8) score++
+  if (/[A-Z]/.test(v) && /[a-z]/.test(v)) score++
+  if (/\d/.test(v)) score++
+  if (/[^A-Za-z0-9]/.test(v)) score++
+  return score
 }
 
-const STRENGTH_COLORS = [
-  "var(--c-rose)",
-  "var(--c-amber)",
-  "var(--c-blue)",
-  "var(--c-brand)",
-];
-const STRENGTH_LABELS = [
-  "Senha fraca",
-  "Senha razoável",
-  "Senha boa",
-  "Senha forte",
-];
+const STRENGTH_COLORS = ['var(--c-rose)', 'var(--c-amber)', 'var(--c-blue)', 'var(--c-brand)']
+const STRENGTH_LABELS = ['Senha fraca', 'Senha razoável', 'Senha boa', 'Senha forte']
 
 // ---- Componentes do mascote ----
 function Mascot({
@@ -36,119 +27,119 @@ function Mascot({
   rememberOn,
   termsAccepted,
 }: {
-  pwFocused: boolean;
-  rememberOn: boolean;
-  termsAccepted: boolean;
+  pwFocused: boolean
+  rememberOn: boolean
+  termsAccepted: boolean
 }) {
-  const wrapRef = useRef<HTMLDivElement>(null);
-  const stageRef = useRef<HTMLDivElement>(null);
+  const wrapRef = useRef<HTMLDivElement>(null)
+  const stageRef = useRef<HTMLDivElement>(null)
 
   // Mouse tracker
   useEffect(() => {
     let dx = 0,
       dy = 0,
       tx = 0,
-      ty = 0;
-    let raf: number;
+      ty = 0
+    let raf: number
 
     const onMove = (e: PointerEvent) => {
-      tx = (e.clientX / window.innerWidth - 0.5) * 2;
-      ty = (e.clientY / window.innerHeight - 0.5) * 2;
-    };
-    window.addEventListener("pointermove", onMove, { passive: true });
+      tx = (e.clientX / window.innerWidth - 0.5) * 2
+      ty = (e.clientY / window.innerHeight - 0.5) * 2
+    }
+    window.addEventListener('pointermove', onMove, { passive: true })
 
     function tick() {
-      dx += (tx - dx) * 0.09;
-      dy += (ty - dy) * 0.09;
-      const rotY = dx * 16;
-      const rotX = -dy * 12;
-      const rotZ = dx * 4;
+      dx += (tx - dx) * 0.09
+      dy += (ty - dy) * 0.09
+      const rotY = dx * 16
+      const rotX = -dy * 12
+      const rotZ = dx * 4
       const px = dx * 9,
-        py = dy * 7;
+        py = dy * 7
       if (wrapRef.current) {
         wrapRef.current.style.transform =
           `perspective(720px) translate(${px.toFixed(2)}px,${py.toFixed(2)}px) ` +
-          `rotateX(${rotX.toFixed(2)}deg) rotateY(${rotY.toFixed(2)}deg) rotateZ(${rotZ.toFixed(2)}deg)`;
+          `rotateX(${rotX.toFixed(2)}deg) rotateY(${rotY.toFixed(2)}deg) rotateZ(${rotZ.toFixed(2)}deg)`
       }
-      raf = requestAnimationFrame(tick);
+      raf = requestAnimationFrame(tick)
     }
-    raf = requestAnimationFrame(tick);
+    raf = requestAnimationFrame(tick)
     return () => {
-      window.removeEventListener("pointermove", onMove);
-      cancelAnimationFrame(raf);
-    };
-  }, []);
+      window.removeEventListener('pointermove', onMove)
+      cancelAnimationFrame(raf)
+    }
+  }, [])
 
   // Piscar
-  const [blinking, setBlinking] = useState(false);
+  const [blinking, setBlinking] = useState(false)
   useEffect(() => {
-    let timer: ReturnType<typeof setTimeout>;
+    let timer: ReturnType<typeof setTimeout>
     function blinkLoop() {
-      const wait = 2600 + Math.random() * 3200;
+      const wait = 2600 + Math.random() * 3200
       timer = setTimeout(() => {
         if (!pwFocused) {
-          setBlinking(true);
-          setTimeout(() => setBlinking(false), 150);
+          setBlinking(true)
+          setTimeout(() => setBlinking(false), 150)
         }
-        blinkLoop();
-      }, wait);
+        blinkLoop()
+      }, wait)
     }
-    blinkLoop();
-    return () => clearTimeout(timer);
-  }, [pwFocused]);
+    blinkLoop()
+    return () => clearTimeout(timer)
+  }, [pwFocused])
 
   // Animação do relógio de "remember me"
-  const [showClock, setShowClock] = useState(false);
-  const clockTimerRef = useRef<ReturnType<typeof setTimeout>>(undefined);
+  const [showClock, setShowClock] = useState(false)
+  const clockTimerRef = useRef<ReturnType<typeof setTimeout>>(undefined)
   useEffect(() => {
     if (rememberOn) {
-      setShowClock(false);
+      setShowClock(false)
       // delay para garantir que a animação rode mesmo se o gatilho for acionado durante a animação anterior
       setTimeout(() => {
-        setShowClock(true);
-        clearTimeout(clockTimerRef.current);
-        clockTimerRef.current = setTimeout(() => setShowClock(false), 3200);
-      }, 16);
+        setShowClock(true)
+        clearTimeout(clockTimerRef.current)
+        clockTimerRef.current = setTimeout(() => setShowClock(false), 3200)
+      }, 16)
     }
-  }, [rememberOn]);
+  }, [rememberOn])
 
   // Animação do "oink"
-  const [showOink, setShowOink] = useState(false);
-  const [showHearts, setShowHearts] = useState(false);
+  const [showOink, setShowOink] = useState(false)
+  const [showHearts, setShowHearts] = useState(false)
   useEffect(() => {
     if (termsAccepted) {
-      setShowOink(false);
-      setShowHearts(false);
+      setShowOink(false)
+      setShowHearts(false)
       setTimeout(() => {
-        setShowOink(true);
-        setShowHearts(true);
+        setShowOink(true)
+        setShowHearts(true)
         setTimeout(() => {
-          setShowOink(false);
-          setShowHearts(false);
-        }, 1500);
-      }, 16);
+          setShowOink(false)
+          setShowHearts(false)
+        }, 1500)
+      }, 16)
     }
-  }, [termsAccepted]);
+  }, [termsAccepted])
 
-  const eyesClosed = pwFocused || blinking;
+  const eyesClosed = pwFocused || blinking
 
   return (
     <div
       ref={stageRef}
       style={{
-        position: "relative",
+        position: 'relative',
         width: 248,
         height: 248,
-        animation: "pigfloat 6s ease-in-out infinite",
+        animation: 'pigfloat 6s ease-in-out infinite',
       }}
     >
       <div
         ref={wrapRef}
         style={{
-          position: "absolute",
+          position: 'absolute',
           inset: 0,
-          willChange: "transform",
-          transition: "transform .28s cubic-bezier(.2,.7,.2,1)",
+          willChange: 'transform',
+          transition: 'transform .28s cubic-bezier(.2,.7,.2,1)',
         }}
       >
         <Image
@@ -157,41 +148,41 @@ function Mascot({
           width={248}
           height={248}
           style={{
-            objectFit: "contain",
-            display: "block",
-            filter: "drop-shadow(0 20px 32px rgb(33 194 94 / .28))",
+            objectFit: 'contain',
+            display: 'block',
+            filter: 'drop-shadow(0 20px 32px rgb(33 194 94 / .28))',
           }}
           priority
         />
         {/* Pálpebras */}
         <span
           style={{
-            position: "absolute",
-            background: "#10b981",
-            borderRadius: "0 0 65% 65% / 0 0 85% 85%",
-            transform: eyesClosed ? "scaleY(1)" : "scaleY(0)",
-            transformOrigin: "top center",
-            transition: "transform .16s ease",
+            position: 'absolute',
+            background: '#10b981',
+            borderRadius: '0 0 65% 65% / 0 0 85% 85%',
+            transform: eyesClosed ? 'scaleY(1)' : 'scaleY(0)',
+            transformOrigin: 'top center',
+            transition: 'transform .16s ease',
             zIndex: 3,
-            left: "25.5%",
-            top: "23.8%",
-            width: "6.8%",
-            height: "10.4%",
+            left: '25.5%',
+            top: '23.8%',
+            width: '6.8%',
+            height: '10.4%',
           }}
         />
         <span
           style={{
-            position: "absolute",
-            background: "#10b981",
-            borderRadius: "0 0 65% 65% / 0 0 85% 85%",
-            transform: eyesClosed ? "scaleY(1)" : "scaleY(0)",
-            transformOrigin: "top center",
-            transition: "transform .16s ease",
+            position: 'absolute',
+            background: '#10b981',
+            borderRadius: '0 0 65% 65% / 0 0 85% 85%',
+            transform: eyesClosed ? 'scaleY(1)' : 'scaleY(0)',
+            transformOrigin: 'top center',
+            transition: 'transform .16s ease',
             zIndex: 3,
-            left: "68.8%",
-            top: "23.8%",
-            width: "6.8%",
-            height: "10.4%",
+            left: '68.8%',
+            top: '23.8%',
+            width: '6.8%',
+            height: '10.4%',
           }}
         />
       </div>
@@ -199,7 +190,7 @@ function Mascot({
       {/* Relógio de "remember me" */}
       <div
         style={{
-          position: "absolute",
+          position: 'absolute',
           top: -4,
           left: 18,
           width: 48,
@@ -207,50 +198,49 @@ function Mascot({
           zIndex: 5,
           opacity: showClock ? 1 : 0,
           transform: showClock
-            ? "scale(1) translateY(0) rotate(0)"
-            : "scale(.3) translateY(10px) rotate(-25deg)",
-          transition:
-            "opacity .25s ease, transform .4s cubic-bezier(.2,1.4,.4,1)",
-          pointerEvents: "none",
+            ? 'scale(1) translateY(0) rotate(0)'
+            : 'scale(.3) translateY(10px) rotate(-25deg)',
+          transition: 'opacity .25s ease, transform .4s cubic-bezier(.2,1.4,.4,1)',
+          pointerEvents: 'none',
         }}
       >
         <div
           style={{
-            position: "relative",
-            width: "100%",
-            height: "100%",
-            borderRadius: "50%",
-            background: "#fff",
-            border: "3px solid #10b981",
-            boxShadow: "0 8px 18px rgb(0 0 0 / .35)",
+            position: 'relative',
+            width: '100%',
+            height: '100%',
+            borderRadius: '50%',
+            background: '#fff',
+            border: '3px solid #10b981',
+            boxShadow: '0 8px 18px rgb(0 0 0 / .35)',
           }}
         >
           <span
             style={{
-              position: "absolute",
-              left: "50%",
-              bottom: "50%",
-              transformOrigin: "bottom center",
-              background: "#0f172a",
+              position: 'absolute',
+              left: '50%',
+              bottom: '50%',
+              transformOrigin: 'bottom center',
+              background: '#0f172a',
               borderRadius: 99,
               width: 3.5,
               height: 10,
-              transform: "translateX(-50%) rotate(20deg)",
-              animation: showClock ? "rcspin 3.6s linear infinite" : "none",
+              transform: 'translateX(-50%) rotate(20deg)',
+              animation: showClock ? 'rcspin 3.6s linear infinite' : 'none',
             }}
           />
           <span
             style={{
-              position: "absolute",
-              left: "50%",
-              bottom: "50%",
-              transformOrigin: "bottom center",
-              background: "#0f172a",
+              position: 'absolute',
+              left: '50%',
+              bottom: '50%',
+              transformOrigin: 'bottom center',
+              background: '#0f172a',
               borderRadius: 99,
               width: 3,
               height: 15,
-              transform: "translateX(-50%) rotate(150deg)",
-              animation: showClock ? "rcspin 1.2s linear infinite" : "none",
+              transform: 'translateX(-50%) rotate(150deg)',
+              animation: showClock ? 'rcspin 1.2s linear infinite' : 'none',
             }}
           />
         </div>
@@ -259,55 +249,55 @@ function Mascot({
       {/* bolha de "oink" */}
       <div
         style={{
-          position: "absolute",
-          top: "4%",
+          position: 'absolute',
+          top: '4%',
           right: -10,
           zIndex: 6,
-          pointerEvents: "none",
-          background: "#fff",
-          color: "#0f172a",
+          pointerEvents: 'none',
+          background: '#fff',
+          color: '#0f172a',
           fontWeight: 800,
           fontSize: 13,
-          padding: "5px 11px",
-          borderRadius: "13px 13px 13px 4px",
-          boxShadow: "0 8px 18px rgb(0 0 0 / .32)",
+          padding: '5px 11px',
+          borderRadius: '13px 13px 13px 4px',
+          boxShadow: '0 8px 18px rgb(0 0 0 / .32)',
           opacity: showOink ? 1 : 0,
-          animation: showOink ? "oinkpop 1.4s ease both" : "none",
+          animation: showOink ? 'oinkpop 1.4s ease both' : 'none',
         }}
       >
         Oink!
       </div>
 
       {/* corações */}
-      {(["left", "right"] as const).map((side) => (
+      {(['left', 'right'] as const).map((side) => (
         <span
           key={side}
           style={{
-            position: "absolute",
+            position: 'absolute',
             width: 22,
             height: 22,
             zIndex: 5,
-            pointerEvents: "none",
-            color: "#fb7185",
-            left: side === "left" ? "25%" : undefined,
-            right: side === "right" ? "25%" : undefined,
-            top: "47%",
+            pointerEvents: 'none',
+            color: '#fb7185',
+            left: side === 'left' ? '25%' : undefined,
+            right: side === 'right' ? '25%' : undefined,
+            top: '47%',
             opacity: 0,
             animation: showHearts
-              ? side === "left"
-                ? "heartL 1.4s ease-out both"
-                : "heartR 1.4s ease-out both .7s"
-              : "none",
+              ? side === 'left'
+                ? 'heartL 1.4s ease-out both'
+                : 'heartR 1.4s ease-out both .7s'
+              : 'none',
           }}
         >
           <svg
             viewBox="0 0 24 24"
             fill="currentColor"
             style={{
-              width: "100%",
-              height: "100%",
-              display: "block",
-              filter: "drop-shadow(0 4px 8px rgb(0 0 0 / .28))",
+              width: '100%',
+              height: '100%',
+              display: 'block',
+              filter: 'drop-shadow(0 4px 8px rgb(0 0 0 / .28))',
             }}
           >
             <path d="M12 21s-6.7-4.35-9.3-8.06C1.1 10.43 1.5 7.2 4 5.8c1.9-1.06 4.2-.4 5.4 1.1L12 9.9l2.6-3c1.2-1.5 3.5-2.16 5.4-1.1 2.5 1.4 2.9 4.63 1.3 7.14C18.7 16.65 12 21 12 21Z" />
@@ -315,7 +305,7 @@ function Mascot({
         </span>
       ))}
     </div>
-  );
+  )
 }
 
 // ---- Ícone do olho ----
@@ -347,99 +337,105 @@ function EyeIcon({ open }: { open: boolean }) {
       <path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19" />
       <line x1="1" y1="1" x2="23" y2="23" />
     </svg>
-  );
+  )
 }
 
 export default function LoginPage() {
-  const router = useRouter();
-  const { setUser } = useAuth();
-  const [tab, setTab] = useState<Tab>("login");
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
+  const router = useRouter()
+  const { setUser } = useAuth()
+  const [tab, setTab] = useState<Tab>('login')
+  const [error, setError] = useState('')
+  const [loading, setLoading] = useState(false)
 
   // estado do login
-  const [loginEmail, setLoginEmail] = useState("");
-  const [loginPassword, setLoginPassword] = useState("");
-  const [loginPwVisible, setLoginPwVisible] = useState(false);
-  const [rememberMe, setRememberMe] = useState(false);
+  const [loginEmail, setLoginEmail] = useState('')
+  const [loginPassword, setLoginPassword] = useState('')
+  const [loginPwVisible, setLoginPwVisible] = useState(false)
+  const [rememberMe, setRememberMe] = useState(false)
 
   // estado de cadastro
-  const [signupName, setSignupName] = useState("");
-  const [signupEmail, setSignupEmail] = useState("");
-  const [signupPassword, setSignupPassword] = useState("");
-  const [signupPwVisible, setSignupPwVisible] = useState(false);
-  const [termsAccepted, setTermsAccepted] = useState(false);
-  const [termsAcceptedFired, setTermsAcceptedFired] = useState(false);
-  const [pwScore, setPwScore] = useState(0);
+  const [signupName, setSignupName] = useState('')
+  const [signupEmail, setSignupEmail] = useState('')
+  const [signupPassword, setSignupPassword] = useState('')
+  const [signupPwVisible, setSignupPwVisible] = useState(false)
+  const [termsAccepted, setTermsAccepted] = useState(false)
+  const [termsAcceptedFired, setTermsAcceptedFired] = useState(false)
+  const [pwScore, setPwScore] = useState(0)
 
   // triggers do mascote
-  const [pwFocused, setPwFocused] = useState(false);
-  const [rememberFired, setRememberFired] = useState(false);
+  const [pwFocused, setPwFocused] = useState(false)
+  const [rememberFired, setRememberFired] = useState(false)
 
   function handlePasswordChange(v: string) {
-    setSignupPassword(v);
-    setPwScore(passwordStrength(v));
+    setSignupPassword(v)
+    setPwScore(passwordStrength(v))
   }
 
   function handleRememberToggle() {
-    const next = !rememberMe;
-    setRememberMe(next);
-    if (next) setRememberFired((f) => !f); // alterna para re-disparar o efeito do mascote
+    const next = !rememberMe
+    setRememberMe(next)
+    if (next) setRememberFired((f) => !f) // alterna para re-disparar o efeito do mascote
   }
 
   function handleTermsToggle() {
-    const next = !termsAccepted;
-    setTermsAccepted(next);
-    if (next) setTermsAcceptedFired((f) => !f);
+    const next = !termsAccepted
+    setTermsAccepted(next)
+    if (next) setTermsAcceptedFired((f) => !f)
   }
 
   async function handleLogin(e: React.FormEvent) {
-    e.preventDefault();
-    setError("");
-    setLoading(true);
+    e.preventDefault()
+    setError('')
+    setLoading(true)
     try {
-      const { data } = await api.post("/auth/login", {
+      const { data } = await api.post('/auth/login', {
         email: loginEmail,
         password: loginPassword,
         rememberMe,
-      });
-      setUser(data.user);
-      router.push("/overview");
-    } catch (err: any) {
-      setError(err.response?.data?.message ?? "Erro ao fazer login.");
+      })
+      setUser(data.user)
+      router.push('/overview')
+    } catch (err: unknown) {
+      setError(
+        (err as { response?: { data?: { message?: string } } })?.response?.data?.message ??
+          'Erro ao fazer login.'
+      )
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
   }
 
   async function handleRegister(e: React.FormEvent) {
-    e.preventDefault();
+    e.preventDefault()
     if (!termsAccepted) {
-      setError("Aceite os termos para continuar.");
-      return;
+      setError('Aceite os termos para continuar.')
+      return
     }
-    setError("");
-    setLoading(true);
+    setError('')
+    setLoading(true)
     try {
-      const { data } = await api.post("/auth/register", {
+      const { data } = await api.post('/auth/register', {
         name: signupName,
         email: signupEmail,
         password: signupPassword,
-      });
-      setUser(data.user);
-      router.push("/overview");
-    } catch (err: any) {
-      setError(err.response?.data?.message ?? "Erro ao criar conta.");
+      })
+      setUser(data.user)
+      router.push('/overview')
+    } catch (err: unknown) {
+      setError(
+        (err as { response?: { data?: { message?: string } } })?.response?.data?.message ??
+          'Erro ao criar conta.'
+      )
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
   }
 
-  const heading = tab === "login" ? "Bem-vindo de volta" : "Crie sua conta";
+  const heading = tab === 'login' ? 'Bem-vindo de volta' : 'Crie sua conta'
   const subtext =
-    tab === "login"
-      ? "Entre para acompanhar suas finanças."
-      : "Comece de graça em menos de um minuto.";
+    tab === 'login'
+      ? 'Entre para acompanhar suas finanças.'
+      : 'Comece de graça em menos de um minuto.'
 
   return (
     <>
@@ -489,66 +485,55 @@ export default function LoginPage() {
         }
       `}</style>
 
-      <div style={{ display: "flex", minHeight: "100vh" }}>
+      <div style={{ display: 'flex', minHeight: '100vh' }}>
         {/* ESQUERDA: Painel da marca */}
         <aside className="relative hidden w-[44%] xl:w-[48%] lg:flex flex-col justify-between overflow-hidden border-r border-line bg-card p-12">
           {/* glow de fundo */}
           <div
             style={{
-              position: "absolute",
+              position: 'absolute',
               inset: 0,
               background:
-                "radial-gradient(circle at 50% 0%, rgb(var(--c-brand) / 0.14), transparent 60%)",
+                'radial-gradient(circle at 50% 0%, rgb(var(--c-brand) / 0.14), transparent 60%)',
             }}
           />
           <div
             style={{
-              position: "absolute",
+              position: 'absolute',
               inset: 0,
               opacity: 0.6,
               backgroundImage:
-                "linear-gradient(to right, rgba(31,41,55,0.5) 1px, transparent 1px), linear-gradient(to bottom, rgba(31,41,55,0.5) 1px, transparent 1px)",
-              backgroundSize: "56px 56px",
+                'linear-gradient(to right, rgba(31,41,55,0.5) 1px, transparent 1px), linear-gradient(to bottom, rgba(31,41,55,0.5) 1px, transparent 1px)',
+              backgroundSize: '56px 56px',
             }}
           />
 
           {/* logo */}
-          <a
+          <Link
             href="/"
             style={{
-              position: "relative",
-              display: "flex",
-              alignItems: "center",
+              position: 'relative',
+              display: 'flex',
+              alignItems: 'center',
               gap: 10,
-              textDecoration: "none",
-              color: "inherit",
+              textDecoration: 'none',
+              color: 'inherit',
             }}
           >
-            <Image
-              src="/cifrinho-mascot.png"
-              alt="Cifrinho"
-              width={40}
-              height={40}
-            />
-            <span
-              style={{
-                fontSize: 20,
-                fontWeight: 800,
-                letterSpacing: "-0.02em",
-              }}
-            >
+            <Image src="/cifrinho-mascot.png" alt="Cifrinho" width={40} height={40} />
+            <span style={{ fontSize: 20, fontWeight: 800, letterSpacing: '-0.02em' }}>
               Cifrinho
             </span>
-          </a>
+          </Link>
 
           {/* pitch central com mascote */}
           <div
             style={{
-              position: "relative",
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              textAlign: "center",
+              position: 'relative',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              textAlign: 'center',
             }}
           >
             <div style={{ marginBottom: 32 }}>
@@ -564,16 +549,13 @@ export default function LoginPage() {
                 fontSize: 36,
                 fontWeight: 800,
                 lineHeight: 1.1,
-                letterSpacing: "-0.02em",
+                letterSpacing: '-0.02em',
                 margin: 0,
               }}
             >
               Sua vida financeira,
               <br />
-              <span style={{ color: "rgb(var(--c-brand))" }}>
-                pessoal e empresarial
-              </span>
-              ,<br />
+              <span style={{ color: 'rgb(var(--c-brand))' }}>pessoal e empresarial</span>,<br />
               num só lugar.
             </h2>
             <p
@@ -582,41 +564,41 @@ export default function LoginPage() {
                 maxWidth: 400,
                 fontSize: 18,
                 lineHeight: 1.6,
-                color: "rgb(var(--c-mute))",
+                color: 'rgb(var(--c-mute))',
               }}
             >
-              Organize gastos, separe PF de PJ e deixe seu Imposto de Renda
-              pronto o ano inteiro — com a clareza de quem leva a grana a sério.
+              Organize gastos, separe PF de PJ e deixe seu Imposto de Renda pronto o ano inteiro —
+              com a clareza de quem leva a grana a sério.
             </p>
 
             {/* chips de funcionalidades */}
             <div
               style={{
                 marginTop: 32,
-                display: "flex",
-                flexWrap: "wrap",
+                display: 'flex',
+                flexWrap: 'wrap',
                 gap: 10,
-                justifyContent: "center",
+                justifyContent: 'center',
               }}
             >
               {[
-                { label: "Gestão pessoal", dot: "brand" },
-                { label: "Controle PF e PJ", dot: "blue" },
-                { label: "IR sempre pronto", dot: "purple" },
+                { label: 'Gestão pessoal', dot: 'brand' },
+                { label: 'Controle PF e PJ', dot: 'blue' },
+                { label: 'IR sempre pronto', dot: 'purple' },
               ].map(({ label, dot }) => (
                 <span
                   key={label}
                   style={{
-                    display: "flex",
-                    alignItems: "center",
+                    display: 'flex',
+                    alignItems: 'center',
                     gap: 8,
                     borderRadius: 99,
-                    border: "1px solid rgb(var(--c-line))",
-                    background: "rgb(var(--c-bg) / .6)",
-                    padding: "6px 14px",
+                    border: '1px solid rgb(var(--c-line))',
+                    background: 'rgb(var(--c-bg) / .6)',
+                    padding: '6px 14px',
                     fontSize: 14,
                     fontWeight: 500,
-                    color: "rgb(var(--c-mute))",
+                    color: 'rgb(var(--c-mute))',
                   }}
                 >
                   <span
@@ -625,7 +607,7 @@ export default function LoginPage() {
                       height: 6,
                       borderRadius: 99,
                       background: `rgb(var(--c-${dot}))`,
-                      display: "inline-block",
+                      display: 'inline-block',
                       flexShrink: 0,
                     }}
                   />
@@ -638,51 +620,47 @@ export default function LoginPage() {
           {/* prova social */}
           <div
             style={{
-              position: "relative",
-              display: "flex",
-              alignItems: "center",
+              position: 'relative',
+              display: 'flex',
+              alignItems: 'center',
               gap: 16,
             }}
           >
-            <div style={{ display: "flex" }}>
+            <div style={{ display: 'flex' }}>
               {[
                 {
-                  initials: "RA",
-                  from: "from-brand",
-                  to: "to-blue",
-                  grad: "linear-gradient(135deg, rgb(var(--c-brand)), rgb(var(--c-blue)))",
+                  initials: 'RA',
+                  from: 'from-brand',
+                  to: 'to-blue',
+                  grad: 'linear-gradient(135deg, rgb(var(--c-brand)), rgb(var(--c-blue)))',
                 },
                 {
-                  initials: "JV",
-                  from: "from-purple",
-                  to: "to-blue",
-                  grad: "linear-gradient(135deg, rgb(var(--c-purple)), rgb(var(--c-blue)))",
+                  initials: 'JV',
+                  from: 'from-purple',
+                  to: 'to-blue',
+                  grad: 'linear-gradient(135deg, rgb(var(--c-purple)), rgb(var(--c-blue)))',
                 },
                 {
-                  initials: "MA",
-                  from: "from-amber",
-                  to: "to-rose",
-                  grad: "linear-gradient(135deg, rgb(var(--c-amber)), rgb(var(--c-rose)))",
+                  initials: 'MA',
+                  from: 'from-amber',
+                  to: 'to-rose',
+                  grad: 'linear-gradient(135deg, rgb(var(--c-amber)), rgb(var(--c-rose)))',
                 },
-                {
-                  initials: "+9k",
-                  grad: "rgb(var(--c-elev))",
-                  color: "rgb(var(--c-mute))",
-                },
+                { initials: '+9k', grad: 'rgb(var(--c-elev))', color: 'rgb(var(--c-mute))' },
               ].map(({ initials, grad, color }, i) => (
                 <span
                   key={i}
                   style={{
-                    display: "grid",
-                    placeItems: "center",
+                    display: 'grid',
+                    placeItems: 'center',
                     width: 36,
                     height: 36,
-                    borderRadius: "50%",
+                    borderRadius: '50%',
                     background: grad,
-                    color: color ?? "#fff",
+                    color: color ?? '#fff',
                     fontSize: 12,
                     fontWeight: 700,
-                    outline: "2px solid rgb(var(--c-card))",
+                    outline: '2px solid rgb(var(--c-card))',
                     marginLeft: i === 0 ? 0 : -10,
                   }}
                 >
@@ -690,12 +668,10 @@ export default function LoginPage() {
                 </span>
               ))}
             </div>
-            <p style={{ fontSize: 14, color: "rgb(var(--c-mute))", margin: 0 }}>
-              Mais de{" "}
-              <span style={{ fontWeight: 600, color: "rgb(var(--c-ink))" }}>
-                9.000 Juninhos
-              </span>{" "}
-              já organizam suas finanças.
+            <p style={{ fontSize: 14, color: 'rgb(var(--c-mute))', margin: 0 }}>
+              Mais de{' '}
+              <span style={{ fontWeight: 600, color: 'rgb(var(--c-ink))' }}>9.000 Juninhos</span> já
+              organizam suas finanças.
             </p>
           </div>
         </aside>
@@ -703,104 +679,72 @@ export default function LoginPage() {
         {/* DIREITA: Painel do formulário */}
         <main
           style={{
-            position: "relative",
-            display: "flex",
+            position: 'relative',
+            display: 'flex',
             flex: 1,
-            flexDirection: "column",
-            padding: "32px 20px",
+            flexDirection: 'column',
+            padding: '32px 20px',
           }}
         >
           {/* topo: logo mobile */}
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-            }}
-          >
-            <a
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <Link
               href="/"
               style={{
-                display: "flex",
-                alignItems: "center",
+                display: 'flex',
+                alignItems: 'center',
                 gap: 10,
-                textDecoration: "none",
-                color: "inherit",
+                textDecoration: 'none',
+                color: 'inherit',
               }}
               className="lg:invisible"
             >
-              <Image
-                src="/cifrinho-mascot.png"
-                alt="Cifrinho"
-                width={36}
-                height={36}
-              />
-              <span
-                style={{
-                  fontSize: 18,
-                  fontWeight: 800,
-                  letterSpacing: "-0.02em",
-                }}
-              >
+              <Image src="/cifrinho-mascot.png" alt="Cifrinho" width={36} height={36} />
+              <span style={{ fontSize: 18, fontWeight: 800, letterSpacing: '-0.02em' }}>
                 Cifrinho
               </span>
-            </a>
+            </Link>
           </div>
 
           {/* formulário centralizado */}
           <div
             style={{
-              display: "flex",
+              display: 'flex',
               flex: 1,
-              alignItems: "center",
-              justifyContent: "center",
-              padding: "32px 0",
+              alignItems: 'center',
+              justifyContent: 'center',
+              padding: '32px 0',
             }}
           >
-            <div style={{ width: "100%", maxWidth: 448 }}>
-              <h1
-                style={{
-                  fontSize: 30,
-                  fontWeight: 800,
-                  letterSpacing: "-0.02em",
-                  margin: 0,
-                }}
-              >
+            <div style={{ width: '100%', maxWidth: 448 }}>
+              <h1 style={{ fontSize: 30, fontWeight: 800, letterSpacing: '-0.02em', margin: 0 }}>
                 {heading}
               </h1>
-              <p
-                style={{
-                  marginTop: 8,
-                  fontSize: 16,
-                  color: "rgb(var(--c-mute))",
-                }}
-              >
-                {subtext}
-              </p>
+              <p style={{ marginTop: 8, fontSize: 16, color: 'rgb(var(--c-mute))' }}>{subtext}</p>
 
               {/* abas de navegação */}
               <div
                 style={{
                   marginTop: 28,
-                  display: "flex",
+                  display: 'flex',
                   gap: 28,
-                  borderBottom: "1px solid rgb(var(--c-line))",
+                  borderBottom: '1px solid rgb(var(--c-line))',
                 }}
               >
                 <button
-                  className={`auth-tab${tab === "login" ? " on" : ""}`}
+                  className={`auth-tab${tab === 'login' ? ' on' : ''}`}
                   onClick={() => {
-                    setTab("login");
-                    setError("");
+                    setTab('login')
+                    setError('')
                   }}
                 >
                   Entrar
                 </button>
                 <button
-                  className={`auth-tab${tab === "signup" ? " on" : ""}`}
+                  className={`auth-tab${tab === 'signup' ? ' on' : ''}`}
                   onClick={() => {
-                    setTab("signup");
-                    setError("");
+                    setTab('signup')
+                    setError('')
                   }}
                 >
                   Criar conta
@@ -809,12 +753,7 @@ export default function LoginPage() {
 
               {/* botões de login social */}
               <div
-                style={{
-                  marginTop: 28,
-                  display: "grid",
-                  gridTemplateColumns: "1fr 1fr",
-                  gap: 12,
-                }}
+                style={{ marginTop: 28, display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}
               >
                 <button type="button" className="soc-btn">
                   <svg style={{ width: 20, height: 20 }} viewBox="0 0 24 24">
@@ -838,11 +777,7 @@ export default function LoginPage() {
                   Google
                 </button>
                 <button type="button" className="soc-btn">
-                  <svg
-                    style={{ width: 20, height: 20 }}
-                    viewBox="0 0 24 24"
-                    fill="currentColor"
-                  >
+                  <svg style={{ width: 20, height: 20 }} viewBox="0 0 24 24" fill="currentColor">
                     <path d="M16.365 1.43c0 1.14-.42 2.27-1.25 3.09-.83.83-2.04 1.46-3.18 1.37-.13-1.1.4-2.27 1.18-3.04.83-.85 2.16-1.46 3.25-1.42zM20.5 17.06c-.55 1.27-.82 1.84-1.53 2.96-.99 1.57-2.39 3.52-4.12 3.53-1.54.02-1.94-1-4.03-.99-2.09.01-2.53 1.01-4.07.99-1.73-.02-3.05-1.78-4.04-3.35C-.06 16.21-.36 11.13 2.2 8.43c1.06-1.12 2.46-1.78 3.96-1.78 1.53 0 2.49 1.01 3.76 1.01 1.22 0 1.96-1.01 3.73-1.01 1.32 0 2.72.72 3.72 1.96-3.27 1.79-2.74 6.45.93 7.45z" />
                   </svg>
                   Apple
@@ -850,37 +785,12 @@ export default function LoginPage() {
               </div>
 
               {/* separador */}
-              <div
-                style={{
-                  margin: "24px 0",
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 16,
-                }}
-              >
-                <span
-                  style={{
-                    height: 1,
-                    flex: 1,
-                    background: "rgb(var(--c-line))",
-                  }}
-                />
-                <span
-                  style={{
-                    fontSize: 12,
-                    fontWeight: 500,
-                    color: "rgb(var(--c-faint))",
-                  }}
-                >
+              <div style={{ margin: '24px 0', display: 'flex', alignItems: 'center', gap: 16 }}>
+                <span style={{ height: 1, flex: 1, background: 'rgb(var(--c-line))' }} />
+                <span style={{ fontSize: 12, fontWeight: 500, color: 'rgb(var(--c-faint))' }}>
                   ou com e-mail
                 </span>
-                <span
-                  style={{
-                    height: 1,
-                    flex: 1,
-                    background: "rgb(var(--c-line))",
-                  }}
-                />
+                <span style={{ height: 1, flex: 1, background: 'rgb(var(--c-line))' }} />
               </div>
 
               {/* mensagem de erro */}
@@ -888,11 +798,11 @@ export default function LoginPage() {
                 <div
                   style={{
                     marginBottom: 16,
-                    padding: "12px 14px",
+                    padding: '12px 14px',
                     borderRadius: 12,
-                    background: "rgb(var(--c-rose) / .1)",
-                    border: "1px solid rgb(var(--c-rose) / .2)",
-                    color: "rgb(var(--c-rose))",
+                    background: 'rgb(var(--c-rose) / .1)',
+                    border: '1px solid rgb(var(--c-rose) / .2)',
+                    color: 'rgb(var(--c-rose))',
                     fontSize: 14,
                   }}
                 >
@@ -901,25 +811,25 @@ export default function LoginPage() {
               )}
 
               {/* PAINEL DE LOGIN */}
-              {tab === "login" && (
+              {tab === 'login' && (
                 <form key="login" className="pane-enter" onSubmit={handleLogin}>
                   <div
                     style={{
-                      display: "flex",
-                      flexDirection: "column",
+                      display: 'flex',
+                      flexDirection: 'column',
                       gap: 16,
                     }}
                   >
                     {/* campo de e-mail */}
-                    <div style={{ position: "relative" }}>
+                    <div style={{ position: 'relative' }}>
                       <span
                         style={{
-                          position: "absolute",
+                          position: 'absolute',
                           left: 14,
-                          top: "50%",
-                          transform: "translateY(-50%)",
-                          color: "rgb(var(--c-faint))",
-                          pointerEvents: "none",
+                          top: '50%',
+                          transform: 'translateY(-50%)',
+                          color: 'rgb(var(--c-faint))',
+                          pointerEvents: 'none',
                         }}
                       >
                         <svg
@@ -945,15 +855,15 @@ export default function LoginPage() {
                       />
                     </div>
                     {/* campo de senha */}
-                    <div style={{ position: "relative" }}>
+                    <div style={{ position: 'relative' }}>
                       <span
                         style={{
-                          position: "absolute",
+                          position: 'absolute',
                           left: 14,
-                          top: "50%",
-                          transform: "translateY(-50%)",
-                          color: "rgb(var(--c-faint))",
-                          pointerEvents: "none",
+                          top: '50%',
+                          transform: 'translateY(-50%)',
+                          color: 'rgb(var(--c-faint))',
+                          pointerEvents: 'none',
                         }}
                       >
                         <svg
@@ -970,7 +880,7 @@ export default function LoginPage() {
                         </svg>
                       </span>
                       <input
-                        type={loginPwVisible ? "text" : "password"}
+                        type={loginPwVisible ? 'text' : 'password'}
                         className="auth-field"
                         style={{ paddingRight: 44 }}
                         placeholder="Senha"
@@ -984,13 +894,13 @@ export default function LoginPage() {
                         type="button"
                         onClick={() => setLoginPwVisible((v) => !v)}
                         style={{
-                          position: "absolute",
+                          position: 'absolute',
                           right: 12,
-                          top: "50%",
-                          transform: "translateY(-50%)",
-                          color: "rgb(var(--c-faint))",
-                          cursor: "pointer",
-                          background: "none",
+                          top: '50%',
+                          transform: 'translateY(-50%)',
+                          color: 'rgb(var(--c-faint))',
+                          cursor: 'pointer',
+                          background: 'none',
                           border: 0,
                           padding: 0,
                         }}
@@ -1004,19 +914,19 @@ export default function LoginPage() {
                   <div
                     style={{
                       marginTop: 16,
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "space-between",
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
                     }}
                   >
                     <label
                       style={{
-                        display: "flex",
-                        alignItems: "center",
+                        display: 'flex',
+                        alignItems: 'center',
                         gap: 8,
                         fontSize: 14,
-                        color: "rgb(var(--c-mute))",
-                        cursor: "pointer",
+                        color: 'rgb(var(--c-mute))',
+                        cursor: 'pointer',
                       }}
                     >
                       <button
@@ -1024,7 +934,7 @@ export default function LoginPage() {
                         role="switch"
                         aria-checked={rememberMe}
                         onClick={handleRememberToggle}
-                        className={`tgl${rememberMe ? " on" : ""}`}
+                        className={`tgl${rememberMe ? ' on' : ''}`}
                       />
                       Lembrar de mim
                     </label>
@@ -1033,15 +943,11 @@ export default function LoginPage() {
                       style={{
                         fontSize: 14,
                         fontWeight: 600,
-                        color: "rgb(var(--c-brand))",
-                        textDecoration: "none",
+                        color: 'rgb(var(--c-brand))',
+                        textDecoration: 'none',
                       }}
-                      onMouseEnter={(e) =>
-                        (e.currentTarget.style.textDecoration = "underline")
-                      }
-                      onMouseLeave={(e) =>
-                        (e.currentTarget.style.textDecoration = "none")
-                      }
+                      onMouseEnter={(e) => (e.currentTarget.style.textDecoration = 'underline')}
+                      onMouseLeave={(e) => (e.currentTarget.style.textDecoration = 'none')}
                     >
                       Esqueci a senha
                     </a>
@@ -1052,27 +958,26 @@ export default function LoginPage() {
                     disabled={loading}
                     style={{
                       marginTop: 24,
-                      display: "flex",
-                      width: "100%",
-                      alignItems: "center",
-                      justifyContent: "center",
+                      display: 'flex',
+                      width: '100%',
+                      alignItems: 'center',
+                      justifyContent: 'center',
                       gap: 8,
                       borderRadius: 12,
-                      background: "rgb(var(--c-brand))",
-                      padding: "14px",
+                      background: 'rgb(var(--c-brand))',
+                      padding: '14px',
                       fontSize: 16,
                       fontWeight: 700,
-                      color: "#fff",
+                      color: '#fff',
                       border: 0,
-                      cursor: loading ? "not-allowed" : "pointer",
+                      cursor: loading ? 'not-allowed' : 'pointer',
                       opacity: loading ? 0.7 : 1,
-                      boxShadow: "0 4px 20px rgb(var(--c-brand) / .2)",
-                      transition:
-                        "background-color .18s ease, box-shadow .18s ease",
-                      fontFamily: "inherit",
+                      boxShadow: '0 4px 20px rgb(var(--c-brand) / .2)',
+                      transition: 'background-color .18s ease, box-shadow .18s ease',
+                      fontFamily: 'inherit',
                     }}
                   >
-                    {loading ? "Entrando…" : "Entrar"}
+                    {loading ? 'Entrando…' : 'Entrar'}
                     {!loading && (
                       <svg
                         style={{ width: 16, height: 16 }}
@@ -1091,29 +996,25 @@ export default function LoginPage() {
               )}
 
               {/* PAINEL DE CADASTRO */}
-              {tab === "signup" && (
-                <form
-                  key="signup"
-                  className="pane-enter"
-                  onSubmit={handleRegister}
-                >
+              {tab === 'signup' && (
+                <form key="signup" className="pane-enter" onSubmit={handleRegister}>
                   <div
                     style={{
-                      display: "flex",
-                      flexDirection: "column",
+                      display: 'flex',
+                      flexDirection: 'column',
                       gap: 16,
                     }}
                   >
                     {/* campo de nome */}
-                    <div style={{ position: "relative" }}>
+                    <div style={{ position: 'relative' }}>
                       <span
                         style={{
-                          position: "absolute",
+                          position: 'absolute',
                           left: 14,
-                          top: "50%",
-                          transform: "translateY(-50%)",
-                          color: "rgb(var(--c-faint))",
-                          pointerEvents: "none",
+                          top: '50%',
+                          transform: 'translateY(-50%)',
+                          color: 'rgb(var(--c-faint))',
+                          pointerEvents: 'none',
                         }}
                       >
                         <svg
@@ -1139,15 +1040,15 @@ export default function LoginPage() {
                       />
                     </div>
                     {/* campo de e-mail */}
-                    <div style={{ position: "relative" }}>
+                    <div style={{ position: 'relative' }}>
                       <span
                         style={{
-                          position: "absolute",
+                          position: 'absolute',
                           left: 14,
-                          top: "50%",
-                          transform: "translateY(-50%)",
-                          color: "rgb(var(--c-faint))",
-                          pointerEvents: "none",
+                          top: '50%',
+                          transform: 'translateY(-50%)',
+                          color: 'rgb(var(--c-faint))',
+                          pointerEvents: 'none',
                         }}
                       >
                         <svg
@@ -1173,15 +1074,15 @@ export default function LoginPage() {
                       />
                     </div>
                     {/* campo de senha */}
-                    <div style={{ position: "relative" }}>
+                    <div style={{ position: 'relative' }}>
                       <span
                         style={{
-                          position: "absolute",
+                          position: 'absolute',
                           left: 14,
-                          top: "50%",
-                          transform: "translateY(-50%)",
-                          color: "rgb(var(--c-faint))",
-                          pointerEvents: "none",
+                          top: '50%',
+                          transform: 'translateY(-50%)',
+                          color: 'rgb(var(--c-faint))',
+                          pointerEvents: 'none',
                         }}
                       >
                         <svg
@@ -1198,7 +1099,7 @@ export default function LoginPage() {
                         </svg>
                       </span>
                       <input
-                        type={signupPwVisible ? "text" : "password"}
+                        type={signupPwVisible ? 'text' : 'password'}
                         className="auth-field"
                         style={{ paddingRight: 44 }}
                         placeholder="Crie uma senha"
@@ -1213,13 +1114,13 @@ export default function LoginPage() {
                         type="button"
                         onClick={() => setSignupPwVisible((v) => !v)}
                         style={{
-                          position: "absolute",
+                          position: 'absolute',
                           right: 12,
-                          top: "50%",
-                          transform: "translateY(-50%)",
-                          color: "rgb(var(--c-faint))",
-                          cursor: "pointer",
-                          background: "none",
+                          top: '50%',
+                          transform: 'translateY(-50%)',
+                          color: 'rgb(var(--c-faint))',
+                          cursor: 'pointer',
+                          background: 'none',
                           border: 0,
                           padding: 0,
                         }}
@@ -1229,7 +1130,7 @@ export default function LoginPage() {
                     </div>
 
                     {/* medidor de força da senha */}
-                    <div style={{ display: "flex", gap: 6 }} aria-hidden="true">
+                    <div style={{ display: 'flex', gap: 6 }} aria-hidden="true">
                       {[0, 1, 2, 3].map((i) => (
                         <span
                           key={i}
@@ -1238,21 +1139,15 @@ export default function LoginPage() {
                             background:
                               signupPassword && i < pwScore
                                 ? `rgb(${STRENGTH_COLORS[Math.max(0, pwScore - 1)]})`
-                                : "rgb(var(--c-line))",
+                                : 'rgb(var(--c-line))',
                           }}
                         />
                       ))}
                     </div>
-                    <p
-                      style={{
-                        marginTop: -4,
-                        fontSize: 12,
-                        color: "rgb(var(--c-faint))",
-                      }}
-                    >
+                    <p style={{ marginTop: -4, fontSize: 12, color: 'rgb(var(--c-faint))' }}>
                       {signupPassword
                         ? STRENGTH_LABELS[Math.max(0, pwScore - 1)]
-                        : "Use 8+ caracteres com letras, números e símbolos."}
+                        : 'Use 8+ caracteres com letras, números e símbolos.'}
                     </p>
                   </div>
 
@@ -1260,12 +1155,12 @@ export default function LoginPage() {
                   <label
                     style={{
                       marginTop: 16,
-                      display: "flex",
-                      alignItems: "flex-start",
+                      display: 'flex',
+                      alignItems: 'flex-start',
                       gap: 10,
                       fontSize: 14,
-                      color: "rgb(var(--c-mute))",
-                      cursor: "pointer",
+                      color: 'rgb(var(--c-mute))',
+                      cursor: 'pointer',
                     }}
                   >
                     <button
@@ -1274,40 +1169,32 @@ export default function LoginPage() {
                       aria-checked={termsAccepted}
                       onClick={handleTermsToggle}
                       style={{ marginTop: 2, flexShrink: 0 }}
-                      className={`tgl${termsAccepted ? " on" : ""}`}
+                      className={`tgl${termsAccepted ? ' on' : ''}`}
                     />
                     <span>
-                      Concordo com os{" "}
+                      Concordo com os{' '}
                       <a
                         href="/legal"
                         style={{
                           fontWeight: 600,
-                          color: "rgb(var(--c-brand))",
-                          textDecoration: "none",
+                          color: 'rgb(var(--c-brand))',
+                          textDecoration: 'none',
                         }}
-                        onMouseEnter={(e) =>
-                          (e.currentTarget.style.textDecoration = "underline")
-                        }
-                        onMouseLeave={(e) =>
-                          (e.currentTarget.style.textDecoration = "none")
-                        }
+                        onMouseEnter={(e) => (e.currentTarget.style.textDecoration = 'underline')}
+                        onMouseLeave={(e) => (e.currentTarget.style.textDecoration = 'none')}
                       >
                         Termos
-                      </a>{" "}
-                      e a{" "}
+                      </a>{' '}
+                      e a{' '}
                       <a
                         href="/legal"
                         style={{
                           fontWeight: 600,
-                          color: "rgb(var(--c-brand))",
-                          textDecoration: "none",
+                          color: 'rgb(var(--c-brand))',
+                          textDecoration: 'none',
                         }}
-                        onMouseEnter={(e) =>
-                          (e.currentTarget.style.textDecoration = "underline")
-                        }
-                        onMouseLeave={(e) =>
-                          (e.currentTarget.style.textDecoration = "none")
-                        }
+                        onMouseEnter={(e) => (e.currentTarget.style.textDecoration = 'underline')}
+                        onMouseLeave={(e) => (e.currentTarget.style.textDecoration = 'none')}
                       >
                         Política de Privacidade
                       </a>
@@ -1320,27 +1207,26 @@ export default function LoginPage() {
                     disabled={loading}
                     style={{
                       marginTop: 24,
-                      display: "flex",
-                      width: "100%",
-                      alignItems: "center",
-                      justifyContent: "center",
+                      display: 'flex',
+                      width: '100%',
+                      alignItems: 'center',
+                      justifyContent: 'center',
                       gap: 8,
                       borderRadius: 12,
-                      background: "rgb(var(--c-brand))",
-                      padding: "14px",
+                      background: 'rgb(var(--c-brand))',
+                      padding: '14px',
                       fontSize: 16,
                       fontWeight: 700,
-                      color: "#fff",
+                      color: '#fff',
                       border: 0,
-                      cursor: loading ? "not-allowed" : "pointer",
+                      cursor: loading ? 'not-allowed' : 'pointer',
                       opacity: loading ? 0.7 : 1,
-                      boxShadow: "0 4px 20px rgb(var(--c-brand) / .2)",
-                      transition:
-                        "background-color .18s ease, box-shadow .18s ease",
-                      fontFamily: "inherit",
+                      boxShadow: '0 4px 20px rgb(var(--c-brand) / .2)',
+                      transition: 'background-color .18s ease, box-shadow .18s ease',
+                      fontFamily: 'inherit',
                     }}
                   >
-                    {loading ? "Criando conta…" : "Criar conta grátis"}
+                    {loading ? 'Criando conta…' : 'Criar conta grátis'}
                     {!loading && (
                       <svg
                         style={{ width: 16, height: 16 }}
@@ -1358,9 +1244,9 @@ export default function LoginPage() {
                   <p
                     style={{
                       marginTop: 12,
-                      textAlign: "center",
+                      textAlign: 'center',
                       fontSize: 12,
-                      color: "rgb(var(--c-faint))",
+                      color: 'rgb(var(--c-faint))',
                     }}
                   >
                     Sem cartão de crédito · Cancele quando quiser
@@ -1372,28 +1258,28 @@ export default function LoginPage() {
               <p
                 style={{
                   marginTop: 28,
-                  textAlign: "center",
+                  textAlign: 'center',
                   fontSize: 14,
-                  color: "rgb(var(--c-mute))",
+                  color: 'rgb(var(--c-mute))',
                 }}
               >
-                {tab === "login" ? (
+                {tab === 'login' ? (
                   <>
-                    Ainda não tem conta?{" "}
+                    Ainda não tem conta?{' '}
                     <button
                       onClick={() => {
-                        setTab("signup");
-                        setError("");
+                        setTab('signup')
+                        setError('')
                       }}
                       style={{
                         fontWeight: 600,
-                        color: "rgb(var(--c-brand))",
-                        background: "none",
+                        color: 'rgb(var(--c-brand))',
+                        background: 'none',
                         border: 0,
-                        cursor: "pointer",
-                        fontFamily: "inherit",
+                        cursor: 'pointer',
+                        fontFamily: 'inherit',
                         padding: 0,
-                        fontSize: "inherit",
+                        fontSize: 'inherit',
                       }}
                     >
                       Criar agora
@@ -1401,21 +1287,21 @@ export default function LoginPage() {
                   </>
                 ) : (
                   <>
-                    Já tem conta?{" "}
+                    Já tem conta?{' '}
                     <button
                       onClick={() => {
-                        setTab("login");
-                        setError("");
+                        setTab('login')
+                        setError('')
                       }}
                       style={{
                         fontWeight: 600,
-                        color: "rgb(var(--c-brand))",
-                        background: "none",
+                        color: 'rgb(var(--c-brand))',
+                        background: 'none',
                         border: 0,
-                        cursor: "pointer",
-                        fontFamily: "inherit",
+                        cursor: 'pointer',
+                        fontFamily: 'inherit',
                         padding: 0,
-                        fontSize: "inherit",
+                        fontSize: 'inherit',
                       }}
                     >
                       Entrar
@@ -1427,25 +1313,15 @@ export default function LoginPage() {
           </div>
 
           {/* rodapé */}
-          <p
-            style={{
-              textAlign: "center",
-              fontSize: 12,
-              color: "rgb(var(--c-faint))",
-            }}
-          >
-            © 2026 Cifrinho · Feito pela{" "}
+          <p style={{ textAlign: 'center', fontSize: 12, color: 'rgb(var(--c-faint))' }}>
+            © 2026 Cifrinho · Feito pela{' '}
             <a
               href="https://www.juninhos.com/"
               target="_blank"
               rel="noopener noreferrer"
-              style={{ color: "inherit", textDecoration: "none" }}
-              onMouseEnter={(e) =>
-                (e.currentTarget.style.textDecoration = "underline")
-              }
-              onMouseLeave={(e) =>
-                (e.currentTarget.style.textDecoration = "none")
-              }
+              style={{ color: 'inherit', textDecoration: 'none' }}
+              onMouseEnter={(e) => (e.currentTarget.style.textDecoration = 'underline')}
+              onMouseLeave={(e) => (e.currentTarget.style.textDecoration = 'none')}
             >
               Comunidade Juninhos
             </a>
@@ -1453,5 +1329,5 @@ export default function LoginPage() {
         </main>
       </div>
     </>
-  );
+  )
 }
