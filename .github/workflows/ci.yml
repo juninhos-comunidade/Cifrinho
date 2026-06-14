@@ -1,0 +1,79 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [main, Development]
+  push:
+    branches: [main]
+
+jobs:
+  lint-and-typecheck:
+    name: Lint & Typecheck
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Instalar dependências
+        run: npm install
+
+      - name: Lint (web)
+        run: npx eslint src --max-warnings 0
+        working-directory: apps/web
+
+      - name: Typecheck (web)
+        run: npx tsc --noEmit
+        working-directory: apps/web
+
+      - name: Typecheck (api)
+        run: npx tsc --noEmit
+        working-directory: apps/api
+
+      - name: Prettier check
+        run: npx prettier --check .
+
+  tests:
+    name: Testes de integração
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: cifrinho
+          POSTGRES_PASSWORD: cifrinho
+          POSTGRES_DB: cifrinho_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      DATABASE_URL: postgresql://cifrinho:cifrinho@localhost:5432/cifrinho_test
+      DIRECT_URL: postgresql://cifrinho:cifrinho@localhost:5432/cifrinho_test
+      JWT_SECRET: ci-secret-para-testes
+      NODE_ENV: test
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Instalar dependências
+        run: npm install
+
+      - name: Gerar Prisma Client
+        run: npx prisma generate
+        working-directory: apps/api
+
+      - name: Rodar migrations
+        run: npx prisma migrate deploy
+        working-directory: apps/api
+
+      - name: Rodar testes
+        run: npm test --workspace=@cifrinho/api

@@ -67,7 +67,9 @@ export function TransactionModal({ open, onClose, defaultAccountType, editing }:
   // Fechar com Escape
   useEffect(() => {
     if (!open) return
-    const handler = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose() }
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose()
+    }
     window.addEventListener('keydown', handler)
     return () => window.removeEventListener('keydown', handler)
   }, [open, onClose])
@@ -81,9 +83,10 @@ export function TransactionModal({ open, onClose, defaultAccountType, editing }:
     enabled: open,
   })
 
-  const filteredCats = categories.filter(c =>
-    c.accountType === form.accountType &&
-    (c.transactionType === null || c.transactionType === form.type)
+  const filteredCats = categories.filter(
+    (c) =>
+      c.accountType === form.accountType &&
+      (c.transactionType === null || c.transactionType === form.type)
   )
 
   function parseAmount(raw: string): number {
@@ -115,7 +118,7 @@ export function TransactionModal({ open, onClose, defaultAccountType, editing }:
       qc.invalidateQueries({ queryKey: ['transactions'] })
       onClose()
     },
-    onError: (err: any) => {
+    onError: (err: Error & { response?: { data?: { message?: string } } }) => {
       setError(err.message ?? err.response?.data?.message ?? 'Erro ao salvar.')
     },
   })
@@ -128,7 +131,7 @@ export function TransactionModal({ open, onClose, defaultAccountType, editing }:
       qc.invalidateQueries({ queryKey: ['transactions'] })
       onClose()
     },
-    onError: (err: any) => {
+    onError: (err: Error & { response?: { data?: { message?: string } } }) => {
       setError(err.response?.data?.message ?? 'Erro ao excluir.')
     },
   })
@@ -136,7 +139,7 @@ export function TransactionModal({ open, onClose, defaultAccountType, editing }:
   const busy = saveMutation.isPending || deleteMutation.isPending
 
   function set<K extends keyof typeof form>(k: K, v: (typeof form)[K]) {
-    setForm(f => ({ ...f, [k]: v }))
+    setForm((f) => ({ ...f, [k]: v }))
     setError('')
   }
 
@@ -145,9 +148,14 @@ export function TransactionModal({ open, onClose, defaultAccountType, editing }:
   return (
     <div
       ref={overlayRef}
-      onClick={e => { if (e.target === overlayRef.current) onClose() }}
+      onClick={(e) => {
+        if (e.target === overlayRef.current) onClose()
+      }}
       className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4"
-      style={{ backgroundColor: 'rgb(0 0 0 / 0.6)', backdropFilter: 'blur(4px)' }}
+      style={{
+        backgroundColor: 'rgb(0 0 0 / 0.6)',
+        backdropFilter: 'blur(4px)',
+      }}
     >
       <div
         className="w-full max-w-md rounded-2xl border border-line bg-card shadow-xl"
@@ -162,7 +170,16 @@ export function TransactionModal({ open, onClose, defaultAccountType, editing }:
             onClick={onClose}
             className="grid h-8 w-8 place-items-center rounded-md text-mute transition-colors hover:bg-elev hover:text-ink"
           >
-            <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+            <svg
+              className="h-4 w-4"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+            >
+              <path d="M18 6 6 18M6 6l12 12" />
+            </svg>
           </button>
         </div>
 
@@ -213,7 +230,7 @@ export function TransactionModal({ open, onClose, defaultAccountType, editing }:
               type="text"
               placeholder="Ex: Freela de design"
               value={form.description}
-              onChange={e => set('description', e.target.value)}
+              onChange={(e) => set('description', e.target.value)}
               className="modal-field"
             />
           </div>
@@ -227,7 +244,7 @@ export function TransactionModal({ open, onClose, defaultAccountType, editing }:
                 inputMode="decimal"
                 placeholder="0,00"
                 value={form.amount as string}
-                onChange={e => set('amount', e.target.value)}
+                onChange={(e) => set('amount', e.target.value)}
                 className="modal-field"
               />
             </div>
@@ -236,7 +253,7 @@ export function TransactionModal({ open, onClose, defaultAccountType, editing }:
               <input
                 type="date"
                 value={form.date}
-                onChange={e => set('date', e.target.value)}
+                onChange={(e) => set('date', e.target.value)}
                 className="modal-field"
               />
             </div>
@@ -244,15 +261,19 @@ export function TransactionModal({ open, onClose, defaultAccountType, editing }:
 
           {/* categoria */}
           <div>
-            <label className="mb-1.5 block text-xs font-semibold text-mute">Categoria (opcional)</label>
+            <label className="mb-1.5 block text-xs font-semibold text-mute">
+              Categoria (opcional)
+            </label>
             <select
               value={form.categoryId ?? ''}
-              onChange={e => set('categoryId', e.target.value || null)}
+              onChange={(e) => set('categoryId', e.target.value || null)}
               className="modal-field"
             >
               <option value="">Sem categoria</option>
-              {filteredCats.map(c => (
-                <option key={c.id} value={c.id}>{c.name}</option>
+              {filteredCats.map((c) => (
+                <option key={c.id} value={c.id}>
+                  {c.name}
+                </option>
               ))}
             </select>
           </div>
@@ -265,7 +286,9 @@ export function TransactionModal({ open, onClose, defaultAccountType, editing }:
         </div>
 
         {/* rodapé */}
-        <div className={`flex gap-3 border-t border-line px-6 py-4 ${editing ? 'justify-between' : 'justify-end'}`}>
+        <div
+          className={`flex gap-3 border-t border-line px-6 py-4 ${editing ? 'justify-between' : 'justify-end'}`}
+        >
           {editing && (
             <button
               type="button"
@@ -273,7 +296,20 @@ export function TransactionModal({ open, onClose, defaultAccountType, editing }:
               disabled={busy}
               className="flex items-center gap-1.5 rounded-lg px-4 py-2.5 text-sm font-semibold text-rose transition-colors hover:bg-rose/10 disabled:opacity-50"
             >
-              <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+              <svg
+                className="h-4 w-4"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <polyline points="3 6 5 6 21 6" />
+                <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
+                <path d="M10 11v6M14 11v6" />
+                <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2" />
+              </svg>
               {deleteMutation.isPending ? 'Excluindo…' : 'Excluir'}
             </button>
           )}

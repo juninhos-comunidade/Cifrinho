@@ -21,10 +21,10 @@ Este projeto está sendo construído de forma 100% colaborativa dentro do ecossi
 
 O projeto foi estruturado seguindo os conceitos de **modularização**, alta coesão e baixo acoplamento:
 
-* **Frontend:** Next.js
-* **Backend:** Node.js + Fastify
-* **Banco de Dados:** Prisma + NeonDB
-* **Infraestrutura:** Vercel + Railway
+- **Frontend:** Next.js
+- **Backend:** Node.js + Fastify
+- **Banco de Dados:** Prisma + NeonDB
+- **Infraestrutura:** Vercel + Railway
 
 ---
 
@@ -45,29 +45,33 @@ Aqui está o mapeamento de recursos que estão sendo construídos ou planejados 
 ### 📋 Pré-requisitos
 
 Antes de começar, você vai precisar ter instalado em sua máquina:
-* **Ambiente de Execução / Linguagem:** ...
-* **Controle de Versão:** ...
-* **Gerenciador de Pacotes:** ...
+
+- **Ambiente de Execução / Linguagem:** ...
+- **Controle de Versão:** ...
+- **Gerenciador de Pacotes:** ...
 
 ### 🚀 Passos para Instalação
 
 1. Clone o repositório oficial dentro da organização Juninhos:
+
    ```bash
    git clone [https://github.com/juninhos-comunidade/cifrinho.git](https://github.com/juninhos-comunidade/cifrinho.git)
    ```
 
 2. Acesse a pasta do projeto:
+
    ```bash
    cd cifrinho
    ```
 
 3. Instale todas as dependências necessárias:
+
    ```bash
    ...
    ```
 
 4. Configure as variáveis de ambiente:
-   * Crie um arquivo `.env` na raiz do projeto seguindo o modelo do `.env.example`.
+   - Crie um arquivo `.env` na raiz do projeto seguindo o modelo do `.env.example`.
 
 5. Inicie o servidor de desenvolvimento:
    ```bash
@@ -83,11 +87,12 @@ Para manter o código limpo e organizado para todo o time, seguimos rigorosament
 ### 1. Estrutura de Branches
 
 | Branch        | Finalidade                                                        |
-|---------------|-------------------------------------------------------------------|
+| ------------- | ----------------------------------------------------------------- |
 | `main`        | Código em produção. Nunca recebe commits ou PRs diretos.          |
 | `development` | Branch de integração. **Todos os PRs devem ser abertos para cá.** |
 
 ### 2. Nomenclatura de Branches
+
 Sempre crie sua branch a partir da `development`:
 
 ```bash
@@ -97,21 +102,25 @@ git checkout -b feature/nome-da-funcionalidade
 ```
 
 Prefixos obrigatórios:
-* `feature/nome-da-funcionalidade`
-* `fix/correcao-de-bug`
-* `docs/atualizacao-readme`
+
+- `feature/nome-da-funcionalidade`
+- `fix/correcao-de-bug`
+- `docs/atualizacao-readme`
 
 ### 3. Padrão de Commits
+
 Os commits devem ser claros, em português e indicar a intenção da alteração:
-* `feat: adiciona calculo de previsao de gastos`
-* `fix: corrige bug na filtragem por categoria empresarial`
-* `style: estiliza os inputs do formulario de imposto de renda`
+
+- `feat: adiciona calculo de previsao de gastos`
+- `fix: corrige bug na filtragem por categoria empresarial`
+- `style: estiliza os inputs do formulario de imposto de renda`
 
 ### 4. Revisão de Código (Pull Requests)
-* Nunca faça commit ou PR diretamente na `main` ou `development`.
-* Sempre crie sua branch a partir da `development`.
-* Abra um **Pull Request (PR)** apontando para `development` e solicite a revisão de pelo menos um outro membro do squad antes de aplicar as alterações.
-* O merge de `development` para `main` é feito pelo responsável do projeto ao final de cada sprint.
+
+- Nunca faça commit ou PR diretamente na `main` ou `development`.
+- Sempre crie sua branch a partir da `development`.
+- Abra um **Pull Request (PR)** apontando para `development` e solicite a revisão de pelo menos um outro membro do squad antes de aplicar as alterações.
+- O merge de `development` para `main` é feito pelo responsável do projeto ao final de cada sprint.
 
 ---
 
@@ -119,13 +128,13 @@ Os commits devem ser claros, em português e indicar a intenção da alteração
 
 Um projeto completo só ganha vida com uma equipe sintonizada. Conheça as mentes por trás do desenvolvimento da plataforma:
 
-| Avatar | Membro | Função / Especialidade | GitHub |
-| :---: | :--- | :--- | :--- |
-| <img src="https://github.com/github.png" width="40" style="border-radius:50%"/> | **Pedro Augusto** | Pendente | ... |
-| <img src="https://github.com/hanxgxrl.png" width="40" style="border-radius:50%"/> | **Rayane dos Santos** | Full Stack | [hanxgxrl](https://github.com/hanxgxrl) |
-| <img src="https://github.com/github.png" width="40" style="border-radius:50%"/> | **Higor Dornelas** | Pendente | ... |
-| <img src="https://github.com/github.png" width="40" style="border-radius:50%"/> | **Lucas Schiavo** | Pendente | ... |
-| <img src="https://avatars.githubusercontent.com/u/139577518?v=4" width="40" style="border-radius:50%"/> | **Rafhael Hanry** | Full Stack | [MrRafha](https://github.com/MrRafha) |
+|                                                 Avatar                                                  | Membro                | Função / Especialidade | GitHub                                  |
+| :-----------------------------------------------------------------------------------------------------: | :-------------------- | :--------------------- | :-------------------------------------- |
+|             <img src="https://github.com/github.png" width="40" style="border-radius:50%"/>             | **Pedro Augusto**     | Pendente               | ...                                     |
+|            <img src="https://github.com/hanxgxrl.png" width="40" style="border-radius:50%"/>            | **Rayane dos Santos** | Full Stack             | [hanxgxrl](https://github.com/hanxgxrl) |
+|             <img src="https://github.com/github.png" width="40" style="border-radius:50%"/>             | **Higor Dornelas**    | Pendente               | ...                                     |
+|             <img src="https://github.com/github.png" width="40" style="border-radius:50%"/>             | **Lucas Schiavo**     | Pendente               | ...                                     |
+| <img src="https://avatars.githubusercontent.com/u/139577518?v=4" width="40" style="border-radius:50%"/> | **Rafhael Hanry**     | Full Stack             | [MrRafha](https://github.com/MrRafha)   |
 
 ---
 
@@ -139,4 +148,7 @@ Este projeto é de uso exclusivo e educacional dos membros vinculados à **Junin
 
 Este projeto é desenvolvido e mantido pelos membros da **Juninhos Community**.
 Se precisar de suporte técnico, mentoria de deploy ou dúvidas sobre infraestrutura, use os canais oficiais no Discord.
+
+```
+
 ```

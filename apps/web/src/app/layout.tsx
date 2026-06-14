@@ -15,9 +15,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body>
         <QueryProvider>
           <AuthProvider>
-            <PreferencesProvider>
-              {children}
-            </PreferencesProvider>
+            <PreferencesProvider>{children}</PreferencesProvider>
           </AuthProvider>
         </QueryProvider>
       </body>

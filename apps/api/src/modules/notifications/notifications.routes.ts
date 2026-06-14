@@ -41,7 +41,9 @@ export async function notificationRoutes(app: FastifyInstance) {
       where: {
         userId,
         status: 'COMPLETED',
-        completedAt: { gte: new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000) },
+        completedAt: {
+          gte: new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000),
+        },
       },
       orderBy: { completedAt: 'desc' },
     })

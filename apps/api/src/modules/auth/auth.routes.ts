@@ -23,27 +23,117 @@ const DEFAULT_CATEGORIES: Array<{
   transactionType: 'INCOME' | 'EXPENSE' | null
 }> = [
   // Apenas saída (EXPENSE)
-  { name: 'Alimentação',   icon: '🍔', color: '#F59E0B', accountType: 'PERSONAL',  transactionType: 'EXPENSE' },
-  { name: 'Transporte',    icon: '🚗', color: '#3B82F6', accountType: 'PERSONAL',  transactionType: 'EXPENSE' },
-  { name: 'Saúde',         icon: '🏥', color: '#10B981', accountType: 'PERSONAL',  transactionType: 'EXPENSE' },
-  { name: 'Educação',      icon: '📚', color: '#8B5CF6', accountType: 'PERSONAL',  transactionType: 'EXPENSE' },
-  { name: 'Lazer',         icon: '🎮', color: '#EC4899', accountType: 'PERSONAL',  transactionType: 'EXPENSE' },
-  { name: 'Assinaturas',   icon: '📱', color: '#6366F1', accountType: 'PERSONAL',  transactionType: 'EXPENSE' },
-  { name: 'Vestuário',     icon: '👕', color: '#F43F5E', accountType: 'PERSONAL',  transactionType: 'EXPENSE' },
-  { name: 'Casa',          icon: '🏠', color: '#84CC16', accountType: 'PERSONAL',  transactionType: 'EXPENSE' },
+  {
+    name: 'Alimentação',
+    icon: '🍔',
+    color: '#F59E0B',
+    accountType: 'PERSONAL',
+    transactionType: 'EXPENSE',
+  },
+  {
+    name: 'Transporte',
+    icon: '🚗',
+    color: '#3B82F6',
+    accountType: 'PERSONAL',
+    transactionType: 'EXPENSE',
+  },
+  {
+    name: 'Saúde',
+    icon: '🏥',
+    color: '#10B981',
+    accountType: 'PERSONAL',
+    transactionType: 'EXPENSE',
+  },
+  {
+    name: 'Educação',
+    icon: '📚',
+    color: '#8B5CF6',
+    accountType: 'PERSONAL',
+    transactionType: 'EXPENSE',
+  },
+  {
+    name: 'Lazer',
+    icon: '🎮',
+    color: '#EC4899',
+    accountType: 'PERSONAL',
+    transactionType: 'EXPENSE',
+  },
+  {
+    name: 'Assinaturas',
+    icon: '📱',
+    color: '#6366F1',
+    accountType: 'PERSONAL',
+    transactionType: 'EXPENSE',
+  },
+  {
+    name: 'Vestuário',
+    icon: '👕',
+    color: '#F43F5E',
+    accountType: 'PERSONAL',
+    transactionType: 'EXPENSE',
+  },
+  {
+    name: 'Casa',
+    icon: '🏠',
+    color: '#84CC16',
+    accountType: 'PERSONAL',
+    transactionType: 'EXPENSE',
+  },
   // Apenas entrada (INCOME)
-  { name: 'Salário',       icon: '💼', color: '#14B8A6', accountType: 'PERSONAL',  transactionType: 'INCOME'  },
-  { name: 'Freelance',     icon: '💻', color: '#0EA5E9', accountType: 'PERSONAL',  transactionType: 'INCOME'  },
-  { name: 'Aluguel recebido', icon: '🏘️', color: '#22C55E', accountType: 'PERSONAL', transactionType: 'INCOME' },
-  { name: 'Faturamento',   icon: '📊', color: '#0EA5E9', accountType: 'BUSINESS',  transactionType: 'INCOME'  },
+  {
+    name: 'Salário',
+    icon: '💼',
+    color: '#14B8A6',
+    accountType: 'PERSONAL',
+    transactionType: 'INCOME',
+  },
+  {
+    name: 'Freelance',
+    icon: '💻',
+    color: '#0EA5E9',
+    accountType: 'PERSONAL',
+    transactionType: 'INCOME',
+  },
+  {
+    name: 'Aluguel recebido',
+    icon: '🏘️',
+    color: '#22C55E',
+    accountType: 'PERSONAL',
+    transactionType: 'INCOME',
+  },
+  {
+    name: 'Faturamento',
+    icon: '📊',
+    color: '#0EA5E9',
+    accountType: 'BUSINESS',
+    transactionType: 'INCOME',
+  },
   // Ambos (null)
-  { name: 'Investimentos', icon: '📈', color: '#22C55E', accountType: 'BUSINESS',  transactionType: null },
-  { name: 'Transferência', icon: '↔️', color: '#94A3B8', accountType: 'PERSONAL',  transactionType: null },
-  { name: 'Outros',        icon: '📦', color: '#64748B', accountType: 'PERSONAL',  transactionType: null },
+  {
+    name: 'Investimentos',
+    icon: '📈',
+    color: '#22C55E',
+    accountType: 'BUSINESS',
+    transactionType: null,
+  },
+  {
+    name: 'Transferência',
+    icon: '↔️',
+    color: '#94A3B8',
+    accountType: 'PERSONAL',
+    transactionType: null,
+  },
+  {
+    name: 'Outros',
+    icon: '📦',
+    color: '#64748B',
+    accountType: 'PERSONAL',
+    transactionType: null,
+  },
 ]
 
 const IS_PROD = process.env.NODE_ENV === 'production'
-const secure  = IS_PROD ? '; Secure' : ''
+const secure = IS_PROD ? '; Secure' : ''
 
 function setAuthCookies(reply: any, token: string, rememberMe = false) {
   const maxAge = rememberMe ? 60 * 60 * 24 * 30 : 60 * 60 * 24 * 7
@@ -80,18 +170,23 @@ export async function authRoutes(app: FastifyInstance) {
 
   app.post('/auth/seed-categories', { preHandler: [app.authenticate] }, async (request, reply) => {
     const { sub } = request.user as { sub: string }
-    const existing = await prisma.category.findMany({ where: { userId: sub }, select: { name: true } })
-    const existingNames = new Set(existing.map(c => c.name))
+    const existing = await prisma.category.findMany({
+      where: { userId: sub },
+      select: { name: true },
+    })
+    const existingNames = new Set(existing.map((c: { name: string }) => c.name))
 
     // Cria categorias que ainda não existem
-    const toCreate = DEFAULT_CATEGORIES.filter(c => !existingNames.has(c.name))
+    const toCreate = DEFAULT_CATEGORIES.filter((c) => !existingNames.has(c.name))
     if (toCreate.length > 0) {
-      await prisma.category.createMany({ data: toCreate.map(c => ({ ...c, userId: sub })) })
+      await prisma.category.createMany({
+        data: toCreate.map((c) => ({ ...c, userId: sub })),
+      })
     }
 
     // Atualiza transactionType das que já existem mas podem estar sem o campo
     await Promise.all(
-      DEFAULT_CATEGORIES.filter(c => existingNames.has(c.name)).map(c =>
+      DEFAULT_CATEGORIES.filter((c) => existingNames.has(c.name)).map((c) =>
         prisma.category.updateMany({
           where: { userId: sub, name: c.name, transactionType: null },
           data: { transactionType: c.transactionType },

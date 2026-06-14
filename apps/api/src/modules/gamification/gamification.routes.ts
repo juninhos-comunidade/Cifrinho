@@ -25,16 +25,26 @@ const LEVEL_TITLES = [
   'Ícone Juninhos',
 ]
 
-function calcLevel(xp: number): { level: number; title: string; currentXp: number; nextLevelXp: number; progress: number } {
+function calcLevel(xp: number): {
+  level: number
+  title: string
+  currentXp: number
+  nextLevelXp: number
+  progress: number
+} {
   let level = 0
   for (let i = LEVEL_THRESHOLDS.length - 1; i >= 0; i--) {
-    if (xp >= LEVEL_THRESHOLDS[i]) { level = i; break }
+    if (xp >= LEVEL_THRESHOLDS[i]) {
+      level = i
+      break
+    }
   }
   const currentLevelXp = LEVEL_THRESHOLDS[level]
   const nextLevelXp = LEVEL_THRESHOLDS[level + 1] ?? LEVEL_THRESHOLDS[LEVEL_THRESHOLDS.length - 1]
-  const progress = level >= LEVEL_THRESHOLDS.length - 1
-    ? 100
-    : Math.round(((xp - currentLevelXp) / (nextLevelXp - currentLevelXp)) * 100)
+  const progress =
+    level >= LEVEL_THRESHOLDS.length - 1
+      ? 100
+      : Math.round(((xp - currentLevelXp) / (nextLevelXp - currentLevelXp)) * 100)
 
   return {
     level: level + 1,
@@ -51,7 +61,9 @@ async function checkCondition(condition: string, userId: string): Promise<boolea
   // goals_N — N metas criadas (qualquer status)
   if (condition.startsWith('goals_completed_')) {
     const value = Number(condition.split('_')[2])
-    const count = await prisma.goal.count({ where: { userId, status: 'COMPLETED' } })
+    const count = await prisma.goal.count({
+      where: { userId, status: 'COMPLETED' },
+    })
     return count >= value
   }
 
@@ -82,12 +94,16 @@ async function checkCondition(condition: string, userId: string): Promise<boolea
   }
 
   if (type === 'expense') {
-    const count = await prisma.transaction.count({ where: { userId, type: 'EXPENSE' } })
+    const count = await prisma.transaction.count({
+      where: { userId, type: 'EXPENSE' },
+    })
     return count >= value
   }
 
   if (type === 'income') {
-    const count = await prisma.transaction.count({ where: { userId, type: 'INCOME' } })
+    const count = await prisma.transaction.count({
+      where: { userId, type: 'INCOME' },
+    })
     return count >= value
   }
 
@@ -104,7 +120,7 @@ async function checkCondition(condition: string, userId: string): Promise<boolea
     })
     if (txs.length === 0) return false
 
-    const days = new Set(txs.map(t => t.date.toISOString().slice(0, 10)))
+    const days = new Set(txs.map((t: { date: Date }) => t.date.toISOString().slice(0, 10)))
     let streak = 0
     const today = new Date()
     for (let i = 0; i < value + 30; i++) {
@@ -133,16 +149,19 @@ export async function gamificationRoutes(app: FastifyInstance) {
     // Busca todas as badges e as já conquistadas
     const [allBadges, myBadgeRecords] = await Promise.all([
       prisma.badge.findMany(),
-      prisma.userBadge.findMany({ where: { userId }, include: { badge: true } }),
+      prisma.userBadge.findMany({
+        where: { userId },
+        include: { badge: true },
+      }),
     ])
 
-    const earnedIds = new Set(myBadgeRecords.map(ub => ub.badgeId))
+    const earnedIds = new Set(myBadgeRecords.map((ub: { badgeId: string }) => ub.badgeId))
 
     // Testa condições das badges ainda não conquistadas
     const newlyUnlocked: typeof allBadges = []
     for (const badge of allBadges) {
       if (earnedIds.has(badge.id)) continue
-      if (badge.condition && await checkCondition(badge.condition, userId)) {
+      if (badge.condition && (await checkCondition(badge.condition, userId))) {
         await prisma.userBadge.create({ data: { userId, badgeId: badge.id } })
         newlyUnlocked.push(badge)
         earnedIds.add(badge.id)
@@ -158,10 +177,10 @@ export async function gamificationRoutes(app: FastifyInstance) {
     const levelInfo = calcLevel(xp)
 
     const earned = [
-      ...myBadgeRecords.map(ub => ub.badge),
+      ...myBadgeRecords.map((ub: { badge: (typeof allBadges)[number] }) => ub.badge),
       ...newlyUnlocked,
     ]
-    const locked = allBadges.filter(b => !earnedIds.has(b.id))
+    const locked = allBadges.filter((b: (typeof allBadges)[number]) => !earnedIds.has(b.id))
 
     return {
       xp,
@@ -181,15 +200,18 @@ export async function gamificationRoutes(app: FastifyInstance) {
 
     const [allBadges, myBadgeRecords] = await Promise.all([
       prisma.badge.findMany(),
-      prisma.userBadge.findMany({ where: { userId }, select: { badgeId: true } }),
+      prisma.userBadge.findMany({
+        where: { userId },
+        select: { badgeId: true },
+      }),
     ])
 
-    const earnedIds = new Set(myBadgeRecords.map(ub => ub.badgeId))
+    const earnedIds = new Set(myBadgeRecords.map((ub: { badgeId: string }) => ub.badgeId))
     const newlyUnlocked: typeof allBadges = []
 
     for (const badge of allBadges) {
       if (earnedIds.has(badge.id)) continue
-      if (badge.condition && await checkCondition(badge.condition, userId)) {
+      if (badge.condition && (await checkCondition(badge.condition, userId))) {
         await prisma.userBadge.create({ data: { userId, badgeId: badge.id } })
         newlyUnlocked.push(badge)
       }
