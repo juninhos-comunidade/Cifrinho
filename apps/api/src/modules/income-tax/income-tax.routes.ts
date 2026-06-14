@@ -1,12 +1,12 @@
-import type { FastifyInstance } from 'fastify'
-import { prisma } from '../../lib/prisma.js'
+import type { FastifyInstance } from "fastify";
+import { prisma } from "../../lib/prisma.js";
 
 export async function incomeTaxRoutes(app: FastifyInstance) {
-  const authenticate = { onRequest: [app.authenticate] }
+  const authenticate = { onRequest: [app.authenticate] };
 
-  app.get('/income-tax/summary', authenticate, async (request) => {
-    const userId = (request.user as any).sub
-    const year = new Date().getFullYear()
+  app.get("/income-tax/summary", authenticate, async (request) => {
+    const userId = (request.user as any).sub;
+    const year = new Date().getFullYear();
 
     const transactions = await prisma.transaction.findMany({
       where: {
@@ -17,15 +17,15 @@ export async function incomeTaxRoutes(app: FastifyInstance) {
         },
       },
       include: { category: true },
-    })
+    });
 
     const totalIncome = transactions
-      .filter((t) => t.type === 'INCOME')
-      .reduce((sum, t) => sum + Number(t.amount), 0)
+      .filter((t) => t.type === "INCOME")
+      .reduce((sum, t) => sum + Number(t.amount), 0);
 
     const totalExpenses = transactions
-      .filter((t) => t.type === 'EXPENSE')
-      .reduce((sum, t) => sum + Number(t.amount), 0)
+      .filter((t) => t.type === "EXPENSE")
+      .reduce((sum, t) => sum + Number(t.amount), 0);
 
     return {
       year,
@@ -33,6 +33,6 @@ export async function incomeTaxRoutes(app: FastifyInstance) {
       totalExpenses,
       balance: totalIncome - totalExpenses,
       transactionCount: transactions.length,
-    }
-  })
+    };
+  });
 }
