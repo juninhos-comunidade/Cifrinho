@@ -457,8 +457,15 @@ export default function LoginPage() {
               </div>
 
               {/* botões de login social */}
+              {/* botões de login social */}
               <div style={{ marginTop: 28, display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
-                <button type="button" className="soc-btn">
+                
+                {/* BOTÃO DO GOOGLE */}
+                <button 
+                  type="button" 
+                  className="soc-btn"
+                  onClick={() => window.location.href = 'http://localhost:3333/auth/google'}
+                >
                   <svg style={{ width: 20, height: 20 }} viewBox="0 0 24 24">
                     <path fill="#FFC107" d="M43.6 20.5h-1.9V20H24v8h11.3c-1.6 4.7-6.1 8-11.3 8-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34.3 6.1 29.4 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.3-.4-3.5z"/>
                     <path fill="#FF3D00" d="m6.3 14.7 6.6 4.8C14.7 16 19 13 24 13c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34.3 6.1 29.4 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/>
@@ -467,11 +474,17 @@ export default function LoginPage() {
                   </svg>
                   Google
                 </button>
-                <button type="button" className="soc-btn">
+
+                {/* BOTÃO DO DISCORD (Provisório com ícone da Apple) */}
+                <button 
+                  type="button" 
+                  className="soc-btn"
+                  onClick={() => window.location.href = 'http://localhost:3333/auth/discord'}
+                >
                   <svg style={{ width: 20, height: 20 }} viewBox="0 0 24 24" fill="currentColor">
                     <path d="M16.365 1.43c0 1.14-.42 2.27-1.25 3.09-.83.83-2.04 1.46-3.18 1.37-.13-1.1.4-2.27 1.18-3.04.83-.85 2.16-1.46 3.25-1.42zM20.5 17.06c-.55 1.27-.82 1.84-1.53 2.96-.99 1.57-2.39 3.52-4.12 3.53-1.54.02-1.94-1-4.03-.99-2.09.01-2.53 1.01-4.07.99-1.73-.02-3.05-1.78-4.04-3.35C-.06 16.21-.36 11.13 2.2 8.43c1.06-1.12 2.46-1.78 3.96-1.78 1.53 0 2.49 1.01 3.76 1.01 1.22 0 1.96-1.01 3.73-1.01 1.32 0 2.72.72 3.72 1.96-3.27 1.79-2.74 6.45.93 7.45z"/>
                   </svg>
-                  Apple
+                  Discord
                 </button>
               </div>
 

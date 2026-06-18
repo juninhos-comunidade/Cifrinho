@@ -2,6 +2,9 @@ import type { FastifyInstance } from 'fastify'
 import { z } from 'zod'
 import bcrypt from 'bcryptjs'
 import { prisma } from '../../lib/prisma.js'
+import { email } from 'zod/v4'
+import { parseAsync } from 'zod/v4-mini'
+import { create } from 'domain'
 
 const registerSchema = z.object({
   name: z.string().min(2),
@@ -155,5 +158,89 @@ export async function authRoutes(app: FastifyInstance) {
     return reply.send({
       user: { id: user.id, name: user.name, email: user.email },
     })
+  })
+
+// CALLBACK DO GOOGLE
+  app.get('/auth/google/callback', async (request, reply) => {
+    try {
+      const { token } = await (app as any).googleOAuth2.getAccessTokenFromAuthorizationCodeFlow(request)
+      
+      const userResponse = await fetch('https://www.googleapis.com/oauth2/v2/userinfo', {
+        headers: { Authorization: `Bearer ${token.access_token}` },
+      })
+      
+      const googleUser = (await userResponse.json()) as { email: string; name: string }
+
+      if (!googleUser.email) {
+        return reply.status(400).send({ message: 'Não foi possível obter o e-mail do Google.' })
+      }
+
+      let user = await prisma.user.findUnique({ where: { email: googleUser.email } })
+
+      if (!user) {
+        user = await prisma.user.create({
+          data: {
+            name: googleUser.name || 'Usuário do Google',
+            email: googleUser.email,
+            password: '', 
+            categories: {
+              create: DEFAULT_CATEGORIES,
+            },
+          },
+        })
+      }
+
+      const jwtToken = app.jwt.sign({ sub: user.id }, { expiresIn: '7d' })
+      setAuthCookies(reply, jwtToken)
+
+      return reply.redirect(process.env.FRONTEND_URL || 'http://localhost:3000')
+
+    } catch (error) {
+      console.error('ERRO DETALHADO NO GOOGLE:', error)
+      app.log.error(error)
+      return reply.status(500).send({ message: 'Erro na autenticação com o Google.' })
+    }
+  })
+
+  // CALLBACK DO DISCORD
+  app.get('/auth/discord/callback', async (request, reply) => {
+    try {
+      const { token } = await (app as any).discordOAuth2.getAccessTokenFromAuthorizationCodeFlow(request)
+      
+      const userResponse = await fetch('https://discord.com/api/users/@me', {
+        headers: { Authorization: `Bearer ${token.access_token}` },
+      })
+      
+      const discordUser = (await userResponse.json()) as { email: string; global_name?: string; username: string }
+
+      if (!discordUser.email) {
+        return reply.status(400).send({ message: 'Não foi possível obter o e-mail do Discord.' })
+      }
+
+      let user = await prisma.user.findUnique({ where: { email: discordUser.email } })
+
+      if (!user) {
+        user = await prisma.user.create({
+          data: {
+            name: discordUser.global_name || discordUser.username || 'Usuário do Discord',
+            email: discordUser.email,
+            password: '',
+            categories: {
+              create: DEFAULT_CATEGORIES,
+            },
+          },
+        })
+      }
+
+      const jwtToken = app.jwt.sign({ sub: user.id }, { expiresIn: '7d' })
+      setAuthCookies(reply, jwtToken)
+
+      return reply.redirect(process.env.FRONTEND_URL || 'http://localhost:3000')
+
+    } catch (error) {
+      console.error('ERRO DETALHADO NO DISCORD:', error)
+      app.log.error(error)
+      return reply.status(500).send({ message: 'Erro na autenticação com o Discord.' })
+    }
   })
 }
