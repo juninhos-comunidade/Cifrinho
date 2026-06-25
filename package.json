@@ -14,7 +14,7 @@
     "prepare": "node -e \"if (process.env.CI !== 'true' && !process.env.VERCEL) { require('child_process').execSync('husky', {stdio: 'inherit'}) }\""
   },
   "engines": {
-    "node": ">=20.0.0"
+    "node": ">=22.0.0"
   },
   "overrides": {
     "react": "^19.1.0",
