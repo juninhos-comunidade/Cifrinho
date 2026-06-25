@@ -14,14 +14,14 @@ packages/
 
 ## Stack
 
-| Camada        | Tecnologia            | Responsabilidade                                      |
-|---------------|-----------------------|-------------------------------------------------------|
-| Frontend      | Next.js (App Router)  | Interface do usuário, rotas, SSR/SSG                  |
-| Backend       | Node.js + Fastify     | API REST, regras de negócio, autenticação             |
-| ORM           | Prisma                | Mapeamento objeto-relacional, migrations              |
-| Banco de Dados| NeonDB (PostgreSQL)   | Persistência dos dados em nuvem                       |
-| Deploy Web    | Vercel                | Hospedagem do frontend com CI/CD automático           |
-| Deploy API    | Railway               | Hospedagem do backend com CI/CD automático            |
+| Camada         | Tecnologia           | Responsabilidade                            |
+| -------------- | -------------------- | ------------------------------------------- |
+| Frontend       | Next.js (App Router) | Interface do usuário, rotas, SSR/SSG        |
+| Backend        | Node.js + Fastify    | API REST, regras de negócio, autenticação   |
+| ORM            | Prisma               | Mapeamento objeto-relacional, migrations    |
+| Banco de Dados | NeonDB (PostgreSQL)  | Persistência dos dados em nuvem             |
+| Deploy Web     | Vercel               | Hospedagem do frontend com CI/CD automático |
+| Deploy API     | Railway              | Hospedagem do backend com CI/CD automático  |
 
 ## Fluxo de Dados
 

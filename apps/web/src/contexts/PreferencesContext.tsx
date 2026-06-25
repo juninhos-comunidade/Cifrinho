@@ -24,7 +24,9 @@ export function PreferencesProvider({ children }: { children: ReactNode }) {
 
   function setBusinessEnabled(v: boolean) {
     setBusinessEnabledState(v)
-    try { localStorage.setItem('cif.businessEnabled', String(v)) } catch {}
+    try {
+      localStorage.setItem('cif.businessEnabled', String(v))
+    } catch {}
   }
 
   return (

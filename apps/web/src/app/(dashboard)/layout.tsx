@@ -18,9 +18,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       </div>
       <div className={`flex flex-col flex-1 min-w-0 ${pl} transition-[padding] duration-300`}>
         <Header onMenuToggle={() => setCollapsed(!collapsed)} />
-        <main className="flex-1 p-6">
-          {children}
-        </main>
+        <main className="flex-1 p-6">{children}</main>
       </div>
     </div>
   )

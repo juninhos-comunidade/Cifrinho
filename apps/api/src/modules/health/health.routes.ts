@@ -11,7 +11,11 @@ export async function healthRoutes(app: FastifyInstance) {
   app.get('/health/ready', async (_req, reply) => {
     try {
       await prisma.$queryRaw`SELECT 1`
-      return { status: 'ready', database: 'ok', timestamp: new Date().toISOString() }
+      return {
+        status: 'ready',
+        database: 'ok',
+        timestamp: new Date().toISOString(),
+      }
     } catch (err) {
       app.log.error(err)
       return reply.status(503).send({

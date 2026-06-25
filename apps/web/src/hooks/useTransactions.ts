@@ -54,15 +54,30 @@ function isPrevMonth(dateStr: string): boolean {
 }
 
 export function calcOverview(txs: Transaction[]) {
-  const curIncome   = txs.filter(t => t.type === 'INCOME'  && isCurrentMonth(t.date)).reduce((s, t) => s + Number(t.amount), 0)
-  const curExpense  = txs.filter(t => t.type === 'EXPENSE' && isCurrentMonth(t.date)).reduce((s, t) => s + Number(t.amount), 0)
-  const prevIncome  = txs.filter(t => t.type === 'INCOME'  && isPrevMonth(t.date)).reduce((s, t) => s + Number(t.amount), 0)
-  const prevExpense = txs.filter(t => t.type === 'EXPENSE' && isPrevMonth(t.date)).reduce((s, t) => s + Number(t.amount), 0)
+  const curIncome = txs
+    .filter((t) => t.type === 'INCOME' && isCurrentMonth(t.date))
+    .reduce((s, t) => s + Number(t.amount), 0)
+  const curExpense = txs
+    .filter((t) => t.type === 'EXPENSE' && isCurrentMonth(t.date))
+    .reduce((s, t) => s + Number(t.amount), 0)
+  const prevIncome = txs
+    .filter((t) => t.type === 'INCOME' && isPrevMonth(t.date))
+    .reduce((s, t) => s + Number(t.amount), 0)
+  const prevExpense = txs
+    .filter((t) => t.type === 'EXPENSE' && isPrevMonth(t.date))
+    .reduce((s, t) => s + Number(t.amount), 0)
 
-  const balance = txs.reduce((s, t) => t.type === 'INCOME' ? s + Number(t.amount) : s - Number(t.amount), 0)
+  const balance = txs.reduce(
+    (s, t) => (t.type === 'INCOME' ? s + Number(t.amount) : s - Number(t.amount)),
+    0
+  )
 
-  const personalBalance  = txs.filter(t => t.accountType === 'PERSONAL').reduce((s, t) => t.type === 'INCOME' ? s + Number(t.amount) : s - Number(t.amount), 0)
-  const businessBalance  = txs.filter(t => t.accountType === 'BUSINESS').reduce((s, t) => t.type === 'INCOME' ? s + Number(t.amount) : s - Number(t.amount), 0)
+  const personalBalance = txs
+    .filter((t) => t.accountType === 'PERSONAL')
+    .reduce((s, t) => (t.type === 'INCOME' ? s + Number(t.amount) : s - Number(t.amount)), 0)
+  const businessBalance = txs
+    .filter((t) => t.accountType === 'BUSINESS')
+    .reduce((s, t) => (t.type === 'INCOME' ? s + Number(t.amount) : s - Number(t.amount)), 0)
 
   const savingsRate = curIncome > 0 ? Math.round(((curIncome - curExpense) / curIncome) * 100) : 0
 
@@ -86,25 +101,49 @@ export function calcOverview(txs: Transaction[]) {
 
 export function calcMonthlyBars(txs: Transaction[]) {
   const now = new Date()
-  const months: { month: string; in: number; out: number; current?: boolean }[] = []
+  const months: {
+    month: string
+    in: number
+    out: number
+    current?: boolean
+  }[] = []
 
   for (let i = 6; i >= 0; i--) {
     const d = new Date(now.getFullYear(), now.getMonth() - i, 1)
-    const label = d.toLocaleString('pt-BR', { month: 'short' })
-      .replace('.', '').replace(/^\w/, c => c.toUpperCase())
-    const inc = txs.filter(t => {
-      const td = new Date(t.date)
-      return t.type === 'INCOME' && td.getMonth() === d.getMonth() && td.getFullYear() === d.getFullYear()
-    }).reduce((s, t) => s + Number(t.amount), 0)
-    const exp = txs.filter(t => {
-      const td = new Date(t.date)
-      return t.type === 'EXPENSE' && td.getMonth() === d.getMonth() && td.getFullYear() === d.getFullYear()
-    }).reduce((s, t) => s + Number(t.amount), 0)
-    months.push({ month: label, in: inc, out: exp, ...(i === 0 ? { current: true } : {}) })
+    const label = d
+      .toLocaleString('pt-BR', { month: 'short' })
+      .replace('.', '')
+      .replace(/^\w/, (c) => c.toUpperCase())
+    const inc = txs
+      .filter((t) => {
+        const td = new Date(t.date)
+        return (
+          t.type === 'INCOME' &&
+          td.getMonth() === d.getMonth() &&
+          td.getFullYear() === d.getFullYear()
+        )
+      })
+      .reduce((s, t) => s + Number(t.amount), 0)
+    const exp = txs
+      .filter((t) => {
+        const td = new Date(t.date)
+        return (
+          t.type === 'EXPENSE' &&
+          td.getMonth() === d.getMonth() &&
+          td.getFullYear() === d.getFullYear()
+        )
+      })
+      .reduce((s, t) => s + Number(t.amount), 0)
+    months.push({
+      month: label,
+      in: inc,
+      out: exp,
+      ...(i === 0 ? { current: true } : {}),
+    })
   }
 
-  const maxVal = Math.max(...months.flatMap(m => [m.in, m.out]), 1)
-  return months.map(m => ({
+  const maxVal = Math.max(...months.flatMap((m) => [m.in, m.out]), 1)
+  return months.map((m) => ({
     ...m,
     inH: Math.round((m.in / maxVal) * 160),
     outH: Math.round((m.out / maxVal) * 160),
@@ -112,13 +151,20 @@ export function calcMonthlyBars(txs: Transaction[]) {
 }
 
 export function calcPersonal(txs: Transaction[]) {
-  const personal = txs.filter(t => t.accountType === 'PERSONAL')
-  const curIncome  = personal.filter(t => t.type === 'INCOME'  && isCurrentMonth(t.date)).reduce((s, t) => s + Number(t.amount), 0)
-  const curExpense = personal.filter(t => t.type === 'EXPENSE' && isCurrentMonth(t.date)).reduce((s, t) => s + Number(t.amount), 0)
-  const balance    = personal.reduce((s, t) => t.type === 'INCOME' ? s + Number(t.amount) : s - Number(t.amount), 0)
+  const personal = txs.filter((t) => t.accountType === 'PERSONAL')
+  const curIncome = personal
+    .filter((t) => t.type === 'INCOME' && isCurrentMonth(t.date))
+    .reduce((s, t) => s + Number(t.amount), 0)
+  const curExpense = personal
+    .filter((t) => t.type === 'EXPENSE' && isCurrentMonth(t.date))
+    .reduce((s, t) => s + Number(t.amount), 0)
+  const balance = personal.reduce(
+    (s, t) => (t.type === 'INCOME' ? s + Number(t.amount) : s - Number(t.amount)),
+    0
+  )
 
   const byCategory: Record<string, { name: string; total: number }> = {}
-  for (const t of personal.filter(t => t.type === 'EXPENSE' && isCurrentMonth(t.date))) {
+  for (const t of personal.filter((t) => t.type === 'EXPENSE' && isCurrentMonth(t.date))) {
     const key = t.categoryId ?? 'other'
     const name = t.category?.name ?? 'Outros'
     if (!byCategory[key]) byCategory[key] = { name, total: 0 }
@@ -128,22 +174,34 @@ export function calcPersonal(txs: Transaction[]) {
   const categories = Object.values(byCategory)
     .sort((a, b) => b.total - a.total)
     .slice(0, 5)
-    .map(c => ({ ...c, pct: curExpense > 0 ? Math.round((c.total / curExpense) * 100) : 0 }))
+    .map((c) => ({
+      ...c,
+      pct: curExpense > 0 ? Math.round((c.total / curExpense) * 100) : 0,
+    }))
 
   return { balance, curIncome, curExpense, categories }
 }
 
 export function calcBusiness(txs: Transaction[]) {
-  const biz = txs.filter(t => t.accountType === 'BUSINESS')
-  const curIncome  = biz.filter(t => t.type === 'INCOME'  && isCurrentMonth(t.date)).reduce((s, t) => s + Number(t.amount), 0)
-  const curExpense = biz.filter(t => t.type === 'EXPENSE' && isCurrentMonth(t.date)).reduce((s, t) => s + Number(t.amount), 0)
-  const balance    = biz.reduce((s, t) => t.type === 'INCOME' ? s + Number(t.amount) : s - Number(t.amount), 0)
+  const biz = txs.filter((t) => t.accountType === 'BUSINESS')
+  const curIncome = biz
+    .filter((t) => t.type === 'INCOME' && isCurrentMonth(t.date))
+    .reduce((s, t) => s + Number(t.amount), 0)
+  const curExpense = biz
+    .filter((t) => t.type === 'EXPENSE' && isCurrentMonth(t.date))
+    .reduce((s, t) => s + Number(t.amount), 0)
+  const balance = biz.reduce(
+    (s, t) => (t.type === 'INCOME' ? s + Number(t.amount) : s - Number(t.amount)),
+    0
+  )
 
   const MEI_LIMIT = 81000
-  const yearIncome = biz.filter(t => {
-    const d = new Date(t.date)
-    return t.type === 'INCOME' && d.getFullYear() === new Date().getFullYear()
-  }).reduce((s, t) => s + Number(t.amount), 0)
+  const yearIncome = biz
+    .filter((t) => {
+      const d = new Date(t.date)
+      return t.type === 'INCOME' && d.getFullYear() === new Date().getFullYear()
+    })
+    .reduce((s, t) => s + Number(t.amount), 0)
   const meiPct = Math.min(Math.round((yearIncome / MEI_LIMIT) * 100), 100)
 
   return { balance, curIncome, curExpense, meiPct, yearIncome }
@@ -169,9 +227,9 @@ export function calcCategoryPie(
   txs: Transaction[],
   type: 'INCOME' | 'EXPENSE',
   year: number,
-  month: number, // 0-indexed
+  month: number // 0-indexed
 ): PieSlice[] {
-  const filtered = txs.filter(t => {
+  const filtered = txs.filter((t) => {
     const d = new Date(t.date)
     return t.type === type && d.getFullYear() === year && d.getMonth() === month
   })
@@ -185,8 +243,7 @@ export function calcCategoryPie(
     byCategory[key] = (byCategory[key] ?? 0) + Number(t.amount)
   }
 
-  const sorted = Object.entries(byCategory)
-    .sort((a, b) => b[1] - a[1])
+  const sorted = Object.entries(byCategory).sort((a, b) => b[1] - a[1])
 
   const top = sorted.slice(0, 5)
   const rest = sorted.slice(5).reduce((s, [, v]) => s + v, 0)
@@ -202,20 +259,27 @@ export function calcCategoryPie(
 
 export function calcCashFlowBars(txs: Transaction[], accountType: 'PERSONAL' | 'BUSINESS') {
   const now = new Date()
-  const filtered = txs.filter(t => t.accountType === accountType)
+  const filtered = txs.filter((t) => t.accountType === accountType)
   const months: { m: string; net: number; cur?: boolean }[] = []
 
   for (let i = 5; i >= 0; i--) {
     const d = new Date(now.getFullYear(), now.getMonth() - i, 1)
-    const label = d.toLocaleString('pt-BR', { month: 'short' })
-      .replace('.', '').replace(/^\w/, c => c.toUpperCase())
-    const net = filtered.filter(t => {
-      const td = new Date(t.date)
-      return td.getMonth() === d.getMonth() && td.getFullYear() === d.getFullYear()
-    }).reduce((s, t) => t.type === 'INCOME' ? s + Number(t.amount) : s - Number(t.amount), 0)
+    const label = d
+      .toLocaleString('pt-BR', { month: 'short' })
+      .replace('.', '')
+      .replace(/^\w/, (c) => c.toUpperCase())
+    const net = filtered
+      .filter((t) => {
+        const td = new Date(t.date)
+        return td.getMonth() === d.getMonth() && td.getFullYear() === d.getFullYear()
+      })
+      .reduce((s, t) => (t.type === 'INCOME' ? s + Number(t.amount) : s - Number(t.amount)), 0)
     months.push({ m: label, net, ...(i === 0 ? { cur: true } : {}) })
   }
 
-  const maxVal = Math.max(...months.map(m => Math.abs(m.net)), 1)
-  return months.map(m => ({ ...m, h: Math.max(Math.round((Math.abs(m.net) / maxVal) * 140), 4) }))
+  const maxVal = Math.max(...months.map((m) => Math.abs(m.net)), 1)
+  return months.map((m) => ({
+    ...m,
+    h: Math.max(Math.round((Math.abs(m.net) / maxVal) * 140), 4),
+  }))
 }

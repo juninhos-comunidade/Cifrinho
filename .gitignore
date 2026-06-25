@@ -50,4 +50,8 @@ coverage/
 # TypeScript
 *.tsbuildinfo
 
+
 .claude/settings.local.json
+
+# lock raiz gerado no Windows — CI usa npm install sem lock
+package-lock.json

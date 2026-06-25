@@ -19,13 +19,14 @@ export async function incomeTaxRoutes(app: FastifyInstance) {
       include: { category: true },
     })
 
+    type Tx = (typeof transactions)[number]
     const totalIncome = transactions
-      .filter((t) => t.type === 'INCOME')
-      .reduce((sum, t) => sum + Number(t.amount), 0)
+      .filter((t: Tx) => t.type === 'INCOME')
+      .reduce((sum: number, t: Tx) => sum + Number(t.amount), 0)
 
     const totalExpenses = transactions
-      .filter((t) => t.type === 'EXPENSE')
-      .reduce((sum, t) => sum + Number(t.amount), 0)
+      .filter((t: Tx) => t.type === 'EXPENSE')
+      .reduce((sum: number, t: Tx) => sum + Number(t.amount), 0)
 
     return {
       year,

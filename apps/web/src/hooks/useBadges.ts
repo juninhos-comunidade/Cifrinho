@@ -30,7 +30,10 @@ async function fetchProgress(): Promise<GamificationProgress> {
 }
 
 export function useBadges() {
-  const query = useQuery({ queryKey: ['gamification'], queryFn: fetchProgress })
+  const query = useQuery({
+    queryKey: ['gamification'],
+    queryFn: fetchProgress,
+  })
 
   return {
     earned: query.data?.earned ?? [],

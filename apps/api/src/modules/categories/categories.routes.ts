@@ -14,14 +14,19 @@ export async function categoryRoutes(app: FastifyInstance) {
 
   app.get('/categories', authenticate, async (request) => {
     const userId = (request.user as any).sub
-    return prisma.category.findMany({ where: { userId }, orderBy: { name: 'asc' } })
+    return prisma.category.findMany({
+      where: { userId },
+      orderBy: { name: 'asc' },
+    })
   })
 
   app.post('/categories', authenticate, async (request, reply) => {
     const userId = (request.user as any).sub
     const data = categorySchema.parse(request.body)
 
-    const category = await prisma.category.create({ data: { ...data, userId } })
+    const category = await prisma.category.create({
+      data: { ...data, userId },
+    })
     return reply.status(201).send(category)
   })
 }
