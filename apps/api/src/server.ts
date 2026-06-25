@@ -1,21 +1,22 @@
-import Fastify from 'fastify'
 import fastifyCookie from '@fastify/cookie'
 import fastifyMultipart from '@fastify/multipart'
-import { corsPlugin } from './plugins/cors.js'
-import { jwtPlugin } from './plugins/jwt.js'
+import oauthPlugin from '@fastify/oauth2'
+import Fastify from 'fastify'
 import { authRoutes } from './modules/auth/auth.routes.js'
-import { transactionRoutes } from './modules/transactions/transactions.routes.js'
-import { categoryRoutes } from './modules/categories/categories.routes.js'
 import { badgeRoutes } from './modules/badges/badges.routes.js'
-import { incomeTaxRoutes } from './modules/income-tax/income-tax.routes.js'
-import { helpRoutes } from './modules/help/help.routes.js'
-import { statementRoutes } from './modules/statements/statements.routes.js'
+import { categoryRoutes } from './modules/categories/categories.routes.js'
 import { gamificationRoutes } from './modules/gamification/gamification.routes.js'
 import { goalRoutes } from './modules/goals/goals.routes.js'
-import { notificationRoutes } from './modules/notifications/notifications.routes.js'
 import { healthRoutes } from './modules/health/health.routes.js'
-import { statusRoutes } from './modules/status/status.routes.js'
+import { helpRoutes } from './modules/help/help.routes.js'
+import { incomeTaxRoutes } from './modules/income-tax/income-tax.routes.js'
+import { notificationRoutes } from './modules/notifications/notifications.routes.js'
 import { roadmapRoutes } from './modules/roadmap/roadmap.routes.js'
+import { statementRoutes } from './modules/statements/statements.routes.js'
+import { statusRoutes } from './modules/status/status.routes.js'
+import { transactionRoutes } from './modules/transactions/transactions.routes.js'
+import { corsPlugin } from './plugins/cors.js'
+import { jwtPlugin } from './plugins/jwt.js'
 
 const app = Fastify({ logger: true })
 
@@ -23,6 +24,36 @@ app.register(corsPlugin)
 app.register(fastifyCookie)
 app.register(fastifyMultipart, { limits: { fileSize: 5 * 1024 * 1024 } })
 app.register(jwtPlugin)
+
+app.register(oauthPlugin, {
+  name: 'googleOAuth2',
+  scope: ['profile', 'email'],
+  credentials: {
+    client: {
+      id: process.env.GOOGLE_CLIENT_ID || '',
+      secret: process.env.GOOGLE_CLIENT_SECRET || '',
+    },
+    auth: (oauthPlugin as any).GOOGLE_CONFIGURATION,
+    options: { authorizationMethod: 'body' },
+  },
+  startRedirectPath: '/auth/google',
+  callbackUri: `${process.env.API_URL}/auth/google/callback`,
+})
+
+app.register(oauthPlugin, {
+  name: 'discordOAuth2',
+  scope: ['identify', 'email'],
+  credentials: {
+    client: {
+      id: process.env.DISCORD_CLIENT_ID || '',
+      secret: process.env.DISCORD_CLIENT_SECRET || '',
+    },
+    auth: (oauthPlugin as any).DISCORD_CONFIGURATION,
+    options: { authorizationMethod: 'body' },
+  },
+  startRedirectPath: '/auth/discord',
+  callbackUri: `${process.env.API_URL}/auth/discord/callback`,
+})
 
 app.register(authRoutes)
 app.register(transactionRoutes)
