@@ -256,15 +256,17 @@ export async function authRoutes(app: FastifyInstance) {
     })
   })
 
-// CALLBACK DO GOOGLE
+  // CALLBACK DO GOOGLE
   app.get('/auth/google/callback', async (request, reply) => {
     try {
-      const { token } = await (app as any).googleOAuth2.getAccessTokenFromAuthorizationCodeFlow(request)
-      
+      const { token } = await (app as any).googleOAuth2.getAccessTokenFromAuthorizationCodeFlow(
+        request
+      )
+
       const userResponse = await fetch('https://www.googleapis.com/oauth2/v2/userinfo', {
         headers: { Authorization: `Bearer ${token.access_token}` },
       })
-      
+
       const googleUser = (await userResponse.json()) as { email: string; name: string }
 
       if (!googleUser.email) {
@@ -278,7 +280,7 @@ export async function authRoutes(app: FastifyInstance) {
           data: {
             name: googleUser.name || 'Usuário do Google',
             email: googleUser.email,
-            password: '', 
+            password: '',
             categories: {
               create: DEFAULT_CATEGORIES,
             },
@@ -290,7 +292,6 @@ export async function authRoutes(app: FastifyInstance) {
       setAuthCookies(reply, jwtToken)
 
       return reply.redirect(process.env.FRONTEND_URL || 'http://localhost:3000')
-
     } catch (error) {
       console.error('ERRO DETALHADO NO GOOGLE:', error)
       app.log.error(error)
@@ -301,13 +302,19 @@ export async function authRoutes(app: FastifyInstance) {
   // CALLBACK DO DISCORD
   app.get('/auth/discord/callback', async (request, reply) => {
     try {
-      const { token } = await (app as any).discordOAuth2.getAccessTokenFromAuthorizationCodeFlow(request)
-      
+      const { token } = await (app as any).discordOAuth2.getAccessTokenFromAuthorizationCodeFlow(
+        request
+      )
+
       const userResponse = await fetch('https://discord.com/api/users/@me', {
         headers: { Authorization: `Bearer ${token.access_token}` },
       })
-      
-      const discordUser = (await userResponse.json()) as { email: string; global_name?: string; username: string }
+
+      const discordUser = (await userResponse.json()) as {
+        email: string
+        global_name?: string
+        username: string
+      }
 
       if (!discordUser.email) {
         return reply.status(400).send({ message: 'Não foi possível obter o e-mail do Discord.' })
@@ -332,7 +339,6 @@ export async function authRoutes(app: FastifyInstance) {
       setAuthCookies(reply, jwtToken)
 
       return reply.redirect(process.env.FRONTEND_URL || 'http://localhost:3000')
-
     } catch (error) {
       console.error('ERRO DETALHADO NO DISCORD:', error)
       app.log.error(error)
